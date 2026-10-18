@@ -21,6 +21,8 @@ A native macOS port of [Enhed/clawd-usage-winwidget](https://github.com/Enhed/cl
 
 > A fan project, unaffiliated with Anthropic. Claude and Clawd belong to Anthropic.
 
+**Latest release: [v0.3.0](https://github.com/juliobianco/claudy-usage-mac/releases/tag/v0.3.0).** Now available through Homebrew, with 20-second refreshes near a limit, recovery from stuck usage probes, and fixes for settings backups and invalid JSON handling. See the [release notes](CHANGELOG.md#030---2026-10-18).
+
 ## Install
 
 **Requirements:** macOS 14 or later and Claude Code installed and logged in. Liquid Glass requires macOS 26; earlier versions use a solid background. Release downloads support both Apple silicon and Intel.

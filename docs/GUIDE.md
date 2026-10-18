@@ -229,5 +229,5 @@ Other documents: [ROADMAP.md](../ROADMAP.md), [CONTRIBUTING.md](../CONTRIBUTING.
 
 ## Versions and news
 
-The version is in the [`VERSION`](../VERSION) file (semantic versioning); `bundle.sh` writes it into the app, and you see it in the card's footer and in Settings. What changed in each version is in [**CHANGELOG.md**](../CHANGELOG.md). Each release is a tag (`v0.1.0`) with a GitHub Release whose notes are the changelog's entry and whose zip is the app; **Watch → Custom → Releases** on GitHub tells you when there is a new one. For each installation method, see [Updating](../README.md#updating).
+The version is in the [`VERSION`](../VERSION) file (semantic versioning); `bundle.sh` writes it into the app, and you see it in the card's footer and in Settings. What changed in each version is in [**CHANGELOG.md**](../CHANGELOG.md). Each release is a tag (`vX.Y.Z`) with a GitHub Release whose notes are the changelog's entry and whose zip is the app; **Watch → Custom → Releases** on GitHub tells you when there is a new one. For each installation method, see [Updating](../README.md#updating).
 

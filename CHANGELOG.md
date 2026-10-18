@@ -2,13 +2,13 @@
 
 All notable changes to Claudy Usage. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the versions follow [semantic versioning](https://semver.org). The version of the app is in the [`VERSION`](VERSION) file.
 
-Each release is a git tag (`v0.1.0`) with a GitHub Release; its notes are the entry below. To update: `git pull`, then `./scripts/bundle.sh`.
+Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the entry below. For Homebrew, download and source installations, see [Updating](README.md#updating).
 
 ## [Unreleased]
 
 ### Changed
 
-- Reorganized the README around installation and everyday use; moved detailed features, animation galleries and developer image tools to `docs/GUIDE.md`, and clarified refresh intervals and update options.
+- Reorganized the README around installation and everyday use; moved detailed features, animation galleries and developer image tools to `docs/GUIDE.md`, clarified refresh intervals and update options, and highlighted the published v0.3.0 release.
 
 ## [0.3.0] - 2026-10-18
 
