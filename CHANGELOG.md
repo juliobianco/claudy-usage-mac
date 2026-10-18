@@ -6,6 +6,12 @@ Each release is a git tag (`v0.1.0`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+### Changed
+
+- Reorganized the README around installation and everyday use; moved detailed features, animation galleries and developer image tools to `docs/GUIDE.md`, and clarified refresh intervals and update options.
+
+## [0.3.0] - 2026-10-18
+
 ### Added
 
 - A Homebrew tap: `brew install --cask juliobianco/tap/claudy-usage` ([homebrew-tap](https://github.com/juliobianco/homebrew-tap)). Bump `version` and `sha256` in its cask on each release.

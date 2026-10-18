@@ -23,7 +23,7 @@ Build outside `~/Documents` (the scripts do): macOS adds file attributes there t
 
 ## Pictures
 
-Screenshots and GIFs are made by the app with made-up data (`CLAUDY_DEMO=1`) or with real use and names replaced (`CLAUDY_REDACT=1`): see "Development" in the README. **Never put real project names, branches, session names, e-mails or paths in a picture.**
+Screenshots and GIFs are made by the app with made-up data (`CLAUDY_DEMO=1`) or with real use and names replaced (`CLAUDY_REDACT=1`): see [the screenshot and GIF tools](docs/GUIDE.md#development). **Never put real project names, branches, session names, e-mails or paths in a picture.**
 
 ## Pull requests
 
