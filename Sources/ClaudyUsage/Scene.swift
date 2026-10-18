@@ -48,8 +48,8 @@ final class SceneModel {
     @ObservationIgnored var skinOverride: Skin?         // snapshots only
     var skin: Skin { skinOverride ?? Skins.current() }
     var size = CGSize(width: 272, height: 56)
-    @ObservationIgnored let clawd = Mascot()
-    @ObservationIgnored let skySim = Sky()
+    @ObservationIgnored let clawd: Mascot
+    @ObservationIgnored let skySim: Sky
     @ObservationIgnored var lon: Double?
     @ObservationIgnored var city: String? = UserDefaults.standard.string(forKey: "lastCity")
     @ObservationIgnored private var running = false
@@ -61,7 +61,11 @@ final class SceneModel {
     static let scale = 1.14                       // the original's units to points
     static let areaLeft = 80.0                    // points: where Clawd's area starts (after the percentage)
 
-    init() {
+    /// `seed` makes the walk, the clouds and the rain repeat (the GIF tools); demo data starts without an entrance move.
+    init(seed: UInt64? = nil) {
+        clawd = Mascot(seed: seed, entrance: !DevFlags.demo)
+        skySim = Sky(seed: seed)
+        if DevFlags.demo { return }       // made-up data: no location, no weather request
         if let p = LocationProvider.saved { skySim.lat = p.lat; lon = p.lon }
         location.onFix = { [self] la, lo in skySim.lat = la; lon = lo; refreshWeather(force: true); lookUpCity(la, lo) }
         location.start()

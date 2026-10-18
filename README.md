@@ -9,12 +9,18 @@ It is a native Swift port of [**Enhed/clawd-usage-winwidget**](https://github.co
   <img src="docs/images/panel-details.png" width="300" alt="The dropdown with the details open: usage profile, 24-hour chart, projects">
 </p>
 
+<p align="center">
+  <img src="docs/images/tour.gif" width="420" alt="A session starts working, finishes (Clawd jumps), then waits for you">
+</p>
+
 > Not affiliated with Anthropic. Clawd and Claude are Anthropic's. This is a fan project.
 
 - **Official numbers only.** Percentages come from `claude -p "/usage"`: the slash command runs headless, talks to Anthropic with your existing login and **does not call the model or spend tokens**.
 - **No login, no tokens, no keys.** The app has no account of its own and never touches your credentials. It uses the Claude Code you are already logged into.
 - **No dependencies.** Plain Swift and SwiftUI. You need Claude Code, and Xcode's command line tools to build it.
 - **Local.** Nothing is uploaded. See [Privacy](#privacy-and-security).
+
+<sub>The pictures come from the app itself: the card and the floating widget are real use with the names of projects, branches, sessions and the e-mail replaced by stand-ins (`CLAUDY_REDACT`); the 7-day view, the settings and the GIFs use made-up or scripted data.</sub>
 
 ## Contents
 
@@ -86,6 +92,10 @@ Click the menu bar item and a card drops down.
   <img src="docs/images/floating-bubble.png" width="150" alt="The widget folded into a bubble with two rings">
 </p>
 
+<p align="center">
+  <img src="docs/images/floating.gif" width="300" alt="The widget inflates like a bubble, folds into the two-ring bubble, unfolds, and shrinks away">
+</p>
+
 The dropdown's compact card — the sky, Clawd, the 5-hour number, the week, the sessions, the status — in its own window that floats over everything and can be put **anywhere**. Its position is remembered, and it comes back when the app starts.
 
 - It **folds into a bubble** with two rings (5h outside, the week inside) around the 5-hour number, and unfolds again. On macOS 26 and later the card and the bubble are **Liquid Glass** and morph into each other.
@@ -112,6 +122,21 @@ The crab from Claude Code's welcome screen, drawn from the same block glyphs and
 The less limit he has left, the slower and sleepier he gets: yawns, sweat, staggering, and in the end tripping over his own legs.
 
 Behind him is a **sky** that follows the real sunrise and sunset where you are: the sun moves along an arc, at night there is the moon **in its real phase** and twinkling stars. The weather ([Open-Meteo](https://open-meteo.com), no key) adds clouds drifting with the wind, drizzle, rain, showers, snow that settles under his feet, fog and thunderstorms. Hover the sky for the place, temperature, weather, wind, sunrise, sunset and the moon's phase.
+
+<table>
+<tr>
+<td align="center"><img src="docs/images/sleep.gif" width="380" alt="No Claude Code running: he burrows into the sand and sleeps"><br><sub>Nothing runs: he burrows into the sand and sleeps</sub></td>
+<td align="center"><img src="docs/images/clicks.gif" width="380" alt="Click him: a random Claude Code animation and a heart"><br><sub>Click him: a random Claude Code animation and a heart</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="docs/images/limit.gif" width="380" alt="Session at 100%: belly-up; a click and his soul floats out"><br><sub>Session at 100%: belly-up; click and his soul floats out</sub></td>
+<td align="center"><img src="docs/images/reset.gif" width="380" alt="The 5-hour window resets: celebration and confetti"><br><sub>The 5-hour window resets: celebration and confetti</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="docs/images/hearts.gif" width="380" alt="Hearts are his health: less limit left, slower and sleepier"><br><sub>Hearts are his health: less limit left, slower and sleepier</sub></td>
+<td align="center"><img src="docs/images/weather.gif" width="380" alt="The sky follows the time of day and the weather"><br><sub>The sky follows the time of day and the weather</sub></td>
+</tr>
+</table>
 
 <p align="center">
   <img src="docs/images/clawd-situations.png" width="420" alt="Clawd in eight situations: working in sun, resting in rain, waiting at dusk, in snow at night, in a storm near the limit, asleep, out of limit, in fog at dawn">
@@ -248,7 +273,12 @@ Pictures without screen-recording permission, and with made-up data (nothing rea
 export CLAUDY_DEMO=1 CLAUDE_CONFIG_DIR=/tmp/empty CLAUDY_VERSION=0.1.0 CLAUDY_NO_FLOAT=1
 $S/debug/ClaudyUsage --readme out/        # the panel, the settings, Clawd in eight situations
 $S/debug/ClaudyUsage --float-test out/    # opens the real floating window and captures it
+$S/debug/ClaudyUsage --gifs out/          # the animated GIFs of Clawd (scripted, seeded)
+$S/debug/ClaudyUsage --float-gif out/     # a GIF of the real floating widget inflating, folding, unfolding
+$S/debug/ClaudyUsage --banner out/cover.png docs/images   # the repository's cover image (1280x640)
 ```
+
+With real use instead of demo data, set `CLAUDY_REDACT=1`: projects, branches, sessions and the e-mail are replaced by stand-ins.
 
 Other documents: [docs/STATUS.md](docs/STATUS.md) (done, next, pushed back), [docs/PARITY.md](docs/PARITY.md) (feature by feature against the original), [docs/CREATING-ART.md](docs/CREATING-ART.md), [docs/PHASE5.md](docs/PHASE5.md).
 

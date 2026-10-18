@@ -6,6 +6,9 @@ Each release is a git tag (`v0.1.0`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+### Added
+
+- Pictures from the app itself: animated GIFs of Clawd (tour, sleep, clicks, limit, reset, hearts, weather) and of the floating widget, real-use screenshots with names redacted (`CLAUDY_REDACT`), and a cover image (`docs/images/social-preview.png`).
 - The limits chart's 5-hour line takes the colour of the level it is in (green, yellow, red) and the area under it is shaded by zone; it follows the levels set in Settings → Menu bar.
 
 Planned, not started: reminders, lists, chat and recurring tasks ([docs/PHASE5.md](docs/PHASE5.md)); credits and usage by product, if a data source turns up ([docs/STATUS.md](docs/STATUS.md)).

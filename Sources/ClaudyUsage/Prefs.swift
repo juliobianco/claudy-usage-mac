@@ -128,3 +128,25 @@ enum DevFlags {
     nonisolated(unsafe) static var offscreen = false
     static var demo: Bool { ProcessInfo.processInfo.environment["CLAUDY_DEMO"] != nil }
 }
+
+
+/// CLAUDY_REDACT: real numbers, but no names of yours: projects, branches, sessions and the e-mail are replaced by
+/// stable stand-ins. For screenshots made from real use.
+enum Redact {
+    static let on = ProcessInfo.processInfo.environment["CLAUDY_REDACT"] != nil
+    nonisolated(unsafe) private static var seen: [String: String] = [:]
+
+    static func name(_ s: String, _ kind: String) -> String {
+        guard on else { return s }
+        if kind == "branch", s == "main" || s == "master" { return s }
+        let key = kind + "\u{0}" + s
+        if let v = seen[key] { return v }
+        let v = "\(kind)-\(seen.keys.filter { $0.hasPrefix(kind + "\u{0}") }.count + 1)"
+        seen[key] = v
+        return v
+    }
+    static func account(_ line: String) -> String {
+        guard on else { return line }
+        return line.split(separator: "·").first.map { $0.trimmingCharacters(in: .whitespaces) + " · you@example.com" } ?? line
+    }
+}

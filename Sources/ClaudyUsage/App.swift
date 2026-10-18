@@ -12,12 +12,28 @@ struct ClaudyApp: App {
            NSRunningApplication.runningApplications(withBundleIdentifier: id).count > 1 { exit(0) }
         // `ClaudyUsage --snapshot DIR`: render the panel and the bar label to PNGs (for checking the look), then quit.
         let a = CommandLine.arguments
+        if a.contains(where: { ["--snapshot", "--scenes", "--settings", "--readme", "--gifs", "--banner"].contains($0) }) { DevFlags.offscreen = true }
         if let i = a.firstIndex(of: "--snapshot"), i + 1 < a.count {
             Snapshot.schedule(dir: a[i + 1])
         }
         if let i = a.firstIndex(of: "--float-test"), i + 1 < a.count {
             let d = a[i + 1]
             DispatchQueue.main.async { MainActor.assumeIsolated { Snapshot.floatTest(dir: d) } }
+        }
+        if let i = a.firstIndex(of: "--gifs"), i + 1 < a.count {
+            let d = a[i + 1]
+            DispatchQueue.main.async { MainActor.assumeIsolated { DevTools.gifs(dir: d); exit(0) } }
+        }
+        if let i = a.firstIndex(of: "--float-gif"), i + 1 < a.count {
+            let d = a[i + 1]
+            DispatchQueue.main.async { MainActor.assumeIsolated {
+                let m = AppModel(); m.persist = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 4) { DevTools.floatingGif(dir: d, model: m) }
+            } }
+        }
+        if let i = a.firstIndex(of: "--banner"), i + 2 < a.count {
+            let out = a[i + 1], images = a[i + 2]
+            DispatchQueue.main.async { MainActor.assumeIsolated { DevTools.banner(out: out, images: images); exit(0) } }
         }
         if let i = a.firstIndex(of: "--readme"), i + 1 < a.count {
             let d = a[i + 1]

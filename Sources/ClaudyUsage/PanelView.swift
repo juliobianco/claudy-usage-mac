@@ -138,7 +138,7 @@ struct PanelView: View {
 
     @ViewBuilder private var accountText: some View {
         if let a = model.account {
-            Text(a.loggedIn ? a.line : L.t("account.out")).font(.system(size: 10))
+            Text(a.loggedIn ? Redact.account(a.line) : L.t("account.out")).font(.system(size: 10))
                 .foregroundStyle(a.loggedIn ? T.faint : T.crit).lineLimit(1).truncationMode(.tail)
         }
     }
@@ -215,7 +215,7 @@ struct SessionRow: View {
         HStack(alignment: .top, spacing: 8) {
             Circle().fill(color).frame(width: 7, height: 7).padding(.top, 5)
             VStack(alignment: .leading, spacing: 1) {
-                Text(s.git?.repo ?? s.name).font(.system(size: 12, weight: .medium)).foregroundStyle(T.text2).lineLimit(1)
+                Text(Redact.name(s.git?.repo ?? s.name, "project")).font(.system(size: 12, weight: .medium)).foregroundStyle(T.text2).lineLimit(1)
                 if s.git != nil || showName {
                     Text(where_(s.git)).font(.system(size: 10.5)).foregroundStyle(T.muted).lineLimit(1).truncationMode(.middle)
                 }
@@ -223,15 +223,15 @@ struct SessionRow: View {
             Spacer(minLength: 8)
             Text(state).font(.system(size: 10.5)).foregroundStyle(color)
         }
-        .help(s.cwd)
+        .help(Redact.on ? "" : s.cwd)
     }
 
     // "branch · worktree x · session name": the name tells apart two sessions in the same checkout.
     private var showName: Bool { !s.name.isEmpty && s.name != (s.git?.repo ?? s.name) }
     private func where_(_ g: GitInfo?) -> String {
         var parts: [String] = []
-        if let g { parts.append(g.branch); if let w = g.worktree { parts.append("worktree \(w)") } }
-        if showName { parts.append(s.name) }
+        if let g { parts.append(Redact.name(g.branch, "branch")); if let w = g.worktree { parts.append("worktree \(Redact.name(w, "worktree"))") } }
+        if showName { parts.append(Redact.name(s.name, "session")) }
         return parts.joined(separator: " · ")
     }
     private var color: Color { s.busy ? T.ok : s.waiting ? T.warn : T.dim }
@@ -326,7 +326,7 @@ struct DetailsView: View {
             if let p = model.projects {
                 let top = p.ranked.prefix(4)
                 if top.isEmpty { Text(L.t("nothingYet")).font(.system(size: 10.5)).foregroundStyle(T.dim) }
-                ForEach(Array(top), id: \.name) { row($0.name, Int($0.share.rounded()), Color(hex: 0xD77757), help: p.paths[$0.name]) }
+                ForEach(Array(top), id: \.name) { row(Redact.name($0.name, "project"), Int($0.share.rounded()), Color(hex: 0xD77757), help: Redact.on ? nil : p.paths[$0.name]) }
             } else {
                 Text(L.t("counting")).font(.system(size: 10.5)).foregroundStyle(T.dim)
             }

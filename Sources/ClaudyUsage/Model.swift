@@ -23,11 +23,12 @@ final class AppModel {
     @ObservationIgnored private var scannedAt = Date.distantPast
     var now = Date()
     @ObservationIgnored private var failStreak = 0
-    let scene = SceneModel()
+    let scene: SceneModel
 
     private var timers: [Timer] = []
 
-    init() {
+    init(seed: UInt64? = nil) {
+        scene = SceneModel(seed: seed)
         // Made-up data for screenshots (CLAUDY_DEMO): no polling, so nothing real ever reaches the screen.
         if DevFlags.demo { loadDemo(); return }
         // The popover only exists while open, so polling lives here, not in a view.
