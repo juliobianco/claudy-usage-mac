@@ -30,6 +30,14 @@ It is a native Swift port of [**Enhed/clawd-usage-winwidget**](https://github.co
 
 Requirements: macOS 14 or later (the Liquid Glass look needs macOS 26) and [Claude Code](https://docs.claude.com/en/docs/claude-code) installed and logged in (`claude` in `~/.local/bin`, `/opt/homebrew/bin`, `/usr/local/bin` or on your login shell's PATH).
 
+### With Homebrew
+
+```
+brew install --cask juliobianco/tap/claudy-usage
+```
+
+The [tap](https://github.com/juliobianco/homebrew-tap) installs the same release zip and clears the download mark, so the app opens without "Open Anyway". It is still not notarized.
+
 ### Option 1: download the app
 
 Get **`ClaudyUsage-<version>-macos.zip`** from the [latest release](https://github.com/juliobianco/claudy-usage-mac/releases/latest) (a universal build: Apple silicon and Intel), unzip it and move `ClaudyUsage.app` to `Applications`.

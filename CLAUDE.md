@@ -44,6 +44,7 @@ may run instead, so check the build output first.
 2. `swift test`, `./scripts/bundle.sh`, look at the app.
 3. `./scripts/package.sh` makes `dist/ClaudyUsage-X.Y.Z-macos.zip` (+ `.sha256`, universal, ad-hoc signed, not notarized).
 4. Commit, `git tag -a vX.Y.Z`, push with the tag, and `gh release create vX.Y.Z --notes-file <the changelog entry> dist/*.zip dist/*.sha256`.
+5. Bump `version` and `sha256` in `Casks/claudy-usage.rb` of the tap repo `juliobianco/homebrew-tap` (`~/Documents/VSCODE/homebrew-tap`), commit and push.
 Screenshots and GIFs for the README come from the app itself: `--readme`, `--float-test`, `--float-gif`, `--gifs`, `--alerts`, `--banner` (see "Development" in the README). Use `CLAUDY_DEMO=1` for made-up data, or `CLAUDY_REDACT=1` with real use (names replaced). Never put real session names, e-mails or paths in a picture. The cover image is `docs/images/social-preview.png`; it is uploaded by hand in the repo's Settings → Social preview (no API for it).
 
 ## Project routine

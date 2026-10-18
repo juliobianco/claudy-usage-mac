@@ -6,6 +6,10 @@ Each release is a git tag (`v0.1.0`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+### Added
+
+- A Homebrew tap: `brew install --cask juliobianco/tap/claudy-usage` ([homebrew-tap](https://github.com/juliobianco/homebrew-tap)). Bump `version` and `sha256` in its cask on each release.
+
 ### Fixed
 
 - A `claude` probe that ignores the time limit is now killed (it could freeze the usage refresh); the settings backup is kept per file for the whole run; a `settings.json` with an invalid escape is no longer rewritten.
