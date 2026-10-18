@@ -35,6 +35,7 @@ First version: a macOS port of [Enhed/clawd-usage-winwidget](https://github.com/
 - Hover texts: the sky (place, weather, wind, sun, moon), the Claude Code changelog on the version line, and a one-click `claude update`.
 - Tools for art: [docs/CREATING-ART.md](docs/CREATING-ART.md), an example skin, command-line previews.
 - A unit-tested core and offscreen screenshot tools that need no permission, with demo data.
+- A prebuilt universal (Apple silicon + Intel) zip with its SHA-256 on the release, from `scripts/package.sh`. It is ad-hoc signed and **not notarized**, so macOS asks to allow it the first time (see the README).
 
 ### Fixed along the way (problems the original's notes did not mention)
 

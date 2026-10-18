@@ -42,7 +42,8 @@ may run instead, so check the build output first.
 ## Release
 1. Put the new number in `VERSION`; move the `[Unreleased]` notes of `CHANGELOG.md` under a new `## [x.y.z] - date` heading.
 2. `swift test`, `./scripts/bundle.sh`, look at the app.
-3. Commit, `git tag vX.Y.Z`, push with the tag, and create the GitHub Release with that changelog entry as its notes.
+3. `./scripts/package.sh` makes `dist/ClaudyUsage-X.Y.Z-macos.zip` (+ `.sha256`, universal, ad-hoc signed, not notarized).
+4. Commit, `git tag -a vX.Y.Z`, push with the tag, and `gh release create vX.Y.Z --notes-file <the changelog entry> dist/*.zip dist/*.sha256`.
 Screenshots for the README come from `--readme` / `--float-test` with `CLAUDY_DEMO=1` (made-up data only): see "Development" in the README. Never put real session names, e-mails or paths in a picture.
 
 ## Text

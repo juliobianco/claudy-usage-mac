@@ -1,17 +1,25 @@
 #!/bin/zsh
-# Builds build/ClaudyUsage.app (menu bar app, no Dock icon), ad-hoc signed.
+# Builds ~/Applications/ClaudyUsage.app (menu bar app, no Dock icon), ad-hoc signed.
+# APP=<path> puts it elsewhere; ARCHS="arm64 x86_64" makes a universal build (scripts/package.sh does).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 # Build outside Documents: its file-provider adds xattrs that break codesign.
 S=$HOME/Library/Caches/claudy-build
 VERSION=$(tr -d "[:space:]" < VERSION)
-swift build -c release --scratch-path "$S"
-APP=$HOME/Applications/ClaudyUsage.app   # outside Documents (xattrs break codesign there)
+APP=${APP:-$HOME/Applications/ClaudyUsage.app}   # outside Documents (xattrs break codesign there)
+if [ -n "${ARCHS:-}" ]; then
+  ARCH_FLAGS=(); for a in ${=ARCHS}; do ARCH_FLAGS+=(--arch $a); done
+  swift build -c release --scratch-path "$S" "${ARCH_FLAGS[@]}"
+  OUT="$S/out/Products/Release"
+else
+  swift build -c release --scratch-path "$S"
+  OUT="$S/release"
+fi
 rm -rf "$APP"
-mkdir -p "$HOME/Applications" "$APP/Contents/MacOS" "$APP/Contents/Resources"
-cp "$S/release/ClaudyUsage" "$APP/Contents/MacOS/ClaudyUsage"
+mkdir -p "$(dirname "$APP")" "$APP/Contents/MacOS" "$APP/Contents/Resources"
+cp "$OUT/ClaudyUsage" "$APP/Contents/MacOS/ClaudyUsage"
 # SwiftPM resources (skins): Bundle.module looks for this next to the executable or in Resources.
-cp -R "$S/release/ClaudyUsage_ClaudyUsage.bundle" "$APP/Contents/Resources/"
+cp -R "$OUT/ClaudyUsage_ClaudyUsage.bundle" "$APP/Contents/Resources/"
 [ -f Resources/AppIcon.icns ] && cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>

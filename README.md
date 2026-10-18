@@ -22,7 +22,22 @@ It is a native Swift port of [**Enhed/clawd-usage-winwidget**](https://github.co
 
 ## Install
 
-Requirements: macOS 14 or later (the Liquid Glass look needs macOS 26), [Claude Code](https://docs.claude.com/en/docs/claude-code) installed and logged in (`claude` in `~/.local/bin`, `/opt/homebrew/bin`, `/usr/local/bin` or on your login shell's PATH), and Xcode or its command line tools (Swift 6).
+Requirements: macOS 14 or later (the Liquid Glass look needs macOS 26) and [Claude Code](https://docs.claude.com/en/docs/claude-code) installed and logged in (`claude` in `~/.local/bin`, `/opt/homebrew/bin`, `/usr/local/bin` or on your login shell's PATH).
+
+### Option 1: download the app
+
+Get **`ClaudyUsage-<version>-macos.zip`** from the [latest release](https://github.com/juliobianco/claudy-usage-mac/releases/latest) (a universal build: Apple silicon and Intel), unzip it and move `ClaudyUsage.app` to `Applications`.
+
+The app is **not notarized** (that needs a paid Apple Developer ID), only ad-hoc signed, so macOS blocks a browser download the first time:
+
+- Try to open it, then go to **System Settings → Privacy & Security**, scroll down to the message about *ClaudyUsage* and press **Open Anyway**; or
+- clear the download mark in Terminal: `xattr -dr com.apple.quarantine /Applications/ClaudyUsage.app`.
+
+To check the file you got, compare `shasum -a 256 ClaudyUsage-<version>-macos.zip` with the `.sha256` file next to it on the release page. A file fetched with `curl -LO` carries no download mark and opens straight away. If you would rather not trust a binary, build it yourself:
+
+### Option 2: build it
+
+You also need Xcode or its command line tools (Swift 6).
 
 ```sh
 git clone https://github.com/juliobianco/claudy-usage-mac.git
@@ -31,12 +46,13 @@ cd claudy-usage-mac
 open ~/Applications/ClaudyUsage.app
 ```
 
+An app you build yourself has no download mark, so macOS does not ask anything.
+
+### First run
+
 The icon appears in the menu bar (there is no Dock icon). Only one copy runs at a time. To start with the Mac, use **⋯ → Launch at login** or **Settings → System**.
 
-Notes:
-
-- The app is built on your own machine and signed ad hoc, so Gatekeeper does not get in the way. There is no notarized download.
-- `bundle.sh` builds in `~/Library/Caches/claudy-build` and puts the app in `~/Applications`, on purpose: inside `~/Documents` macOS adds file attributes that break `codesign`.
+- `bundle.sh` builds in `~/Library/Caches/claudy-build`, on purpose: inside `~/Documents` macOS adds file attributes that break `codesign`. `./scripts/package.sh` makes the universal zip for a release.
 - The first time, macOS asks for **location**. It is used only to pick the weather for the sky behind Clawd (see [Privacy](#privacy-and-security)); you can refuse, or type a fixed place in Settings.
 
 ## What it shows
@@ -203,7 +219,7 @@ Left out on purpose or not done yet (the full comparison is in [docs/PARITY.md](
 - **Self-update** and the **lookup of your location by IP**, for the reasons in [Privacy](#privacy-and-security).
 - Russian and French (the original has them); Portuguese and English are here.
 - **Not yet exercised by hand:** dragging the floating widget and the click that folds the bubble, *Launch at login*, and typing a fixed place in Settings. They are built and checked as far as the screen captures show, but treat them as new.
-- There is no notarized download; you build the app yourself.
+- The download is not notarized (no Apple Developer ID): see [Install](#option-1-download-the-app).
 
 ## Troubleshooting
 
@@ -238,7 +254,7 @@ Other documents: [docs/STATUS.md](docs/STATUS.md) (done, next, pushed back), [do
 
 ## Versions and news
 
-The version is in the [`VERSION`](VERSION) file (semantic versioning); `bundle.sh` writes it into the app, and you see it in the card's footer and in Settings. What changed in each version is in [**CHANGELOG.md**](CHANGELOG.md). Each release is a tag (`v0.1.0`) with a GitHub Release whose notes are the changelog's entry; **Watch → Custom → Releases** on GitHub tells you when there is a new one. To update: `git pull`, then `./scripts/bundle.sh`.
+The version is in the [`VERSION`](VERSION) file (semantic versioning); `bundle.sh` writes it into the app, and you see it in the card's footer and in Settings. What changed in each version is in [**CHANGELOG.md**](CHANGELOG.md). Each release is a tag (`v0.1.0`) with a GitHub Release whose notes are the changelog's entry and whose zip is the app; **Watch → Custom → Releases** on GitHub tells you when there is a new one. To update: download the new zip, or `git pull` and `./scripts/bundle.sh`.
 
 ## Credits and license
 
