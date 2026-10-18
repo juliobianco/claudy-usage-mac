@@ -38,7 +38,11 @@ final class AppModel {
         // Made-up data for screenshots (CLAUDY_DEMO): no polling, so nothing real ever reaches the screen.
         if DevFlags.demo { loadDemo(); return }
         // The popover only exists while open, so polling lives here, not in a view.
-        every(60) { [self] in refreshUsage() }
+        // Once a minute, every 20 s near a limit (the last percent points are the ones worth watching).
+        every(20) { [self] in
+            let hot = max(usage?.session?.percent ?? 0, usage?.week?.percent ?? 0) >= 90
+            if hot || Date().timeIntervalSince(usageAt ?? .distantPast) >= 55 { refreshUsage() }
+        }
         every(5) { [self] in refreshSessions() }
         every(120) { [self] in refreshStatus() }
         every(3600) { [self] in refreshVersion() }

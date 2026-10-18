@@ -6,6 +6,10 @@ Each release is a git tag (`v0.1.0`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+### Changed
+
+- The usage is read every 20 s (instead of 60 s) once the session or the week reaches 90%, so the last points before a limit show up sooner.
+
 ## [0.2.0] - 2026-10-18
 
 ### Fixed
