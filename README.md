@@ -5,8 +5,8 @@ A menu bar app for macOS that shows how much of your **Claude plan limits** you 
 It is a native Swift port of [**Enhed/clawd-usage-winwidget**](https://github.com/Enhed/clawd-usage-winwidget) (PowerShell + WPF, Windows only), rebuilt for the Mac menu bar and extended: a 7-day limits chart, a floating Liquid Glass widget, a full settings window, Portuguese, themes, and more. See [what is new compared with the original](#what-is-new-compared-with-the-original).
 
 <p align="center">
-  <img src="docs/images/panel-collapsed.png" width="300" alt="The dropdown: usage, week, Fable, running sessions with project and branch, service status">
-  <img src="docs/images/panel-details.png" width="300" alt="The dropdown with the details open: usage profile, 24-hour chart, projects">
+  <img src="docs/images/panel-collapsed.png" width="280" alt="The dropdown: usage, week, Fable, running sessions with project and branch, service status">
+  <img src="docs/images/panel-details.png" width="280" alt="The dropdown with the details open: usage profile, 24-hour chart, projects">
 </p>
 
 <p align="center">
