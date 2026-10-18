@@ -1,0 +1,113 @@
+import SwiftUI
+import AppKit
+import ClaudyCore
+
+@main
+struct ClaudyApp: App {
+    @State private var model = AppModel()
+
+    init() {
+        // One copy only: a second launch of the same bundle quits at once.
+        if let id = Bundle.main.bundleIdentifier,
+           NSRunningApplication.runningApplications(withBundleIdentifier: id).count > 1 { exit(0) }
+        // `ClaudyUsage --snapshot DIR`: render the panel and the bar label to PNGs (for checking the look), then quit.
+        let a = CommandLine.arguments
+        if let i = a.firstIndex(of: "--snapshot"), i + 1 < a.count {
+            Snapshot.schedule(dir: a[i + 1])
+        }
+        if let i = a.firstIndex(of: "--float-test"), i + 1 < a.count {
+            let d = a[i + 1]
+            DispatchQueue.main.async { MainActor.assumeIsolated { Snapshot.floatTest(dir: d) } }
+        }
+        if let i = a.firstIndex(of: "--settings"), i + 1 < a.count {
+            let d = a[i + 1]
+            DispatchQueue.main.async { MainActor.assumeIsolated { Snapshot.settings(dir: d) } }
+        }
+        if let i = a.firstIndex(of: "--icon"), i + 1 < a.count {
+            let d = a[i + 1]
+            DispatchQueue.main.async { MainActor.assumeIsolated { Snapshot.icon(dir: d) } }
+        }
+        if let i = a.firstIndex(of: "--scenes"), i + 1 < a.count {
+            let d = a[i + 1]
+            DispatchQueue.main.async { MainActor.assumeIsolated { Snapshot.scenes(dir: d) } }
+        }
+    }
+
+    var body: some Scene {
+        MenuBarExtra {
+            PanelView(model: model)
+        } label: {
+            MenuBarLabel(model: model)
+        }
+        .menuBarExtraStyle(.window)
+
+        Window(L.t("set.title"), id: "settings") {
+            SettingsView(model: model)
+        }
+        .windowResizability(.contentSize)
+        .defaultPosition(.center)
+    }
+}
+
+/// Closed state: two mini bars, `5h ▰▰▱▱▱` over `W ▰▱▱▱▱`, or numbers, or both (settings: Menu bar label).
+/// MenuBarExtra drops custom shapes, so the label is rendered to a bitmap.
+struct MenuBarLabel: View {
+    let model: AppModel
+
+    var body: some View {
+        // The bitmap is drawn by an ImageRenderer, outside this view's tracking: touch what it uses, so a change redraws the label.
+        let p = Prefs.shared
+        _ = (p.warnPercent, p.critPercent, p.barStyle)
+        return Image(nsImage: render())
+    }
+
+    @MainActor private func render() -> NSImage {
+        let content = MiniBars(session: model.usage?.session?.percent, week: model.usage?.week?.percent,
+                               stale: model.stale, style: Prefs.shared.barStyle)
+        let r = ImageRenderer(content: content)
+        r.scale = NSScreen.main?.backingScaleFactor ?? 2
+        let img = r.nsImage ?? NSImage()
+        img.isTemplate = false
+        return img
+    }
+}
+
+struct MiniBars: View {
+    let session: Int?
+    let week: Int?
+    let stale: Bool
+    var style = "bars"
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 1.5) {
+            row("5h", session)
+            row("W", week)
+        }
+        .opacity(stale ? 0.55 : 1)
+        .padding(.horizontal, 1)
+        .frame(height: 18)
+    }
+
+    private func row(_ label: String, _ pct: Int?) -> some View {
+        HStack(spacing: 3) {
+            Text(label)
+                .font(.system(size: 7.5, weight: .bold, design: .rounded))
+                .foregroundStyle(Color.white.opacity(0.85))
+                .frame(width: 11, alignment: .leading)
+            if style != "numbers" {
+                ZStack(alignment: .leading) {
+                    Capsule().fill(Color.white.opacity(0.28)).frame(width: 30, height: 4)
+                    if let pct {
+                        Capsule().fill(T.level(pct)).frame(width: max(3, 30 * CGFloat(min(pct, 100)) / 100), height: 4)
+                    }
+                }
+            }
+            if style != "bars" {
+                Text(pct.map { "\($0)%" } ?? "--")
+                    .font(.system(size: 8, weight: .semibold, design: .rounded)).monospacedDigit()
+                    .foregroundStyle(pct.map { T.level($0) } ?? Color.white.opacity(0.6))
+                    .frame(width: 22, alignment: .trailing)
+            }
+        }
+    }
+}

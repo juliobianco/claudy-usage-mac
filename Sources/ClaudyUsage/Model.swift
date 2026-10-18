@@ -1,0 +1,194 @@
+import SwiftUI
+import ClaudyCore
+
+@MainActor @Observable
+final class AppModel {
+    var usage: Usage?
+    var usageAt: Date?
+    var usageFailed = false
+    var usageError = ""
+    var sessions: [ClaudeSession] = []
+    var status: ClaudeStatus?
+    var statusFailed = false
+    var version: ClaudeVersion?
+    var account: ClaudeAccount?
+    var changes: [String] = []
+    var updating = false
+    var history = UsageHistory.load()
+    /// Snapshots (dev aid) fill the model with made-up data: they must never write it to the real history file.
+    @ObservationIgnored var persist = true
+    var projects: ProjectUsage?
+    @ObservationIgnored private let scanner = ProjectScanner()
+    @ObservationIgnored private var scanning = false
+    @ObservationIgnored private var scannedAt = Date.distantPast
+    var now = Date()
+    @ObservationIgnored private var failStreak = 0
+    let scene = SceneModel()
+
+    private var timers: [Timer] = []
+
+    init() {
+        // The popover only exists while open, so polling lives here, not in a view.
+        every(60) { [self] in refreshUsage() }
+        every(5) { [self] in refreshSessions() }
+        every(120) { [self] in refreshStatus() }
+        every(3600) { [self] in refreshVersion() }
+        every(600) { [self] in refreshAccount() }
+        every(900) { [self] in refreshProjects() }
+        every(1) { [self] in now = Date() }
+        every(600) { [self] in scene.refreshWeather() }
+        // After the Mac wakes up a probe that was running got no answer: ask again instead of waiting for the next tick.
+        NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { DispatchQueue.main.asyncAfter(deadline: .now() + 5) { self?.refreshUsage(); self?.refreshStatus() } }
+        }
+        refreshUsage(); refreshSessions(); refreshStatus(); refreshVersion(); refreshAccount()
+        // The floating widget comes back where it was left.
+        if Prefs.shared.floatOpen, ProcessInfo.processInfo.environment["CLAUDY_NO_FLOAT"] == nil {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [self] in FloatingWidget.shared.show(model: self, animated: false) }
+        }
+    }
+
+    private func every(_ s: TimeInterval, _ f: @escaping @MainActor () -> Void) {
+        let t = Timer(timeInterval: s, repeats: true) { _ in MainActor.assumeIsolated { f() } }
+        RunLoop.main.add(t, forMode: .common)
+        timers.append(t)
+    }
+
+    private var probing = false
+    func refreshUsage() {
+        guard !probing else { return }
+        probing = true
+        Task.detached {
+            let r = ClaudeCLI.fetchUsage()
+            await MainActor.run {
+                self.probing = false
+                switch r {
+                case .ok(let u):
+                    if self.failStreak > 0 { Log.write("usage probe is back after \(self.failStreak) failed attempt(s)"); self.failStreak = 0 }
+                    self.usage = u; self.usageAt = Date(); self.usageFailed = false; self.usageError = ""
+                    self.scene.observe(model: self)
+                    if self.history.add(session: u.session?.percent, week: u.week?.percent), self.persist { self.history.save() }
+                case .failed(let why):   // keep the last numbers, marked stale, and try again soon
+                    self.failStreak += 1
+                    self.usageFailed = true; self.usageError = why
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 10) { self.refreshUsage() }
+                }
+            }
+        }
+    }
+
+    func refreshSessions() {
+        Task.detached {
+            let s = Sessions.list()
+            await MainActor.run { if s != self.sessions { self.sessions = s; self.scene.observe(model: self) } }
+        }
+    }
+
+    func refreshStatus() {
+        Task {
+            let s = await StatusFetcher.fetch()
+            statusFailed = s == nil
+            if let s { status = s }
+        }
+    }
+
+    func refreshVersion() {
+        Task {
+            guard let v = await VersionFetcher.fetch() else { return }
+            version = v
+            // The changelog is only worth a request when there is something newer.
+            if !v.upToDate, let l = v.latest { changes = await Changelog.fetch(installed: v.installed, latest: l) ?? [] }
+            else { changes = [] }
+        }
+    }
+
+    /// Reads the transcripts of the last 7 days in the background. Only when the details are open: it is the costly part.
+    func refreshProjects(force: Bool = false) {
+        guard !scanning, force || (UserDefaults.standard.bool(forKey: "detailsOpen") && Date().timeIntervalSince(scannedAt) > 600) else { return }
+        scanning = true
+        let root = Sessions.configDir + "/projects", scanner = scanner
+        Task.detached(priority: .utility) {
+            let r = scanner.scan(root: root, since: Date().addingTimeInterval(-7 * 86400))
+            await MainActor.run { self.projects = r; self.scannedAt = Date(); self.scanning = false }
+        }
+    }
+
+    func refreshAccount() {
+        Task.detached {
+            let a = ClaudeAccount.fetch()
+            await MainActor.run { if let a { self.account = a } }
+        }
+    }
+
+    /// `claude update` in the background, then look at the version again. Only on a click.
+    func runUpdate() {
+        guard !updating, let exe = ClaudeCLI.path else { return }
+        updating = true
+        Task.detached {
+            let ok = ClaudeCLI.exec(exe, ["update"], timeout: 300)?.status == 0
+            if !ok { Log.write("claude update failed") }
+            await MainActor.run { self.updating = false; self.refreshVersion() }
+        }
+    }
+
+    /// The sky's hover text, in the chosen language.
+    var skyTip: String {
+        let s = scene
+        let sun = s.skySim.weather.flatMap { w in w.sunrise.flatMap { a in w.sunset.map { (a, $0) } } }
+            ?? s.lon.map { Wx.sunCalc(lat: s.skySim.lat, lon: $0) } ?? (420, 1140)
+        let tip = Wx.skyTip(weather: s.skySim.weather, sun: sun)
+        var lines: [String] = []
+        if let w = tip.weather {
+            var l = "\(tip.temp > 0 ? "+" : "")\(tip.temp)°, \(L.t("wx." + Wx.kind(w.code).id))"
+            if let city = s.city, !city.isEmpty { l = "\(city) · " + l }
+            lines += [l, L.t("tip.wind", tip.windMS)]
+        } else { lines.append(L.t("tip.noWeather")) }
+        lines.append(L.t("tip.sun", tip.sunrise, tip.sunset))
+        lines.append(L.t("tip.moon", L.t("moon.\(tip.moonPhase)"), tip.moonLit))
+        return lines.joined(separator: "\n")
+    }
+
+    // MARK: texts shared by the panel and the floating widget
+    var resetText: String {
+        guard let u = usage else { return usageFailed ? L.t("noDataWhy", usageError) : L.t("loading") }
+        guard let s = u.session else { return L.t("noData") }
+        let base: String
+        if let r = s.reset, let span = Format.span(to: r, now: now) { base = L.t("resetsIn", span) }
+        else { base = s.percent == 0 ? L.t("windowClosed") : L.t("resetsSoon") }
+        return stale ? base + " · " + L.t("stale") : base
+    }
+
+    func limitText(_ l: UsageLine?) -> String {
+        guard let l else { return "" }
+        let span = l.reset.flatMap { Format.span(to: $0, now: now) }
+        return span.map { "\(l.percent)% · \($0)" } ?? "\(l.percent)%"
+    }
+
+    var sessionsText: String {
+        if sessions.isEmpty { return L.t("none") }
+        var t = L.count("session", sessions.count)
+        let busy = sessions.filter(\.busy).count, wait = sessions.filter(\.waiting).count
+        if busy > 0 { t += " · \(busy) \(L.t("working"))" }
+        if wait > 0 { t += " · \(wait) \(L.t("waiting"))" }
+        return t
+    }
+
+    /// Hover text of the bubble: the reset and the week.
+    var bubbleTip: String { [resetText, "\(L.t("hist.week")) \(limitText(usage?.week))"].joined(separator: "\n") }
+
+    var statusColor: Color {
+        switch status?.level {
+        case .ok: T.ok; case .minor: T.warn; case .major: T.crit; default: T.dim
+        }
+    }
+
+    var statusText: String {
+        guard let s = status else { return statusFailed ? L.t("status.offline") : L.t("status.loading") }
+        return s.level == .ok ? L.t("status.ok") : s.text
+    }
+
+    /// Forget the saved samples (settings > System).
+    func clearHistory() { history = UsageHistory(); history.save() }
+
+    var stale: Bool { usageFailed && usage != nil }
+}

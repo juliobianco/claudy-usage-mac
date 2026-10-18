@@ -1,0 +1,12 @@
+---
+name: Headphones
+top: -2
+k: #374151
+g: #9CA3AF
+---
+....kkkkkkkkkkk...
+...k...........k..
+.ggk...........kgg
+.gg.............gg
+.gg.............gg
+.gg.............gg
