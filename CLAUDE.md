@@ -44,7 +44,11 @@ may run instead, so check the build output first.
 2. `swift test`, `./scripts/bundle.sh`, look at the app.
 3. `./scripts/package.sh` makes `dist/ClaudyUsage-X.Y.Z-macos.zip` (+ `.sha256`, universal, ad-hoc signed, not notarized).
 4. Commit, `git tag -a vX.Y.Z`, push with the tag, and `gh release create vX.Y.Z --notes-file <the changelog entry> dist/*.zip dist/*.sha256`.
-Screenshots for the README come from `--readme` / `--float-test` with `CLAUDY_DEMO=1` (made-up data only): see "Development" in the README. Never put real session names, e-mails or paths in a picture.
+Screenshots and GIFs for the README come from the app itself: `--readme`, `--float-test`, `--float-gif`, `--gifs`, `--alerts`, `--banner` (see "Development" in the README). Use `CLAUDY_DEMO=1` for made-up data, or `CLAUDY_REDACT=1` with real use (names replaced). Never put real session names, e-mails or paths in a picture. The cover image is `docs/images/social-preview.png`; it is uploaded by hand in the repo's Settings → Social preview (no API for it).
+
+## Project routine
+- The public plan is `ROADMAP.md`; each item links to an issue. Add or close issues as the work moves, and keep `docs/STATUS.md` (the working log) and `CHANGELOG.md` (*Unreleased*) current with every change.
+- The git identity is not configured on this Mac: commit with `git -c user.name=... -c user.email=...` for the project owner, with the Co-Authored-By line. Pull with `--rebase` before pushing (the owner also edits the README on GitHub). Never force-push.
 
 ## Text
 Never hard-code a user-facing string: add the key to `Strings.swift` in both languages (`L.t("key", args)`). The core returns keys and data, the UI words them.

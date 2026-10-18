@@ -1,8 +1,11 @@
 # Status
 
-Plan: `~/.claude/plans/async-sparking-reddy.md` (outside the repo). Updated 2026-10-17.
+Plan: `~/.claude/plans/async-sparking-reddy.md` (outside the repo). Updated 2026-10-18. The public plan is `ROADMAP.md`; this file is the working log.
 
 ## Done
+- **Published** (2026-10-17/18): repository https://github.com/juliobianco/claudy-usage-mac (public), release `v0.1.0` with the universal ad-hoc-signed zip + SHA-256 (not notarized), README, CHANGELOG, `ROADMAP.md`, `CONTRIBUTING.md`, 13 labelled issues, the cover image uploaded as the repo's social preview.
+- **Pictures** (2026-10-18): GIFs of Clawd and of the floating widget, real-use screenshots with names redacted, the cover; all made by the app (`--gifs`, `--float-gif`, `--readme`, `--float-test`, `--banner`, `--alerts`, with `CLAUDY_DEMO` / `CLAUDY_REDACT`).
+- **Alerts** (2026-10-18): a blinking ? on the menu bar label, a pulsing pill on the card and a pulsing rim on the bubble while a session waits; confetti on the label and the bubble when a limit starts over (`ResetDetector`, also for a reset ahead of time); optional notifications; previews in Settings → Menu bar. The chart's 5-hour line is coloured by level.
 - **Phase 1**: `/usage` probe and parser (tested), sessions with project / branch / worktree, Claude status, Claude Code version, panel card, two mini bars (`5h`, `W`) in the menu bar.
 - **Polish pass 1** (2026-10-17): account line, sky tooltip, version changelog + `claude update`, "⋯" menu (Refresh, Launch at login, Quit), single instance, app icon (`scripts/make-icon.sh`), developer menu (right-click the scene).
 - **Polish pass 2** (2026-10-17): window follows the content height (no empty frame after collapsing), details redesigned: 24h / 7d switch, big numbers, share bars, rankings on demand with readable names.
@@ -18,8 +21,9 @@ Plan: `~/.claude/plans/async-sparking-reddy.md` (outside the repo). Updated 2026
 
 ## Next (in order)
 Full comparison with the original: `docs/PARITY.md`.
-1. **Polish pass 3**: confirm on the real dropdown that the window now fits the content; sessions block may still be busy. The "⋯" menu, hover texts and the window fit were only checked in code (offscreen renders cannot show them).
-2. **Phase 5** (chat, reminders, lists, recurring tasks): written up in `docs/PHASE5.md`, to be done later. Reminders and lists first.
+1. **Check by hand** (issue #1): the alerts and the previews, dragging the floating widget, the bubble click, Launch at login, a fixed weather place, macOS 14/15 and Intel. **Polish pass 3**: confirm on the real dropdown that the window now fits the content; sessions block may still be busy. The "⋯" menu, hover texts and the window fit were only checked in code (offscreen renders cannot show them).
+2. **Phase 5** (chat, reminders, lists, recurring tasks): written up in `docs/PHASE5.md`, to be done later. Reminders and lists first (issue #7).
+3. Everything else open is in `ROADMAP.md` and in the issues.
 
 ## Pushed back / ideas
 - **Credits ("Cloud session credits: $48 of $100 left, expires Nov 5") and "This week's usage by product" (Claude Code 95%, Chats 1%, Cowork 4%, Other 0%)**: both are on claude.ai/settings/usage only. `claude -p /usage` does not print them (checked, text and json) and no `claude` subcommand exposes them. The only automatic source would be Anthropic's OAuth usage endpoint called with the Claude subscription login. On this Mac the Keychain item `Claude Code-credentials` holds only MCP logins (no `claudeAiOauth`), so that login is somewhere else; not searched further. Left for later. If taken up: show each as its own switch in Settings → Menu bar, like the Fable one. Simpler fallbacks: an "Open usage on claude.ai" button, and a hand-typed credit balance. A read-only probe script was written and then removed (the item held only MCP logins); if rewritten, it must use `claudeAiOauth.accessToken` and nothing else.

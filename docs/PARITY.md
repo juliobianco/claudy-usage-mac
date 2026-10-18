@@ -67,6 +67,10 @@ Legend: ✅ done · 🟡 partly · ⬜ planned (phase) · 🆕 not in the plan u
 | Clawd's home folder (`tips.md`, `chat-log.md`, `reminders/`, `lists/`, `tasks/`) | ⬜ phase 5 (`~/Documents/Clawd/`) |
 | Clawd's own Claude Code session with Remote Control, to talk from the phone | ✖ out of scope for now |
 
+## Added beyond the original
+
+Floating Liquid Glass widget that folds into a bubble; alerts (a blinking ? while a session waits, confetti when a limit starts over, including one given ahead of time, optional notifications); the chart's 5-hour line coloured by level; the quota-cycle week view; label styles for the menu bar; Portuguese; Claude Code tab revert and presets; GIF / cover / redacted-screenshot tooling. See the README's "What is new compared with the original".
+
 ## Phase 4 settings, concretely (macOS)
 
 Opened from a gear in the panel header and from the right-click menu, as its own window (a menu bar panel closes when it loses focus).
