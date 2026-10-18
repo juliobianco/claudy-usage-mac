@@ -24,7 +24,7 @@ It is a native Swift port of [**Enhed/clawd-usage-winwidget**](https://github.co
 
 ## Contents
 
-[Install](#install) · [What it shows](#what-it-shows) · [Floating widget](#floating-widget) · [Clawd](#clawd) · [Settings](#settings) · [Skins and your own art](#skins-and-your-own-art) · [Where the data comes from](#where-the-data-comes-from) · [Privacy and security](#privacy-and-security) · [What is new compared with the original](#what-is-new-compared-with-the-original) · [Not in this version](#not-in-this-version) · [Troubleshooting](#troubleshooting) · [Development](#development) · [Versions and news](#versions-and-news) · [Credits](#credits-and-license)
+[Install](#install) · [What it shows](#what-it-shows) · [Floating widget](#floating-widget) · [Clawd](#clawd) · [Settings](#settings) · [Skins and your own art](#skins-and-your-own-art) · [Where the data comes from](#where-the-data-comes-from) · [Privacy and security](#privacy-and-security) · [What is new compared with the original](#what-is-new-compared-with-the-original) · [Not in this version](#not-in-this-version) · [Roadmap](#roadmap-and-contributing) · [Troubleshooting](#troubleshooting) · [Development](#development) · [Versions and news](#versions-and-news) · [Credits](#credits-and-license)
 
 ## Install
 
@@ -246,6 +246,10 @@ Left out on purpose or not done yet (the full comparison is in [docs/PARITY.md](
 - **Not yet exercised by hand:** dragging the floating widget and the click that folds the bubble, *Launch at login*, and typing a fixed place in Settings. They are built and checked as far as the screen captures show, but treat them as new.
 - The download is not notarized (no Apple Developer ID): see [Install](#option-1-download-the-app).
 
+## Roadmap and contributing
+
+What comes next, in order: checking it on other Macs, more languages and skins, then **phase 5** (reminders and lists first, then a read-only chat and recurring tasks), then credits and usage by product once there is an honest data source. It is all in [**ROADMAP.md**](ROADMAP.md), and every item with a link is an [issue](https://github.com/juliobianco/claudy-usage-mac/issues) — the ones marked [good first issue](https://github.com/juliobianco/claudy-usage-mac/labels/good%20first%20issue) need no deep knowledge of the code (a skin is a text file, a language is one table). [CONTRIBUTING.md](CONTRIBUTING.md) is the five-minute version.
+
 ## Troubleshooting
 
 - **The number shows `--` or "no data"** — check that Claude Code is logged in (`claude auth status`). The panel shows why the probe failed under the number, and `~/Library/Logs/ClaudyUsage.log` has the details (**Settings → System → Open log**). A probe that times out is retried in 10 seconds; the last numbers stay on screen, marked *stale*.
@@ -280,7 +284,7 @@ $S/debug/ClaudyUsage --banner out/cover.png docs/images   # the repository's cov
 
 With real use instead of demo data, set `CLAUDY_REDACT=1`: projects, branches, sessions and the e-mail are replaced by stand-ins.
 
-Other documents: [docs/STATUS.md](docs/STATUS.md) (done, next, pushed back), [docs/PARITY.md](docs/PARITY.md) (feature by feature against the original), [docs/CREATING-ART.md](docs/CREATING-ART.md), [docs/PHASE5.md](docs/PHASE5.md).
+Other documents: [ROADMAP.md](ROADMAP.md), [CONTRIBUTING.md](CONTRIBUTING.md), [docs/STATUS.md](docs/STATUS.md) (done, next, pushed back), [docs/PARITY.md](docs/PARITY.md) (feature by feature against the original), [docs/CREATING-ART.md](docs/CREATING-ART.md), [docs/PHASE5.md](docs/PHASE5.md).
 
 ## Versions and news
 
