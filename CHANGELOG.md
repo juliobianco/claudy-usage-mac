@@ -6,6 +6,8 @@ Each release is a git tag (`v0.1.0`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+- The limits chart's 5-hour line takes the colour of the level it is in (green, yellow, red) and the area under it is shaded by zone; it follows the levels set in Settings → Menu bar.
+
 Planned, not started: reminders, lists, chat and recurring tasks ([docs/PHASE5.md](docs/PHASE5.md)); credits and usage by product, if a data source turns up ([docs/STATUS.md](docs/STATUS.md)).
 
 ## [0.1.0] - 2026-10-17

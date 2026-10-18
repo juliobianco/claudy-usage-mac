@@ -16,7 +16,8 @@ struct HistoryChart: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
             GeometryReader { geo in
-                Canvas { ctx, size in draw(ctx, size) }
+                let levels = (warn: Prefs.shared.warnPercent, crit: Prefs.shared.critPercent)
+                Canvas { ctx, size in draw(ctx, size, levels) }
                     .contentShape(Rectangle())
                     .onContinuousHover { phase in
                         if case .active(let p) = phase { hover = min(max(p.x, 0), geo.size.width) } else { hover = nil }
@@ -61,34 +62,62 @@ struct HistoryChart: View {
     }
 
     // MARK: drawing
-    private func draw(_ ctx: GraphicsContext, _ size: CGSize) {
+    private func draw(_ ctx: GraphicsContext, _ size: CGSize, _ levels: (warn: Int, crit: Int)) {
         let w = size.width, h = Self.height
         let (t0, t1) = range
         if mode == .day { drawHours(ctx, w, h) } else { drawCycle(ctx, w, h) }
 
         // Runs of samples without gaps; each becomes a figure of its own.
-        for (keyPath, color, filled) in [(\HistorySample.week, T.accent, false), (\HistorySample.session, T.ok, true)] {
-            var runs: [[CGPoint]] = [], run: [CGPoint] = []
+        func y(_ v: Int) -> CGFloat { 1 + (h - 2) * (1 - CGFloat(min(100, v)) / 100) }
+        func runs(_ key: KeyPath<HistorySample, Int>) -> [[(p: CGPoint, v: Int)]] {
+            var out: [[(p: CGPoint, v: Int)]] = [], run: [(p: CGPoint, v: Int)] = []
             var prev: Int?
             for s in model.history.samples where s.minute >= t0 && s.minute <= t1 {
-                let v = s[keyPath: keyPath]
-                if v < 0 || (prev != nil && s.minute - prev! > UsageHistory.gapMinutes) { if !run.isEmpty { runs.append(run) }; run = [] }
+                let v = s[keyPath: key]
+                if v < 0 || (prev != nil && s.minute - prev! > UsageHistory.gapMinutes) { if !run.isEmpty { out.append(run) }; run = [] }
                 prev = s.minute
-                if v >= 0 { run.append(CGPoint(x: x(s.minute, w), y: 1 + (h - 2) * (1 - CGFloat(min(100, v)) / 100))) }
+                if v >= 0 { run.append((CGPoint(x: x(s.minute, w), y: y(v)), v)) }
             }
-            if !run.isEmpty { runs.append(run) }
-            var line = Path(), area = Path()
-            for r in runs {
-                let pts = r.count == 1 ? [r[0], CGPoint(x: r[0].x + 1, y: r[0].y)] : r      // a lone sample gets a short tick
-                line.move(to: pts[0]); pts.dropFirst().forEach { line.addLine(to: $0) }
-                area.move(to: CGPoint(x: pts[0].x, y: h)); pts.forEach { area.addLine(to: $0) }
-                area.addLine(to: CGPoint(x: pts.last!.x, y: h)); area.closeSubpath()
+            if !run.isEmpty { out.append(run) }
+            return out
+        }
+        let round = StrokeStyle(lineWidth: 1.3, lineCap: .round, lineJoin: .round)
+
+        // The week: one blue line.
+        var weekLine = Path()
+        for r in runs(\.week) {
+            let pts = r.count == 1 ? [r[0].p, CGPoint(x: r[0].p.x + 1, y: r[0].p.y)] : r.map(\.p)
+            weekLine.move(to: pts[0]); pts.dropFirst().forEach { weekLine.addLine(to: $0) }
+            if r.count == 1 { ctx.fill(Path(ellipseIn: CGRect(x: r[0].p.x - 2, y: r[0].p.y - 2, width: 4, height: 4)), with: .color(T.accent)) }
+        }
+        ctx.stroke(weekLine, with: .color(T.accent), style: round)
+
+        // The 5-hour line takes the colour of the level it is in (the same levels as the bars: Settings → Menu bar),
+        // and the area under it is shaded by zones: green below the yellow level, yellow up to the red one, red above.
+        let session = runs(\.session)
+        var area = Path()
+        for r in session {
+            let pts = r.count == 1 ? [r[0].p, CGPoint(x: r[0].p.x + 1, y: r[0].p.y)] : r.map(\.p)
+            area.move(to: CGPoint(x: pts[0].x, y: h)); pts.forEach { area.addLine(to: $0) }
+            area.addLine(to: CGPoint(x: pts.last!.x, y: h)); area.closeSubpath()
+        }
+        let warnAt = Double(y(levels.warn) / h), critAt = Double(y(levels.crit) / h)
+        let shade: (Color) -> Color = { $0.opacity(0.17) }
+        ctx.fill(area, with: .linearGradient(
+            Gradient(stops: [.init(color: shade(T.crit), location: 0), .init(color: shade(T.crit), location: critAt),
+                             .init(color: shade(T.warn), location: critAt), .init(color: shade(T.warn), location: warnAt),
+                             .init(color: shade(T.ok), location: warnAt), .init(color: shade(T.ok), location: 1)]),
+            startPoint: .zero, endPoint: CGPoint(x: 0, y: h)))
+        for r in session {
+            if r.count == 1 {
+                ctx.fill(Path(ellipseIn: CGRect(x: r[0].p.x - 2, y: r[0].p.y - 2, width: 4, height: 4)), with: .color(T.level(r[0].v)))
+                continue
             }
-            for r in runs where r.count == 1 {      // one lonely sample: a dot you can see
-                ctx.fill(Path(ellipseIn: CGRect(x: r[0].x - 2, y: r[0].y - 2, width: 4, height: 4)), with: .color(color))
+            // A segment is as hot as its hotter end, so a climb into the yellow turns yellow where it crosses.
+            for i in 1..<r.count {
+                var seg = Path(); seg.move(to: r[i - 1].p); seg.addLine(to: r[i].p)
+                ctx.stroke(seg, with: .color(T.level(max(r[i - 1].v, r[i].v))), style: round)
             }
-            if filled { ctx.fill(area, with: .color(color.opacity(0.15))) }
-            ctx.stroke(line, with: .color(color), style: StrokeStyle(lineWidth: 1.3, lineCap: .round, lineJoin: .round))
         }
     }
 
