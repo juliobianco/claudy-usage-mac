@@ -36,7 +36,8 @@ struct PanelView: View {
     // MARK: header
     private var header: some View {
         HStack(spacing: 0) {
-            Text(L.t("app.title")).font(.system(size: 10.5, weight: .semibold)).foregroundStyle(T.muted)
+            if model.alertWaiting || model.alertCelebrating { AlertBadge(model: model) }
+            else { Text(L.t("app.title")).font(.system(size: 10.5, weight: .semibold)).foregroundStyle(T.muted) }
             Spacer()
             if let p = model.usage?.session?.percent {
                 HeartsView(halves: Format.heartHalves(sessionPercent: p)).padding(.trailing, 12)

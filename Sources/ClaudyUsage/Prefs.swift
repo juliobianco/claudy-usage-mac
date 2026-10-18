@@ -78,6 +78,9 @@ final class Prefs: @unchecked Sendable {
     var weatherLat: String { didSet { d.set(weatherLat, forKey: "weatherLatText") } }
     var weatherLon: String { didSet { d.set(weatherLon, forKey: "weatherLonText") } }
 
+    var alertsAnimate: Bool { didSet { d.set(alertsAnimate, forKey: "alertsAnimate") } }
+    var alertsNotifyWaiting: Bool { didSet { d.set(alertsNotifyWaiting, forKey: "alertsNotifyWaiting") } }
+    var alertsNotifyReset: Bool { didSet { d.set(alertsNotifyReset, forKey: "alertsNotifyReset") } }
     var floatOpen: Bool { didSet { d.set(floatOpen, forKey: "floatOpen") } }
     var floatExpanded: Bool { didSet { d.set(floatExpanded, forKey: "floatExpanded") } }
     var floatOnTop: Bool { didSet { d.set(floatOnTop, forKey: "floatOnTop") } }
@@ -100,6 +103,7 @@ final class Prefs: @unchecked Sendable {
         warnPercent = i("warnPercent", Format.warnPercent); critPercent = i("critPercent", Format.critPercent)
         weatherManual = b("weatherManual", false)
         weatherLat = d.string(forKey: "weatherLatText") ?? ""; weatherLon = d.string(forKey: "weatherLonText") ?? ""
+        alertsAnimate = b("alertsAnimate", true); alertsNotifyWaiting = b("alertsNotifyWaiting", false); alertsNotifyReset = b("alertsNotifyReset", false)
         floatOpen = b("floatOpen", false); floatExpanded = b("floatExpanded", true)
         floatOnTop = b("floatOnTop", true); floatGlass = b("floatGlass", true); floatOpacity = i("floatOpacity", 100)
         palette = Themes.palette(t, accent: a)

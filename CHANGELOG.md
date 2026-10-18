@@ -6,8 +6,13 @@ Each release is a git tag (`v0.1.0`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+### Fixed
+
+- The menu bar label cut "100%" to "10…" in the bars-and-numbers style; the number column now fits.
+
 ### Added
 
+- **Alerts**: a blinking yellow ? on the menu bar label, a pulsing pill on the card and a pulsing rim on the bubble while a session waits for you; confetti on the label and the bubble (and Clawd's celebration) when a limit starts over, including a reset that comes ahead of time; optional notifications; previews in Settings → Menu bar.
 - `ROADMAP.md`, `CONTRIBUTING.md` and a set of labelled issues (good first issue / help wanted).
 - Pictures from the app itself: animated GIFs of Clawd (tour, sleep, clicks, limit, reset, hearts, weather) and of the floating widget, real-use screenshots with names redacted (`CLAUDY_REDACT`), and a cover image (`docs/images/social-preview.png`).
 - The limits chart's 5-hour line takes the colour of the level it is in (green, yellow, red) and the area under it is shaded by zone; it follows the levels set in Settings → Menu bar.

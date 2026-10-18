@@ -23,6 +23,12 @@ final class AppModel {
     @ObservationIgnored private var scannedAt = Date.distantPast
     var now = Date()
     @ObservationIgnored private var failStreak = 0
+    // MARK: alerts: a session waits for you, a limit started over
+    var alertTick = 0                              // moves twice a second while an alert is on: drives the pulse and the confetti
+    var celebrateUntil: Date?
+    var alertEarly = false                         // the reset came before its time
+    var previewWaitingUntil: Date?
+    @ObservationIgnored private var prevWaiting = 0
     let scene: SceneModel
 
     private var timers: [Timer] = []
@@ -39,6 +45,7 @@ final class AppModel {
         every(600) { [self] in refreshAccount() }
         every(900) { [self] in refreshProjects() }
         every(1) { [self] in now = Date() }
+        every(0.5) { [self] in if alertWaiting || alertCelebrating { alertTick += 1 } }
         every(600) { [self] in scene.refreshWeather() }
         // After the Mac wakes up a probe that was running got no answer: ask again instead of waiting for the next tick.
         NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in
@@ -68,6 +75,7 @@ final class AppModel {
                 switch r {
                 case .ok(let u):
                     if self.failStreak > 0 { Log.write("usage probe is back after \(self.failStreak) failed attempt(s)"); self.failStreak = 0 }
+                    for e in ResetDetector.events(old: self.usage, new: u) { self.celebrate(e) }
                     self.usage = u; self.usageAt = Date(); self.usageFailed = false; self.usageError = ""
                     self.scene.observe(model: self)
                     if self.history.add(session: u.session?.percent, week: u.week?.percent), self.persist { self.history.save() }
@@ -83,7 +91,7 @@ final class AppModel {
     func refreshSessions() {
         Task.detached {
             let s = Sessions.list()
-            await MainActor.run { if s != self.sessions { self.sessions = s; self.scene.observe(model: self) } }
+            await MainActor.run { if s != self.sessions { self.sessions = s; self.scene.observe(model: self); self.sessionsChanged() } }
         }
     }
 
@@ -149,6 +157,37 @@ final class AppModel {
         lines.append(L.t("tip.sun", tip.sunrise, tip.sunset))
         lines.append(L.t("tip.moon", L.t("moon.\(tip.moonPhase)"), tip.moonLit))
         return lines.joined(separator: "\n")
+    }
+
+    // MARK: alerts
+    var alertWaiting: Bool {
+        guard Prefs.shared.alertsAnimate else { return false }
+        return sessions.contains(where: \.waiting) || (previewWaitingUntil.map { $0 > now } ?? false)
+    }
+    var alertCelebrating: Bool { Prefs.shared.alertsAnimate && (celebrateUntil.map { $0 > now } ?? false) }
+
+    /// Sessions changed: a newly waiting one is worth a notification (if asked for).
+    private func sessionsChanged() {
+        let waiting = sessions.filter(\.waiting)
+        defer { prevWaiting = waiting.count }
+        guard waiting.count > prevWaiting, Prefs.shared.alertsNotifyWaiting, let s = waiting.first else { return }
+        let where_ = [Redact.name(s.git?.repo ?? s.name, "project"), s.git.map { Redact.name($0.branch, "branch") }].compactMap { $0 }.joined(separator: " · ")
+        Notifier.post(L.t("notify.waiting"), where_)
+    }
+
+    /// A limit started over: Clawd celebrates, the bar and the widget sparkle for a few seconds.
+    func celebrate(_ e: ResetEvent, notify: Bool = true) {
+        celebrateUntil = Date().addingTimeInterval(8); alertEarly = e.early
+        scene.clawd.celebrate()
+        guard notify, Prefs.shared.alertsNotifyReset else { return }
+        let name = L.t(e.window == .session ? "notify.session" : "notify.week")
+        Notifier.post(L.t(e.early ? "alert.resetEarly" : "alert.reset"), name)
+    }
+
+    /// Settings → "Preview": shows an alert for a few seconds without touching the real numbers.
+    func previewAlert(waiting: Bool) {
+        if waiting { previewWaitingUntil = Date().addingTimeInterval(8) }
+        else { celebrate(ResetEvent(window: .session, early: false), notify: false) }
     }
 
     // MARK: demo data (screenshots)

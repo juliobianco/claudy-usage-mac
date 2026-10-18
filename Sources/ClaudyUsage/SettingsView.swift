@@ -190,6 +190,15 @@ struct BarTab: View {
             SwitchRow(label: L.t("show.fable"), hint: L.t("show.fable.hint"), isOn: $prefs.showFable)
             SwitchRow(label: L.t("show.details"), isOn: $prefs.showDetails)
         }
+        group(L.t("alerts.title")) {
+            SwitchRow(label: L.t("alerts.animate"), hint: L.t("alerts.animate.hint"), isOn: $prefs.alertsAnimate)
+            SwitchRow(label: L.t("alerts.notifyWaiting"), isOn: Binding(get: { prefs.alertsNotifyWaiting }, set: { prefs.alertsNotifyWaiting = $0; if $0 { Notifier.authorize() } }))
+            SwitchRow(label: L.t("alerts.notifyReset"), isOn: Binding(get: { prefs.alertsNotifyReset }, set: { prefs.alertsNotifyReset = $0; if $0 { Notifier.authorize() } }))
+            HStack(spacing: 8) {
+                ActionButton(text: L.t("alerts.previewWaiting"), systemImage: "questionmark.circle") { model.previewAlert(waiting: true) }
+                ActionButton(text: L.t("alerts.previewReset"), systemImage: "sparkles") { model.previewAlert(waiting: false) }
+            }
+        }
         group(L.t("float.title")) {
             SwitchRow(label: L.t("float.show"), isOn: Binding(get: { prefs.floatOpen }, set: { on in
                 if on { FloatingWidget.shared.show(model: model) } else { FloatingWidget.shared.hide() }

@@ -264,7 +264,8 @@ struct FloatingCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 0) {
-                Text(L.t("app.title")).font(.system(size: 10.5, weight: .semibold)).foregroundStyle(T.muted)
+                if model.alertWaiting || model.alertCelebrating { AlertBadge(model: model) }
+                else { Text(L.t("app.title")).font(.system(size: 10.5, weight: .semibold)).foregroundStyle(T.muted) }
                 Spacer()
                 if let p = model.usage?.session?.percent { HeartsView(halves: Format.heartHalves(sessionPercent: p)).padding(.trailing, 12) }
                 button("arrow.down.right.and.arrow.up.left", L.t("float.collapse")) { controller.toggleExpanded() }
@@ -324,6 +325,16 @@ struct BubbleView: View {
             }
         }
         .frame(width: 76, height: 76)
+        .overlay {                              // a session waits: the rim pulses yellow; a limit reset: confetti
+            if model.alertWaiting {
+                Circle().stroke(T.warn.opacity(model.alertTick % 2 == 0 ? 0.95 : 0.25), lineWidth: 3)
+                    .overlay(alignment: .topTrailing) {
+                        Text("?").font(.system(size: 9, weight: .heavy, design: .rounded)).foregroundStyle(Color.black.opacity(0.85))
+                            .frame(width: 15, height: 15).background(Circle().fill(T.warn)).offset(x: 2, y: -2)
+                    }
+            }
+            if model.alertCelebrating { Confetti(tick: model.alertTick).clipShape(Circle()) }
+        }
         .allowsHitTesting(false)
     }
 

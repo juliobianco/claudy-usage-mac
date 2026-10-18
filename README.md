@@ -83,6 +83,7 @@ Click the menu bar item and a card drops down.
   - **Limits chart** — the 5-hour percentage (green, filled) and the weekly one (blue). On **24 hours** it shows the last day; on **7 days** it shows the **quota's own cycle**, from the last reset to the next: day 1 is the reset day, *now* is marked and the rest of the week is shaded. Hover for the time, both percentages and the busiest project of that hour.
   - **Projects · 7 days** — which projects spent the most, counted from Claude Code's transcripts (tokens weighted by the model's price; worktrees count for their repo).
   - **Skills, plugins & MCP** — the top skills, plugins, MCP servers and subagents, with readable names.
+- **Alerts** — when a session is **waiting for you** the menu bar label gets a yellow **?** that blinks, the card's title becomes a pulsing *waiting for you* pill and the bubble's rim pulses; when a limit **starts over** (the 5-hour window running out, the week, or a reset Anthropic gives ahead of time) Clawd celebrates and confetti falls over the label and the bubble for a few seconds. Optional macOS notifications for each (off by default), and **Settings → Menu bar → Alerts** has buttons to preview both.
 - **⋯ menu** — refresh now, settings, floating widget, launch at login, quit. The **pin** puts the widget on the screen.
 
 ## Floating widget

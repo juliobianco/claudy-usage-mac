@@ -166,3 +166,29 @@ final class BreakdownTests: XCTestCase {
         XCTAssertEqual(b.other, ["Something new 5%"])      // unknown lines are kept
     }
 }
+
+final class ResetDetectorTests: XCTestCase {
+    func u(_ s: Int, reset: Date? = nil, week: Int = 30) -> Usage {
+        Usage(session: UsageLine(percent: s, reset: reset), week: UsageLine(percent: week, reset: nil), fable: nil, day: nil, week7: nil)
+    }
+
+    func testWindowThatRanOutIsNotEarly() {
+        let now = Date()
+        let e = ResetDetector.events(old: u(88, reset: now.addingTimeInterval(-30)), new: u(3), now: now)
+        XCTAssertEqual(e, [ResetEvent(window: .session, early: false)])
+    }
+
+    func testResetBeforeItsTimeIsEarly() {
+        let now = Date()
+        let e = ResetDetector.events(old: u(62, reset: now.addingTimeInterval(3 * 3600)), new: u(0), now: now)
+        XCTAssertEqual(e, [ResetEvent(window: .session, early: true)])
+    }
+
+    func testWeekResetAndNoise() {
+        let now = Date()
+        XCTAssertEqual(ResetDetector.events(old: u(5, week: 90), new: u(6, week: 2), now: now), [ResetEvent(window: .week, early: false)])
+        XCTAssertTrue(ResetDetector.events(old: u(40), new: u(36), now: now).isEmpty)     // a revised number, not a reset
+        XCTAssertTrue(ResetDetector.events(old: u(8), new: u(0), now: now).isEmpty)       // too small to celebrate
+        XCTAssertTrue(ResetDetector.events(old: nil, new: u(3), now: now).isEmpty)
+    }
+}

@@ -102,6 +102,9 @@ public final class Mascot {
     /// Back to live data.
     public func auto() { forceMood = nil; forceHalves = nil; forceCrit = false; act = nil }
 
+    /// The celebration (two jumps, "!" and confetti), for resets the usage numbers did not show him.
+    public func celebrate() { start("celebrate") }
+
     /// Plays one move now (developer menu).
     public func play(_ name: String) {
         guard Clawd.seqs[name] != nil || Clawd.customLen[name] != nil else { return }

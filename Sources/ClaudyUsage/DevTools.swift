@@ -136,6 +136,43 @@ enum DevTools {
         })
     }
 
+    /// `--alerts DIR`: the menu bar label and the bubble in each alert state, to look at.
+    static func alerts(dir: String) {
+        let model = AppModel(seed: 1)
+        func pill<V: View>(_ v: V) -> some View {
+            v.padding(.horizontal, 12).padding(.vertical, 6).background(Capsule().fill(Color(hex: 0x2A2A33)))
+        }
+        func state(_ label: String, waiting: Bool, celebrating: Bool, tick: Int, p: Int = 100) -> some View {
+            HStack(spacing: 16) {
+                Text(label).font(.system(size: 11)).foregroundStyle(T.muted).frame(width: 150, alignment: .leading)
+                pill(MiniBars(session: p, week: 35, stale: false, style: "barsNumbers", waiting: waiting, celebrating: celebrating, tick: tick))
+                pill(MiniBars(session: p, week: 35, stale: false, style: "bars", waiting: waiting, celebrating: celebrating, tick: tick))
+            }
+        }
+        let sheet = VStack(alignment: .leading, spacing: 10) {
+            state("at 100%", waiting: false, celebrating: false, tick: 0)
+            state("waiting, bright", waiting: true, celebrating: false, tick: 0, p: 42)
+            state("waiting, dim", waiting: true, celebrating: false, tick: 1, p: 42)
+            state("reset, tick 0", waiting: false, celebrating: true, tick: 0, p: 3)
+            state("reset, tick 3", waiting: false, celebrating: true, tick: 3, p: 3)
+            state("reset, tick 7", waiting: false, celebrating: true, tick: 7, p: 3)
+            HStack(spacing: 14) {
+                ForEach([("waiting", true, false), ("reset", false, true)], id: \.0) { s in
+                    VStack {
+                        BubbleView(model: { let m = AppModel(seed: 1); m.previewWaitingUntil = s.1 ? Date().addingTimeInterval(60) : nil
+                            if s.2 { m.celebrateUntil = Date().addingTimeInterval(60) }; m.alertTick = 3; return m }())
+                            .background(Circle().fill(T.bg))
+                        Text(s.0).font(.system(size: 10)).foregroundStyle(T.muted)
+                    }
+                }
+            }
+        }
+        .padding(16).background(T.bg).environment(\.colorScheme, .dark)
+        if let img = image(sheet, scale: 3) {
+            try? NSBitmapImageRep(cgImage: img).representation(using: .png, properties: [:])?.write(to: URL(fileURLWithPath: "\(dir)/alerts.png"))
+        }
+    }
+
     // MARK: the real floating window, captured
 
     static func floatingGif(dir: String, model: AppModel) {

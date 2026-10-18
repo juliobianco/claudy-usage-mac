@@ -20,6 +20,10 @@ struct ClaudyApp: App {
             let d = a[i + 1]
             DispatchQueue.main.async { MainActor.assumeIsolated { Snapshot.floatTest(dir: d) } }
         }
+        if let i = a.firstIndex(of: "--alerts"), i + 1 < a.count {
+            let d = a[i + 1]
+            DispatchQueue.main.async { MainActor.assumeIsolated { DevTools.alerts(dir: d); exit(0) } }
+        }
         if let i = a.firstIndex(of: "--gifs"), i + 1 < a.count {
             let d = a[i + 1]
             DispatchQueue.main.async { MainActor.assumeIsolated { DevTools.gifs(dir: d); exit(0) } }
@@ -83,7 +87,8 @@ struct MenuBarLabel: View {
 
     @MainActor private func render() -> NSImage {
         let content = MiniBars(session: model.usage?.session?.percent, week: model.usage?.week?.percent,
-                               stale: model.stale, style: Prefs.shared.barStyle)
+                               stale: model.stale, style: Prefs.shared.barStyle,
+                               waiting: model.alertWaiting, celebrating: model.alertCelebrating, tick: model.alertTick)
         let r = ImageRenderer(content: content)
         r.scale = NSScreen.main?.backingScaleFactor ?? 2
         let img = r.nsImage ?? NSImage()
@@ -97,13 +102,24 @@ struct MiniBars: View {
     let week: Int?
     let stale: Bool
     var style = "bars"
+    var waiting = false          // a session waits for you: a yellow "?" that blinks
+    var celebrating = false      // a limit started over: confetti over the bars
+    var tick = 0
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 1.5) {
-            row("5h", session)
-            row("W", week)
+        HStack(spacing: 4) {
+            if waiting {
+                Text("?").font(.system(size: 9, weight: .heavy, design: .rounded)).foregroundStyle(Color.black.opacity(0.85))
+                    .frame(width: 13, height: 13).background(Circle().fill(T.warn))
+                    .opacity(tick % 2 == 0 ? 1 : 0.3)
+            }
+            VStack(alignment: .leading, spacing: 1.5) {
+                row("5h", session)
+                row("W", week)
+            }
+            .opacity(stale ? 0.55 : 1)
+            .overlay { if celebrating { Confetti(tick: tick) } }
         }
-        .opacity(stale ? 0.55 : 1)
         .padding(.horizontal, 1)
         .frame(height: 18)
     }
@@ -126,7 +142,8 @@ struct MiniBars: View {
                 Text(pct.map { "\($0)%" } ?? "--")
                     .font(.system(size: 8, weight: .semibold, design: .rounded)).monospacedDigit()
                     .foregroundStyle(pct.map { T.level($0) } ?? Color.white.opacity(0.6))
-                    .frame(width: 22, alignment: .trailing)
+                    .fixedSize()                  // "100%" must fit: a fixed 22 pt cut it to "10…"
+                    .frame(minWidth: 24, alignment: .trailing)
             }
         }
     }
