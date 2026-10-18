@@ -6,12 +6,14 @@ import Foundation
 public struct UsageLine: Equatable, Sendable {
     public var percent: Int
     public var reset: Date?
+    public init(percent: Int, reset: Date?) { self.percent = percent; self.reset = reset }
 }
 
 public struct UsagePeriod: Equatable, Sendable {
     public var requests: Int
     public var sessions: Int
     public var lines: [String]
+    public init(requests: Int, sessions: Int, lines: [String]) { self.requests = requests; self.sessions = sessions; self.lines = lines }
 }
 
 /// A "N% of your usage ..." line: what share of the limit went where.
@@ -55,6 +57,9 @@ public struct Usage: Equatable, Sendable {
     public var fable: UsageLine?
     public var day: UsagePeriod?
     public var week7: UsagePeriod?
+    public init(session: UsageLine?, week: UsageLine?, fable: UsageLine?, day: UsagePeriod?, week7: UsagePeriod?) {
+        self.session = session; self.week = week; self.fable = fable; self.day = day; self.week7 = week7
+    }
 }
 
 public enum UsageParser {

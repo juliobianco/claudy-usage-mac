@@ -45,7 +45,7 @@ Legend: ✅ done · 🟡 partly · ⬜ planned (phase) · 🆕 not in the plan u
 | Settings window, tab Look: language, theme, skin cards with live preview | ✅ + accent colour |
 | Settings, tab Window: size, opacity, topmost, which blocks show, tray clock, admin | ✅ as "Menu bar": label style, blocks, thresholds. Size / opacity / topmost belong to the floating widget (later); admin ➖ |
 | Settings, tab Clawd: tips, chat, auto-run, tasks, Remote Control session | ⬜ phase 5 toggles |
-| Settings, tab Claude Code: ~30 keys of `~/.claude/settings.json` with hints, backup | ✅ 28 keys, same list |
+| Settings, tab Claude Code: ~30 keys of `~/.claude/settings.json` with hints, backup | ✅ 25 settings, same list |
 | Languages en / ru / fr | ✅ en + **pt-BR** (ru / fr not ported) |
 | Themes: classic, oled, midnight, mocha, forest, halloween (seasonal wallpaper), `accent` colour | ✅ (default Classic; "By season" is a choice) |
 | `config.json` with live reload and ~60 keys | ✖ we use macOS `defaults` (UserDefaults); the keys that matter are exposed in settings |

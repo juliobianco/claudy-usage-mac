@@ -43,7 +43,7 @@ struct ClaudeSettingsView: View {
 
     private let file = ClaudeSettingsFile()
     @State private var loaded = ClaudeSettingsFile().load()
-    @State private var presets = ClaudePresets.load()
+    @State private var presets = DevFlags.demo ? [ClaudePreset?](repeating: nil, count: ClaudePresets.slots) : ClaudePresets.load()
     /// How the managed keys were when Settings first opened in this run: what "Revert" goes back to.
     nonisolated(unsafe) private static var initial: [String: String?]?
 
@@ -95,7 +95,9 @@ struct ClaudeSettingsView: View {
         let p = presets[i]
         let active = p.map { $0.values == current } ?? false
         return HStack(spacing: 8) {
-            if p != nil {
+            if let p, DevFlags.offscreen {
+                Text(p.name).font(.system(size: 12.5)).foregroundStyle(T.textHi).frame(maxWidth: .infinity, alignment: .leading)
+            } else if p != nil {
                 TextField(L.t("cc.slot", i + 1), text: Binding(get: { presets[i]?.name ?? "" }, set: { presets[i]?.name = $0; ClaudePresets.save(presets) }))
                     .textFieldStyle(.plain).font(.system(size: 12.5)).foregroundStyle(T.textHi)
                     .padding(.horizontal, 8).padding(.vertical, 5).background(RoundedRectangle(cornerRadius: 6).fill(T.code))

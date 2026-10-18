@@ -12,6 +12,9 @@ public struct ClaudeSession: Equatable, Sendable, Identifiable {
     public var busy: Bool
     public var waiting: Bool
     public var git: GitInfo?
+    public init(pid: Int32, name: String, cwd: String, busy: Bool, waiting: Bool, git: GitInfo?) {
+        self.pid = pid; self.name = name; self.cwd = cwd; self.busy = busy; self.waiting = waiting; self.git = git
+    }
 }
 
 /// Where a session works: the repo, the branch, and whether it is a linked worktree.
@@ -19,6 +22,7 @@ public struct GitInfo: Equatable, Sendable {
     public var repo: String
     public var branch: String
     public var worktree: String?   // folder name of the linked worktree, nil in the main checkout
+    public init(repo: String, branch: String, worktree: String?) { self.repo = repo; self.branch = branch; self.worktree = worktree }
 }
 
 public enum Git {

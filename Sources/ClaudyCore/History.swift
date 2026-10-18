@@ -77,6 +77,9 @@ public struct ProjectUsage: Equatable, Sendable {
     public var total: [String: Double] = [:]            // weight by project
     public var hours: [Int: [String: Double]] = [:]     // unix hour -> weight by project
     public var paths: [String: String] = [:]            // project -> folder, for the hover text
+    public init(total: [String: Double] = [:], hours: [Int: [String: Double]] = [:], paths: [String: String] = [:]) {
+        self.total = total; self.hours = hours; self.paths = paths
+    }
 
     public var ranked: [(name: String, share: Double)] {
         let sum = total.values.reduce(0, +)

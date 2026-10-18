@@ -93,7 +93,7 @@ enum L {
             "weather.manual": "Fixed place", "weather.lat": "Latitude", "weather.lon": "Longitude",
             "set.history": "7-day history", "history.clear": "Clear", "history.clear.tip": "Forget the saved 5h and week samples",
             "hist.samples": "%d samples", "set.files": "Files", "open.log": "Open log", "open.data": "Open data folder",
-            "set.about": "Claudy Usage 0.1 · a macOS port of clawd-usage-winwidget (MIT). Clawd and Claude are Anthropic's.",
+            "set.about": "Claudy Usage %@ · a macOS port of clawd-usage-winwidget (MIT). Clawd and Claude are Anthropic's.",
             "set.moreHint": "The rest of Claude Code's settings (hooks, permissions, plugins, env) are in settings.json",
         ],
         "pt": [
@@ -150,7 +150,7 @@ enum L {
             "weather.manual": "Local fixo", "weather.lat": "Latitude", "weather.lon": "Longitude",
             "set.history": "Histórico de 7 dias", "history.clear": "Apagar", "history.clear.tip": "Esquecer as amostras salvas de 5h e semana",
             "hist.samples": "%d amostras", "set.files": "Arquivos", "open.log": "Abrir o log", "open.data": "Abrir a pasta de dados",
-            "set.about": "Claudy Usage 0.1 · um port para macOS do clawd-usage-winwidget (MIT). Clawd e Claude são da Anthropic.",
+            "set.about": "Claudy Usage %@ · um port para macOS do clawd-usage-winwidget (MIT). Clawd e Claude são da Anthropic.",
             "set.moreHint": "O resto das configurações do Claude Code (hooks, permissões, plugins, env) fica no settings.json",
         ],
     ]

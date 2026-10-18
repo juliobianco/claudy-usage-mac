@@ -19,6 +19,10 @@ struct ClaudyApp: App {
             let d = a[i + 1]
             DispatchQueue.main.async { MainActor.assumeIsolated { Snapshot.floatTest(dir: d) } }
         }
+        if let i = a.firstIndex(of: "--readme"), i + 1 < a.count {
+            let d = a[i + 1]
+            DispatchQueue.main.async { MainActor.assumeIsolated { Snapshot.readme(dir: d) } }
+        }
         if let i = a.firstIndex(of: "--settings"), i + 1 < a.count {
             let d = a[i + 1]
             DispatchQueue.main.async { MainActor.assumeIsolated { Snapshot.settings(dir: d) } }

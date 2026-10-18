@@ -4,6 +4,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 # Build outside Documents: its file-provider adds xattrs that break codesign.
 S=$HOME/Library/Caches/claudy-build
+VERSION=$(tr -d "[:space:]" < VERSION)
 swift build -c release --scratch-path "$S"
 APP=$HOME/Applications/ClaudyUsage.app   # outside Documents (xattrs break codesign there)
 rm -rf "$APP"
@@ -20,7 +21,8 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <key>CFBundleName</key><string>Claudy Usage</string>
   <key>CFBundleExecutable</key><string>ClaudyUsage</string>
   <key>CFBundlePackageType</key><string>APPL</string>
-  <key>CFBundleShortVersionString</key><string>0.1</string>
+  <key>CFBundleShortVersionString</key><string>$VERSION</string>
+  <key>CFBundleVersion</key><string>$VERSION</string>
   <key>LSMinimumSystemVersion</key><string>14.0</string>
   <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>LSUIElement</key><true/>

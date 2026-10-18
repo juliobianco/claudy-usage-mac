@@ -124,7 +124,7 @@ struct PanelView: View {
                 HStack(alignment: .top) {
                     versionView
                     Spacer()
-                    Text("Claudy v0.1").font(.system(size: 10.5)).foregroundStyle(T.dim)
+                    Text("Claudy v\(AppInfo.version)").font(.system(size: 10.5)).foregroundStyle(T.dim)
                 }
                 .padding(.bottom, 7)
             }
@@ -417,6 +417,10 @@ struct MoreMenu: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
+        if DevFlags.offscreen { Text("⋯").font(.system(size: 13, weight: .bold)).foregroundStyle(T.muted) } else { menu }
+    }
+
+    private var menu: some View {
         Menu {
             Button(L.t("menu.refresh")) { model.refreshUsage(); model.refreshStatus(); model.refreshSessions(); model.refreshAccount() }
             Button(L.t("menu.settings")) { SettingsWindow.open(openWindow) }

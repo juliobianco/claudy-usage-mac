@@ -8,6 +8,7 @@ public struct ClaudeStatus: Equatable, Sendable {
     public var level: Level
     public var text: String
     public var detail: [String]
+    public init(level: Level, text: String, detail: [String]) { self.level = level; self.text = text; self.detail = detail }
 }
 
 public enum StatusFetcher {
@@ -36,6 +37,7 @@ public enum StatusFetcher {
 public struct ClaudeVersion: Equatable, Sendable {
     public var installed: String
     public var latest: String?
+    public init(installed: String, latest: String?) { self.installed = installed; self.latest = latest }
     public var upToDate: Bool { latest.map { !Changelog.isNewer($0, than: installed) } ?? true }
 }
 
@@ -59,6 +61,7 @@ public struct ClaudeAccount: Equatable, Sendable {
     public var loggedIn: Bool
     public var email: String
     public var plan: String
+    public init(loggedIn: Bool, email: String, plan: String) { self.loggedIn = loggedIn; self.email = email; self.plan = plan }
     /// "pro · name@mail" when logged in; the UI words the logged-out case.
     public var line: String { [plan, email].filter { !$0.isEmpty }.joined(separator: " · ") }
 

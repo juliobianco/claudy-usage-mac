@@ -115,3 +115,16 @@ final class Prefs: @unchecked Sendable {
         return (la, lo)
     }
 }
+
+
+enum AppInfo {
+    /// From the bundle (scripts/bundle.sh writes the VERSION file into it); "dev" when run unbundled.
+    static let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ProcessInfo.processInfo.environment["CLAUDY_VERSION"] ?? "dev"
+}
+
+/// Switches for the dev tools (snapshots): never set in the real app.
+enum DevFlags {
+    /// Offscreen renders cannot draw AppKit-backed controls (a Menu shows as a "prohibited" sign); views draw a plain stand-in.
+    nonisolated(unsafe) static var offscreen = false
+    static var demo: Bool { ProcessInfo.processInfo.environment["CLAUDY_DEMO"] != nil }
+}

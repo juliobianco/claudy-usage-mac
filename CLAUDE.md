@@ -39,6 +39,12 @@ may run instead, so check the build output first.
 - SwiftPM resources: `bundle.sh` must copy `ClaudyUsage_ClaudyUsage.bundle` into `Contents/Resources`, or `Bundle.module` crashes on launch.
 - Failures of the usage probe go to `~/Library/Logs/ClaudyUsage.log`.
 
+## Release
+1. Put the new number in `VERSION`; move the `[Unreleased]` notes of `CHANGELOG.md` under a new `## [x.y.z] - date` heading.
+2. `swift test`, `./scripts/bundle.sh`, look at the app.
+3. Commit, `git tag vX.Y.Z`, push with the tag, and create the GitHub Release with that changelog entry as its notes.
+Screenshots for the README come from `--readme` / `--float-test` with `CLAUDY_DEMO=1` (made-up data only): see "Development" in the README. Never put real session names, e-mails or paths in a picture.
+
 ## Text
 Never hard-code a user-facing string: add the key to `Strings.swift` in both languages (`L.t("key", args)`). The core returns keys and data, the UI words them.
 Snapshots must not write to the real files (`AppModel.persist = false`); a fake week once leaked into the real history.

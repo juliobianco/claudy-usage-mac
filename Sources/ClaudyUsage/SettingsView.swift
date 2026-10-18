@@ -32,7 +32,7 @@ struct SettingsView: View {
             }
             .padding(.bottom, 14)
             if scrolls { ScrollView { content } } else { content }
-            Text(L.t("set.about")).font(.system(size: 10)).foregroundStyle(T.faint).padding(.top, 10)
+            Text(L.t("set.about", AppInfo.version)).font(.system(size: 10)).foregroundStyle(T.faint).padding(.top, 10)
         }
         .padding(20)
         .frame(width: 560, height: scrolls ? 660 : nil)

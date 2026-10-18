@@ -40,6 +40,9 @@ public struct Weather: Equatable, Sendable {
     public var sunrise: Double?      // minutes from local midnight
     public var sunset: Double?
     public var at: Date
+    public init(code: Int, temp: Double, wind: Double, sunrise: Double?, sunset: Double?, at: Date) {
+        self.code = code; self.temp = temp; self.wind = wind; self.sunrise = sunrise; self.sunset = sunset; self.at = at
+    }
 }
 
 public enum Wx {

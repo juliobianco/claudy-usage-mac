@@ -41,7 +41,7 @@ enum Snapshot {
     }
 
     /// `--scenes DIR`: Clawd and the sky in a handful of situations, one PNG each.
-    static func scenes(dir: String) {
+    static func scenes(dir: String, thenExit: Bool = true) {
         func at(_ h: Int) -> Date { Calendar.current.date(bySettingHour: h, minute: 0, second: 0, of: Date())! }
         struct S { var name: String; var hour: Int; var wx: Int?; var busy = 0, waiting = 0, sessions = 1, pct = 20; var click = false; var ticks = 120 }
         let list = [
@@ -72,7 +72,7 @@ enum Snapshot {
             }
         }.padding(10).background(T.bg)
         write(sheet, "\(dir)/sheet.png")
-        exit(0)
+        if thenExit { exit(0) }
     }
 
     /// `--settings DIR`: every tab of the settings window as a PNG.
@@ -85,10 +85,30 @@ enum Snapshot {
         exit(0)
     }
 
+    /// `--readme DIR` (with CLAUDY_DEMO=1): the pictures of the README: the panel, every settings tab, Clawd in a few situations.
+    static func readme(dir: String) {
+        DevFlags.offscreen = true
+        let model = AppModel()
+        let d = UserDefaults.standard
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            model.scene.warmup(90)
+            for (name, open, period) in [("panel-collapsed", false, "day"), ("panel-details", true, "day"), ("panel-week", true, "week")] {
+                d.set(open, forKey: "detailsOpen"); d.set(period, forKey: "period")
+                write(PanelView(model: model).environment(\.colorScheme, .dark), "\(dir)/\(name).png")
+            }
+            for tab in ["look", "bar", "system", "claude"] {
+                write(SettingsView(model: model, tab: tab, scrolls: false), "\(dir)/settings-\(tab).png")
+            }
+            scenes(dir: dir, thenExit: false)
+            exit(0)
+        }
+    }
+
     /// `--float-test DIR`: opens the real floating window, and writes what the screen shows around it at a few moments
     /// (the bubble inflating, the card, folded into a bubble). Captures only our own window, which needs no permission.
     static func floatTest(dir: String) {
         let model = AppModel(); model.persist = false
+        UserDefaults.standard.set([240.0, 640.0], forKey: "floatTopLeft")      // away from the menu bar, over the wallpaper
         let ctl = FloatingWidget.shared
         typealias Fn = @convention(c) (CGRect, UInt32, UInt32, UInt32) -> Unmanaged<CGImage>?
         guard let sym = dlsym(UnsafeMutableRawPointer(bitPattern: -2), "CGWindowListCreateImage") else { print("no capture"); exit(1) }

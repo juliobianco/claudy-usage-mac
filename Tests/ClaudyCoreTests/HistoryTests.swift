@@ -32,7 +32,7 @@ final class HistoryTests: XCTestCase {
 
     func testProjectNames() {
         XCTAssertEqual(ProjectScanner.projectName(cwd: "/Users/me", home: "/Users/me"), "~")
-        XCTAssertEqual(ProjectScanner.projectName(cwd: "/Users/me/code/fiscoscan/.claude/worktrees/feat-x-1a2b", home: "/Users/me"), "fiscoscan")
+        XCTAssertEqual(ProjectScanner.projectName(cwd: "/Users/me/code/myapp/.claude/worktrees/feat-x-1a2b", home: "/Users/me"), "myapp")
         XCTAssertEqual(ProjectScanner.projectName(cwd: "/nonexistent/place/app", home: "/Users/me"), "app")
     }
 

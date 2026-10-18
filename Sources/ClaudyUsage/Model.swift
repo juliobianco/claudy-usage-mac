@@ -28,6 +28,8 @@ final class AppModel {
     private var timers: [Timer] = []
 
     init() {
+        // Made-up data for screenshots (CLAUDY_DEMO): no polling, so nothing real ever reaches the screen.
+        if DevFlags.demo { loadDemo(); return }
         // The popover only exists while open, so polling lives here, not in a view.
         every(60) { [self] in refreshUsage() }
         every(5) { [self] in refreshSessions() }
@@ -146,6 +148,60 @@ final class AppModel {
         lines.append(L.t("tip.sun", tip.sunrise, tip.sunset))
         lines.append(L.t("tip.moon", L.t("moon.\(tip.moonPhase)"), tip.moonLit))
         return lines.joined(separator: "\n")
+    }
+
+    // MARK: demo data (screenshots)
+    private func loadDemo() {
+        persist = false
+        let t = Date()
+        func at(_ s: TimeInterval) -> Date { t.addingTimeInterval(s) }
+        let lines24 = ["46% of your usage was at >150k context", "27% of your usage went to always-on context over 40k tokens",
+                       "12% of your usage came from subagent-heavy sessions",
+                       "Top skills: /frontend-design 6%, /dataviz 3%, /simplify 1%", "Top MCP servers: github 4%, claude-in-chrome 3%, linear 1%"]
+        let lines7 = ["71% of your usage was at >150k context", "31% of your usage went to always-on context over 40k tokens",
+                      "38% of your usage came from sessions active for 8+ hours",
+                      "Top skills: /frontend-design 9%, /dataviz 4%", "Top MCP servers: github 5%, claude-in-chrome 4%"]
+        usage = Usage(session: UsageLine(percent: 42, reset: at(2 * 3600 + 51 * 60)),
+                      week: UsageLine(percent: 31, reset: at(3 * 86400 + 4 * 3600)),
+                      fable: UsageLine(percent: 12, reset: at(3 * 86400 + 4 * 3600)),
+                      day: UsagePeriod(requests: 412, sessions: 9, lines: lines24),
+                      week7: UsagePeriod(requests: 2861, sessions: 54, lines: lines7))
+        usageAt = t
+        sessions = [
+            ClaudeSession(pid: 1, name: "web-app-12", cwd: "/demo/web-app", busy: true, waiting: false,
+                          git: GitInfo(repo: "web-app", branch: "feat/onboarding", worktree: nil)),
+            ClaudeSession(pid: 2, name: "api-3", cwd: "/demo/api", busy: false, waiting: true,
+                          git: GitInfo(repo: "api-server", branch: "main", worktree: nil)),
+            ClaudeSession(pid: 3, name: "docs-7", cwd: "/demo/docs", busy: false, waiting: false,
+                          git: GitInfo(repo: "docs", branch: "fix/typos", worktree: "typos")),
+        ]
+        status = ClaudeStatus(level: .ok, text: "", detail: [])
+        version = ClaudeVersion(installed: "2.1.302", latest: "2.1.302")
+        account = ClaudeAccount(loggedIn: true, email: "you@example.com", plan: "pro")
+        projects = ProjectUsage(total: ["web-app": 61, "api-server": 28, "docs": 11], hours: [:],
+                                paths: ["web-app": "~/code/web-app", "api-server": "~/code/api-server", "docs": "~/code/docs"])
+        // A week of the quota cycle: 5-hour windows that fill up and reset, the weekly share creeping up.
+        var h = UsageHistory()
+        let cycleStart = at(3 * 86400 + 4 * 3600 - 7 * 86400)
+        var m = Int(t.timeIntervalSince(cycleStart) / 60)
+        while m >= 0 {
+            let when = t.addingTimeInterval(-Double(m) * 60)
+            let hours = Double(Int(t.timeIntervalSince(when) / 60) % 1) + Double(m) / 60
+            let active = Int(hours / 24) % 7 != 5 || hours.truncatingRemainder(dividingBy: 24) < 9      // a quiet Saturday afternoon
+            if active {
+                let win = (hours.truncatingRemainder(dividingBy: 5.3)) / 5.3
+                let session = Int(min(96, win * (70 + Double(Int(hours / 5.3) % 4) * 8)))
+                let week = Int(Double(31) * (1 - hours / (92)))
+                h.add(session: session, week: max(0, week), now: when)
+            }
+            m -= 7
+        }
+        history = h
+        scene.skySim.weather = Weather(code: 2, temp: 22, wind: 14, sunrise: 6 * 60 + 5, sunset: 18 * 60 + 40, at: t)
+        scene.skySim.lat = 38.7; scene.lon = -9.1
+        scene.clock = Calendar.current.date(bySettingHour: Int(ProcessInfo.processInfo.environment["CLAUDY_DEMO_HOUR"] ?? "") ?? 14,
+                                            minute: 0, second: 0, of: t)
+        scene.observe(model: self)
     }
 
     // MARK: texts shared by the panel and the floating widget
