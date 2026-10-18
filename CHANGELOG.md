@@ -6,6 +6,8 @@ Each release is a git tag (`v0.1.0`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-18
+
 ### Fixed
 
 - The menu bar label cut "100%" to "10…" in the bars-and-numbers style; the number column now fits.
