@@ -208,7 +208,12 @@ public enum ClaudeCLI {
         own.add(p.processIdentifier)
         defer { own.remove(p.processIdentifier) }
         let timedOut = Flag()
-        let killer = DispatchWorkItem { if p.isRunning { timedOut.set(); p.terminate() } }
+        let killer = DispatchWorkItem {
+            guard p.isRunning else { return }
+            timedOut.set(); p.terminate()
+            // A process that ignores SIGTERM would block the read below for good.
+            DispatchQueue.global().asyncAfter(deadline: .now() + 2) { if p.isRunning { kill(p.processIdentifier, SIGKILL) } }
+        }
         DispatchQueue.global().asyncAfter(deadline: .now() + timeout, execute: killer)
         let data = out.fileHandleForReading.readDataToEndOfFile()
         p.waitUntilExit()

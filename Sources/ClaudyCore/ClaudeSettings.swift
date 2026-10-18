@@ -106,7 +106,8 @@ public indirect enum JSONValue: Equatable, Sendable {
                         code = 0x10000 + ((code - 0xD800) << 10) + (lo - 0xDC00); i += 6
                     }
                     out.append(Unicode.Scalar(code) ?? "\u{FFFD}")
-                default: out.append(e)    // \" \\ \/
+                case "\"", "\\", "/": out.append(e)
+                default: throw err("bad escape")
                 }
             }
             throw err("unterminated string")
@@ -213,7 +214,8 @@ public indirect enum JSONValue: Equatable, Sendable {
 /// The file on disk.
 public final class ClaudeSettingsFile: @unchecked Sendable {
     public let url: URL
-    private var backedUp = false
+    /// Per file for the whole run, not per instance: a second instance must not replace the backup with an edited file.
+    nonisolated(unsafe) private static var backedUp = Set<String>()
     public init(url: URL? = nil) {
         self.url = url ?? URL(fileURLWithPath: Sessions.configDir + "/settings.json")
     }
@@ -243,11 +245,11 @@ public final class ClaudeSettingsFile: @unchecked Sendable {
         do {
             let fm = FileManager.default
             try fm.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-            if !backedUp, fm.fileExists(atPath: url.path) {
+            if !Self.backedUp.contains(url.path), fm.fileExists(atPath: url.path) {
                 let bak = URL(fileURLWithPath: url.path + ".clawd-bak")
                 try? fm.removeItem(at: bak)
                 try fm.copyItem(at: url, to: bak)
-                backedUp = true
+                Self.backedUp.insert(url.path)
             }
             try (l.root.serialized() + "\n").write(to: url, atomically: true, encoding: .utf8)
             return true

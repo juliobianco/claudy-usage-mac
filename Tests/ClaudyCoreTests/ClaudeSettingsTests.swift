@@ -113,4 +113,25 @@ final class ClaudePresetTests: XCTestCase {
         XCTAssertEqual(back[1]?.values["model"] ?? nil, "\"opus\"")
         XCTAssertNil(back[1]?.values["fastMode"] ?? nil)
     }
+
+    func testUnknownEscapeIsRejected() {
+        XCTAssertThrowsError(try JSONValue.parse(#"{"a": "a\q"}"#))
+    }
+
+    func testBackupKeepsTheOriginalAcrossInstances() throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let url = dir.appendingPathComponent("settings.json")
+        try "{\"a\": 1}\n".write(to: url, atomically: true, encoding: .utf8)
+        XCTAssertTrue(ClaudeSettingsFile(url: url).apply([("a", .number("2"))]))
+        XCTAssertTrue(ClaudeSettingsFile(url: url).apply([("a", .number("3"))]))
+        XCTAssertEqual(try String(contentsOfFile: url.path + ".clawd-bak", encoding: .utf8), "{\"a\": 1}\n")
+    }
+
+    func testTimeoutKillsAProcessThatIgnoresSigterm() {
+        let t = Date()
+        let r = ClaudeCLI.exec("/bin/sh", ["-c", "trap '' TERM; exec sleep 10"], timeout: 0.2)
+        XCTAssertEqual(r?.timedOut, true)
+        XCTAssertLessThan(Date().timeIntervalSince(t), 5)
+    }
 }

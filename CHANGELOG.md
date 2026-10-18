@@ -6,6 +6,10 @@ Each release is a git tag (`v0.1.0`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+### Fixed
+
+- A `claude` probe that ignores the time limit is now killed (it could freeze the usage refresh); the settings backup is kept per file for the whole run; a `settings.json` with an invalid escape is no longer rewritten.
+
 ### Changed
 
 - The usage is read every 20 s (instead of 60 s) once the session or the week reaches 90%, so the last points before a limit show up sooner.
