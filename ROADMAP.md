@@ -17,7 +17,7 @@ Small, clear, and good for a first contribution.
 
 ## Observability
 
-Decided 2026-10-19 and done **before** phase 5. In the order we will build them, one per sitting; the thinking for each (data, design, open questions) is in [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md). Everything is read-only and stays on the Mac.
+Decided 2026-10-19 and done **before** phase 5. Items 1 to 9 shipped in 0.3.3 and 0.4.0 (2026-10-19); item 10 is next. In the order we will build them, one per sitting; the thinking for each (data, design, open questions) is in [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md). Everything is read-only and stays on the Mac.
 
 1. **Pace and forecast** — "at this pace you hit 100% at 15:40, before the reset". → [#14](https://github.com/juliobianco/claudy-usage-mac/issues/14)
 2. **Health of the usage read** — when it last worked, and why not when it did not. → [#15](https://github.com/juliobianco/claudy-usage-mac/issues/15)
@@ -26,7 +26,7 @@ Decided 2026-10-19 and done **before** phase 5. In the order we will build them,
 5. **Markers on the limits chart** — resets and the moments a limit reached 100%. → [#18](https://github.com/juliobianco/claudy-usage-mac/issues/18)
 6. **Usage by model** — Opus, Sonnet, Haiku and cache share. → [#19](https://github.com/juliobianco/claudy-usage-mac/issues/19)
 7. **Hour-of-week heatmap** — when the 5h windows are really used. → [#20](https://github.com/juliobianco/claudy-usage-mac/issues/20)
-8. **Export the history** — CSV or JSON. → [#21](https://github.com/juliobianco/claudy-usage-mac/issues/21)
+8. **Export the history** — two CSV files (limits, and projects with models). → [#21](https://github.com/juliobianco/claudy-usage-mac/issues/21)
 9. **Status by service** — which component is degraded, recent incidents. → [#22](https://github.com/juliobianco/claudy-usage-mac/issues/22)
 10. **Tokens per day by model, all time** — a chart from Claude Code's own stats cache, like `/stats` → Models but prettier. → [#23](https://github.com/juliobianco/claudy-usage-mac/issues/23)
 

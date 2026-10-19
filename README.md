@@ -21,7 +21,7 @@ A native macOS port of [Enhed/clawd-usage-winwidget](https://github.com/Enhed/cl
 
 > A fan project, unaffiliated with Anthropic. Claude and Clawd belong to Anthropic.
 
-**Latest release: [v0.3.3](https://github.com/juliobianco/claudy-usage-mac/releases/tag/v0.3.3).** A pace forecast under the session and week bars, and the bubble drags again. See the [release notes](CHANGELOG.md#033---2026-10-19).
+**Latest release: [v0.4.0](https://github.com/juliobianco/claudy-usage-mac/releases/tag/v0.4.0).** Pace forecast and alert, usage by project and model, a heatmap, chart marks, CSV export and service status in detail. See the [release notes](CHANGELOG.md#040---2026-10-19).
 
 ## Install
 
@@ -79,12 +79,13 @@ Location is optional and only used for the weather behind Clawd. You can decline
 |---|---|
 | **Plan limits** | 5-hour and weekly usage with reset countdowns, plus the separate Fable limit when your plan reports one. |
 | **Live sessions** | Running Claude Code sessions with project, branch, worktree and working / waiting / idle state. |
-| **Alerts** | A blinking **?** when a session needs you and confetti when a limit resets. macOS notifications are optional and off by default. |
-| **Usage history** | 24-hour and weekly charts, project shares, and breakdowns for skills, plugins, MCP servers and subagents. |
+| **Pace** | "At this pace: 100% at 16:07" under the 5-hour bar, and "at the week's average" under the weekly one. A notification when you will hit the 5-hour limit within the hour (on by default, one switch to turn it off). |
+| **Alerts** | A blinking **?** when a session needs you and confetti when a limit resets. Notifications for a waiting session and for a reset are optional and off by default. |
+| **Usage history** | 24-hour and weekly charts with marks for resets and for reaching 100%, project and model shares for the last 24 hours or 7 days (click a project for its models and busiest hours), an hour-by-day heatmap, and breakdowns for skills, plugins, MCP servers and subagents. Export it as CSV from the ⋯ menu. |
 | **Floating widget** | A movable card that folds into a two-ring bubble, with opacity and always-on-top controls. Liquid Glass on macOS 26+. |
 | **Clawd and the sky** | A reactive pixel crab, 11 skins, themes, local weather, sunrise, sunset and moon phases. |
 | **Claude Code settings** | Edit selected Claude Code preferences, save three presets and revert changes. The app keeps a backup. |
-| **Status and updates** | Claude service status, account information and Claude Code version checks, with a manual update action. |
+| **Status and updates** | Claude service status with the affected components and open incidents, a warning when the usage read keeps failing, account information and Claude Code version checks, with a manual update action. |
 
 <p align="center">
   <img src="docs/images/floating.gif" width="300" alt="Floating widget opening, folding into a bubble and expanding again">
