@@ -2,11 +2,13 @@ import Foundation
 
 /// CSV text of what the app keeps, for a spreadsheet. Pure: the UI picks the folder and writes the files.
 public enum Export {
-    /// A spreadsheet runs a cell that starts with = + - @ (or a tab / CR) as a formula, and a project name is a folder
-    /// name someone else may have chosen: a quote in front keeps it text.
+    /// A spreadsheet runs a cell that starts with = + - @ (or a tab / CR / LF) as a formula, and a project name is a folder
+    /// name someone else may have chosen: a quote in front keeps it text. Unicode scalars, not Characters: "\r\n" or
+    /// "=" plus a combining mark is a single Character that would slip past a comparison.
     static func field(_ raw: String) -> String {
-        let s = raw.first.map { "=+-@\t\r".contains($0) } == true ? "'" + raw : raw
-        return s.contains(where: { $0 == "," || $0 == "\"" || $0 == "\n" || $0 == "\r" }) ? "\"" + s.replacingOccurrences(of: "\"", with: "\"\"") + "\"" : s
+        let s = raw.unicodeScalars.first.map { "=+-@\t\r\n".unicodeScalars.contains($0) } == true ? "'" + raw : raw
+        return s.unicodeScalars.contains(where: { $0 == "," || $0 == "\"" || $0 == "\n" || $0 == "\r" })
+            ? "\"" + s.replacingOccurrences(of: "\"", with: "\"\"") + "\"" : s
     }
 
     static func stamp(_ date: Date, _ tz: TimeZone) -> String {

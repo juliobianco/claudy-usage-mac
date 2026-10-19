@@ -182,6 +182,9 @@ final class ExportTests: XCTestCase {
         XCTAssertEqual(Export.field("-1"), "'-1")
         XCTAssertEqual(Export.field("plain"), "plain")
         XCTAssertEqual(Export.field("two\rlines"), "\"two\rlines\"")
+        XCTAssertEqual(Export.field("a\r\nb"), "\"a\r\nb\"")                         // CRLF is one Character, two scalars
+        XCTAssertEqual(Export.field("=\u{301}x"), "'=\u{301}x")                         // "=" + a combining mark is one Character
+        XCTAssertEqual(Export.field("\r\nx"), "\"'\r\nx\"")
     }
 
     func testCSVRowsAndEscaping() {
