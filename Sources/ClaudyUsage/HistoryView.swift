@@ -74,9 +74,7 @@ struct HistoryChart: View {
             var prev: Int?
             for s in model.history.samples where s.minute >= t0 && s.minute <= t1 {
                 let v = s[keyPath: key]
-                // A gap, or a fall of 2+ points (a reset: its ring marks it), ends the figure: no vertical stroke from 100% to 0.
-                let reset = v >= 0 && (run.last.map { $0.v - v >= 2 } ?? false)
-                if v < 0 || reset || (prev != nil && s.minute - prev! > UsageHistory.gapMinutes) { if !run.isEmpty { out.append(run) }; run = [] }
+                if v < 0 || (prev != nil && s.minute - prev! > UsageHistory.gapMinutes) { if !run.isEmpty { out.append(run) }; run = [] }
                 prev = s.minute
                 if v >= 0 { run.append((CGPoint(x: x(s.minute, w), y: y(v)), v)) }
             }
@@ -116,9 +114,11 @@ struct HistoryChart: View {
                 continue
             }
             // A segment is as hot as its hotter end, so a climb into the yellow turns yellow where it crosses.
+            // A fall is a reset: it takes the colour of where it lands, not a red stroke down from 100%.
             for i in 1..<r.count {
                 var seg = Path(); seg.move(to: r[i - 1].p); seg.addLine(to: r[i].p)
-                ctx.stroke(seg, with: .color(T.level(max(r[i - 1].v, r[i].v))), style: round)
+                let fall = r[i - 1].v - r[i].v >= 2
+                ctx.stroke(seg, with: .color(T.level(fall ? r[i].v : max(r[i - 1].v, r[i].v))), style: round)
             }
         }
         drawMarks(ctx, w, h)
