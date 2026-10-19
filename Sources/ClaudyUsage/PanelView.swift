@@ -15,6 +15,7 @@ struct PanelView: View {
             header.padding(.bottom, 6)
             hero
             resetLine
+            HealthLine(model: model).padding(.top, 6)
             LimitRow(model: model, title: L.t("week"), line: model.usage?.week, color: T.accent, pace: model.weekPaceText).padding(.top, 9)
             if prefs.showFable, let f = model.usage?.fable { LimitRow(model: model, title: L.t("fableWeek"), line: f, color: T.purple).padding(.top, 7) }
             if prefs.showSessions { sessionsRow.padding(.top, 11) }
@@ -135,7 +136,7 @@ struct PanelView: View {
             HStack {
                 if prefs.showAccount { accountText }
                 Spacer(minLength: 8)
-                Text(model.usageAt.map { Self.clock.string(from: $0) } ?? "").font(.system(size: 10)).foregroundStyle(T.faint)
+                Text(model.usageAt.map { Self.clock.string(from: $0) } ?? "").font(.system(size: 10)).foregroundStyle(model.usageUnhealthy ? T.warn : T.faint)
             }
         }
     }
@@ -209,6 +210,23 @@ struct LimitRow: View {
             }
             ProgressBar(percent: line?.percent, height: 5, color: color)
             if let pace { Text(pace).font(.system(size: 10)).foregroundStyle(T.dim).frame(maxWidth: .infinity, alignment: .leading) }
+        }
+    }
+}
+
+/// Shown only when the usage read is really failing: how long, why, and a button to try at once.
+struct HealthLine: View {
+    let model: AppModel
+
+    var body: some View {
+        if let t = model.healthText {
+            HStack(spacing: 6) {
+                Circle().fill(T.warn).frame(width: 6, height: 6)
+                Text(t).font(.system(size: 10)).foregroundStyle(T.warn).lineLimit(2).fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 4)
+                Button(L.t("health.retry")) { model.refreshUsage() }
+                    .buttonStyle(.plain).font(.system(size: 10, weight: .semibold)).foregroundStyle(T.accent)
+            }
         }
     }
 }

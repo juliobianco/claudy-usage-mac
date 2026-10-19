@@ -6,6 +6,9 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+### Added
+- A warning when the usage read keeps failing (two failures in a row, or 10 minutes without a good read): how long, why, and a "try now" button. The footer clock turns yellow too.
+
 ## [0.3.3] - 2026-10-19
 
 ### Added

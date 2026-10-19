@@ -291,6 +291,7 @@ struct FloatingCard: View {
                 Text(model.resetText).font(.system(size: 12)).foregroundStyle(T.text2)
                 if let p = model.sessionPaceText { Text(p).font(.system(size: 10)).foregroundStyle(T.dim) }
             }.padding(.top, 8)
+            HealthLine(model: model).padding(.top, 6)
             LimitRow(model: model, title: L.t("week"), line: model.usage?.week, color: T.accent, pace: model.weekPaceText).padding(.top, 9)
             if prefs.showFable, let f = model.usage?.fable { LimitRow(model: model, title: L.t("fableWeek"), line: f, color: T.purple).padding(.top, 7) }
             HStack {

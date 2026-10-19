@@ -9,7 +9,7 @@ How to use this file: when we start an item, we talk it through, write the decis
 | # | Item | Issue | Touches | Needs | Status |
 |---|---|---|---|---|---|
 | 1 | Pace and forecast | [#14](https://github.com/juliobianco/claudy-usage-mac/issues/14) | `History.swift` (a pure function), panel, floating card | nothing | done (0.3.3) |
-| 2 | Health of the usage read | [#15](https://github.com/juliobianco/claudy-usage-mac/issues/15) | `Model.swift`, panel | nothing | to discuss |
+| 2 | Health of the usage read | [#15](https://github.com/juliobianco/claudy-usage-mac/issues/15) | `Model.swift`, panel | nothing | built, in testing |
 | 3 | Usage by project, deeper | [#16](https://github.com/juliobianco/claudy-usage-mac/issues/16) | scanner (adds the model dimension), `PanelView` | nothing | to discuss |
 | 4 | Pace alert | [#17](https://github.com/juliobianco/claudy-usage-mac/issues/17) | alerts in `Model.swift`, `AlertsUI`, settings | 1 | to discuss |
 | 5 | Markers on the chart | [#18](https://github.com/juliobianco/claudy-usage-mac/issues/18) | `HistoryView.swift` | maybe 1 | to discuss |
@@ -59,7 +59,13 @@ What already exists (so we do not rebuild it): the week ranking "PROJECTS · 7 D
 
 **Open questions.** Is there already a "last updated" in the panel to reuse? How old before it is a warning? Does the floating card get an indicator or only the panel?
 
-**Decided.** (empty)
+**Decided.** (2026-10-19)
+- A problem is two failed reads in a row, or no good read for 10 minutes. Quiet otherwise (one failure keeps the old "stale" tag only).
+- Shown as a small yellow line under the reset, in the panel and the floating card: "stale for 14m · claude took too long", plus the footer clock turns yellow. Not in the menu bar, not in the bubble.
+- Says how long and why (claude missing, could not start, timeout, unexpected answer: maybe not logged in).
+- One button, "try now". No log button.
+- The retry cadence is untouched (10 s after a failure, as before).
+- Built: `AppModel.healthText` / `usageUnhealthy`, `HealthLine` in `PanelView.swift`. `CLAUDY_DEMO_FAIL=1` with `CLAUDY_DEMO=1` shows it in a snapshot.
 
 ## 3. Usage by project, deeper
 

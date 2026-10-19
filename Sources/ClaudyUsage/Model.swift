@@ -22,7 +22,7 @@ final class AppModel {
     @ObservationIgnored private var scanning = false
     @ObservationIgnored private var scannedAt = Date.distantPast
     var now = Date()
-    @ObservationIgnored private var failStreak = 0
+    private var failStreak = 0
     // MARK: alerts: a session waits for you, a limit started over
     var alertTick = 0                              // moves twice a second while an alert is on: drives the pulse and the confetti
     var celebrateUntil: Date?
@@ -211,6 +211,9 @@ final class AppModel {
                       day: UsagePeriod(requests: 412, sessions: 9, lines: lines24),
                       week7: UsagePeriod(requests: 2861, sessions: 54, lines: lines7))
         usageAt = t
+        if ProcessInfo.processInfo.environment["CLAUDY_DEMO_FAIL"] != nil {     // the warning of a failing read, for screenshots
+            usageAt = t.addingTimeInterval(-14 * 60); usageFailed = true; usageError = "timed out after 45 s"; failStreak = 3
+        }
         sessions = [
             ClaudeSession(pid: 1, name: "web-app-12", cwd: "/demo/web-app", busy: true, waiting: false,
                           git: GitInfo(repo: "web-app", branch: "feat/onboarding", worktree: nil)),
@@ -305,6 +308,24 @@ final class AppModel {
 
     /// Forget the saved samples (settings > System).
     func clearHistory() { history = UsageHistory(); history.save() }
+
+    /// A warning only when it is real: two failed reads in a row, or no good read for 10 minutes. Quiet otherwise.
+    var usageUnhealthy: Bool { failStreak >= 2 || (usageAt.map { now.timeIntervalSince($0) > 600 } ?? false) }
+
+    /// "stale for 14 min · claude not found": what to tell the user, and why.
+    var healthText: String? {
+        guard usageUnhealthy else { return nil }
+        let why: String
+        switch usageError {
+        case "claude not found": why = L.t("health.noClaude")
+        case "could not start claude": why = L.t("health.start")
+        case let e where e.hasPrefix("timed out"): why = L.t("health.timeout")
+        case "": why = L.t("health.old")
+        default: why = L.t("health.output")
+        }
+        guard let at = usageAt, let span = Format.span(to: now, now: at) else { return why }
+        return L.t("health.since", span) + " · " + why
+    }
 
     var stale: Bool { usageFailed && usage != nil }
 }
