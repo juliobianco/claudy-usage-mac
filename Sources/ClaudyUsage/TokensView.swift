@@ -57,7 +57,23 @@ struct TokensView: View {
 
     private func color(_ i: Int) -> Color { palette[min(i, palette.count - 1)] }
     private func label(_ key: String) -> String { key == "other" ? L.t("tokens.others") : ModelName.display(key) }
-    private func dayText(_ day: Int) -> String { L.date("d MMM").string(from: Date(timeIntervalSince1970: TimeInterval(day) * 86400)) }
+    /// The days are calendar dates, not instants: format them in UTC, or a Brazilian evening shows the day before.
+    private func dayText(_ day: Int, _ format: String = "d MMM") -> String {
+        let f = DateFormatter(); f.locale = L.locale; f.timeZone = TimeZone(identifier: "UTC"); f.dateFormat = format
+        return f.string(from: Date(timeIntervalSince1970: TimeInterval(day) * 86400))
+    }
+
+    /// Vertical lines like the little chart: every day for a week, every day (the Mondays stronger and labelled) for a month,
+    /// every month start for the long view.
+    private func ticks(_ first: Int, _ n: Int) -> [(i: Int, label: String?, strong: Bool)] {
+        (0..<n).compactMap { i in
+            let day = first + i
+            let weekday = (day + 4) % 7                               // 0 = Sunday: 1970-01-01 was a Thursday
+            if n <= 8 { return (i, dayText(day, "EEE d"), false) }
+            if n <= 40 { return (i, weekday == 1 ? dayText(day) : nil, weekday == 1) }
+            return dayText(day, "d") == "1" ? (i, dayText(day, "MMM"), true) : nil
+        }
+    }
 
     private func chart(_ series: StatsCache.Series) -> some View {
         let n = series.lines.first?.values.count ?? 0
@@ -73,11 +89,12 @@ struct TokensView: View {
                     ctx.fill(Path(CGRect(x: left, y: y, width: w, height: 1)), with: .color(Color.white.opacity(0.07)))
                     ctx.draw(Text(Format.tokens(Int(peak * f))).font(.system(size: 9)).foregroundColor(T.faint), at: CGPoint(x: left - 6, y: y), anchor: .trailing)
                 }
-                let step = max(1, (n - 1) / 3)
-                for i in stride(from: 0, to: n, by: step) {
-                    // the first label starts at the axis and one near the right edge ends there: neither is cut off
-                    let anchor: UnitPoint = i == 0 ? .leading : (px(i) > left + w - 28 ? .trailing : .center)
-                    ctx.draw(Text(dayText(series.firstDay + i)).font(.system(size: 9)).foregroundColor(T.faint), at: CGPoint(x: px(i), y: h + 10), anchor: anchor)
+                for t in ticks(series.firstDay, n) {
+                    ctx.fill(Path(CGRect(x: px(t.i), y: 0, width: 1, height: h)), with: .color(Color.white.opacity(t.strong ? 0.1 : 0.06)))
+                    guard let label = t.label else { continue }
+                    // a label at the edge would be cut off: it hangs inward there
+                    let anchor: UnitPoint = px(t.i) < left + 14 ? .leading : (px(t.i) > left + w - 22 ? .trailing : .center)
+                    ctx.draw(Text(label).font(.system(size: 9)).foregroundColor(T.faint), at: CGPoint(x: px(t.i), y: h + 10), anchor: anchor)
                 }
                 for (li, line) in series.lines.enumerated().reversed() {
                     let pts = line.values.enumerated().map { CGPoint(x: px($0.offset), y: py($0.element)) }
