@@ -149,6 +149,14 @@ public struct ProjectUsage: Equatable, Sendable {
 
 /// Model keys as the scanner stores them ("opus-4-8") and how they read ("Opus 4.8").
 public enum ModelName {
+    /// "claude-sonnet-5-5-20260101" -> "sonnet-5-5": the id without the vendor prefix and the date.
+    public static func key(_ id: String) -> String {
+        var s = id.lowercased()
+        if s.hasPrefix("claude-") { s.removeFirst(7) }
+        if let r = s.range(of: #"-\d{8}$"#, options: .regularExpression) { s.removeSubrange(r) }
+        return s
+    }
+
     public static func display(_ key: String) -> String {
         let parts = key.split(separator: "-").map(String.init)
         guard let name = parts.first else { return key }

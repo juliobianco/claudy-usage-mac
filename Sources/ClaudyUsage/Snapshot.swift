@@ -82,6 +82,8 @@ enum Snapshot {
         for tab in ["look", "bar", "system", "claude"] {
             write(SettingsView(model: model, tab: tab, scrolls: false), "\(dir)/settings-\(tab).png")
         }
+        write(TokensView(period: 30), "\(dir)/tokens-30.png")
+        write(TokensView(period: nil), "\(dir)/tokens-all.png")
         exit(0)
     }
 

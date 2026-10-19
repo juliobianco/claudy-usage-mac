@@ -71,6 +71,12 @@ struct ClaudyApp: App {
         }
         .windowResizability(.contentSize)
         .defaultPosition(.center)
+
+        Window(L.t("tokens.title"), id: "tokens") {
+            TokensView()
+        }
+        .windowResizability(.contentSize)
+        .defaultPosition(.center)
     }
 }
 

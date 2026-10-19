@@ -26,4 +26,14 @@ public enum Format {
         let left = max(0, 100 - p)
         return (left * 6 + 99) / 100
     }
+
+    /// 715_400_000 -> "715.4M", 1_500_000_000 -> "1.5B", 12_300 -> "12.3k": the way /stats writes tokens.
+    public static func tokens(_ n: Int) -> String {
+        let d = Double(n)
+        func f(_ v: Double, _ u: String) -> String { String(format: "%.1f", v) + u }
+        if d >= 1e9 { return f(d / 1e9, "B") }
+        if d >= 1e6 { return f(d / 1e6, "M") }
+        if d >= 1e3 { return f(d / 1e3, "k") }
+        return String(n)
+    }
 }

@@ -17,7 +17,7 @@ How to use this file: when we start an item, we talk it through, write the decis
 | 7 | Hour-of-week heatmap | [#20](https://github.com/juliobianco/claudy-usage-mac/issues/20) | UI over `ProjectUsage.hours` | 3 (period) | done (0.4.0) |
 | 8 | Export | [#21](https://github.com/juliobianco/claudy-usage-mac/issues/21) | a small writer in the core | nothing | done (0.4.0) |
 | 9 | Status by service | [#22](https://github.com/juliobianco/claudy-usage-mac/issues/22) | `Status.swift` | nothing | done (0.4.0) |
-| 10 | Tokens per day by model, all time | [#23](https://github.com/juliobianco/claudy-usage-mac/issues/23) | new reader of `stats-cache.json`, a window or a details section | 3 (model names) | to discuss |
+| 10 | Tokens per day by model, all time | [#23](https://github.com/juliobianco/claudy-usage-mac/issues/23) | new reader of `stats-cache.json`, a window or a details section | 3 (model names) | built, in testing |
 
 Why this order: 1 is the most useful and needs no new data; 2 is cheap and removes a confusing case (the panel looks frozen); 3 changes the scanner, so 6 and 7 become UI only. 4 waits for 1 because it is the same forecast with a notification on top. 8 and 9 are independent and can move up or down.
 
@@ -200,4 +200,10 @@ What already exists (so we do not rebuild it): the week ranking "PROJECTS · 7 D
 
 **Open questions.** Window or details section? Lines or stacked bars? Show the cache totals or only input/output? Where does it sit in the order (after 9, or earlier)?
 
-**Decided.** (empty)
+**Decided.** (2026-10-19, defaults taken, the owner said "kill the last one")
+- A window of its own, "Token stats…" in the ⋯ menu (the chart wants more room than the panel).
+- Lines, one per model (the five biggest of the period, the rest merged as "other models"), with a hover that names the day and each model's tokens. 7 days / 30 days / All time.
+- Under the chart, the share of each model; for **All time** also the input / output / cache read / cache write totals (`modelUsage` only exists for all time). Other periods show the period's tokens.
+- "up to <date>" from `lastComputedDate`, and a note that the last day or two may be missing and that the Details shares are an estimate of weight, not tokens. The last days are not filled from our own scan (it is a different measure).
+- If the file is missing or in another format the window says to run /stats once.
+- Built: `StatsCache` in `ClaudyCore` (tested), `ModelName.key`, `Format.tokens`, `TokensView.swift`. `--settings DIR` also writes `tokens-30.png` and `tokens-all.png`.

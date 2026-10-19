@@ -221,3 +221,34 @@ final class ExportTests: XCTestCase {
                        "hour,project,model,weight\n2027-01-15T08:00:00Z,\"my,app\",opus-5,12.3\n2027-01-15T08:00:00Z,\"my,app\",sonnet-5-5,1.0\n")
     }
 }
+
+final class StatsCacheTests: XCTestCase {
+    let json = #"""
+    {"lastComputedDate":"2026-10-18","dailyModelTokens":[
+      {"date":"2026-10-10","tokensByModel":{"claude-sonnet-5":100,"claude-opus-4-8":50}},
+      {"date":"2026-10-12","tokensByModel":{"claude-sonnet-5-5":300,"claude-sonnet-5":10}},
+      {"date":"2026-10-13","tokensByModel":{"claude-haiku-4-5-20251001":5}}],
+     "modelUsage":{"claude-sonnet-5-5":{"inputTokens":1,"outputTokens":2,"cacheReadInputTokens":3,"cacheCreationInputTokens":4}}}
+    """#
+
+    func testParseFillsDaysAndRanksModels() throws {
+        let s = try XCTUnwrap(StatsCache.parse(Data(json.utf8)))
+        XCTAssertEqual(s.lastComputed, "2026-10-18")
+        XCTAssertEqual(s.totals["sonnet-5-5"], StatsCache.Totals(input: 1, output: 2, cacheRead: 3, cacheWrite: 4))
+        let all = try XCTUnwrap(s.series(lastDays: nil, top: 2))
+        XCTAssertEqual(all.lines.map(\.key), ["sonnet-5-5", "sonnet-5", "other"])                // 300, 110, then the rest merged
+        XCTAssertEqual(all.lines[0].values, [0, 0, 300, 0])                                        // 10, 11 (no data), 12, 13
+        XCTAssertEqual(all.lines[2].values, [50, 0, 0, 5])
+        let two = try XCTUnwrap(s.series(lastDays: 2))
+        XCTAssertEqual(two.firstDay, all.firstDay + 2)
+        XCTAssertEqual(two.lines.first?.values.count, 2)
+        XCTAssertEqual(s.shares(lastDays: nil).map(\.key), ["sonnet-5-5", "sonnet-5", "opus-4-8", "haiku-4-5"])
+        XCTAssertEqual(s.shares(lastDays: nil)[0].share, 100 * 300 / 465, accuracy: 0.01)
+    }
+
+    func testUnknownFormatGivesNothing() {
+        XCTAssertNil(StatsCache.parse(Data("{}".utf8)))
+        XCTAssertNil(StatsCache.parse(Data("nope".utf8)))
+        XCTAssertEqual(Format.tokens(715_400_000), "715.4M"); XCTAssertEqual(Format.tokens(1_500_000_000), "1.5B"); XCTAssertEqual(Format.tokens(950), "950")
+    }
+}

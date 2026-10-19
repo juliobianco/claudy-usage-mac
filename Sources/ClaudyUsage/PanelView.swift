@@ -488,6 +488,7 @@ struct MoreMenu: View {
         Menu {
             Button(L.t("menu.refresh")) { model.refreshUsage(); model.refreshStatus(); model.refreshSessions(); model.refreshAccount() }
             Button(L.t("menu.export")) { Exporter.run(model: model) }
+            Button(L.t("tokens.menu")) { openWindow(id: "tokens"); NSApp.activate(ignoringOtherApps: true) }
             Button(L.t("menu.settings")) { SettingsWindow.open(openWindow) }
             Toggle(L.t("menu.float"), isOn: Binding(get: { FloatingWidget.shared.isOpen }, set: { on in
                 if on { let from = NSApp.keyWindow?.frame; FloatingWidget.shared.show(model: model, from: from); NSApp.keyWindow?.close() }

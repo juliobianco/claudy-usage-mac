@@ -81,7 +81,7 @@ Location is optional and only used for the weather behind Clawd. You can decline
 | **Live sessions** | Running Claude Code sessions with project, branch, worktree and working / waiting / idle state. |
 | **Pace** | "At this pace: 100% at 16:07" under the 5-hour bar, and "at the week's average" under the weekly one. A notification when you will hit the 5-hour limit within the hour (on by default, one switch to turn it off). |
 | **Alerts** | A blinking **?** when a session needs you and confetti when a limit resets. Notifications for a waiting session and for a reset are optional and off by default. |
-| **Usage history** | 24-hour and weekly charts with marks for resets and for reaching 100%, project and model shares for the last 24 hours or 7 days (click a project for its models and busiest hours), an hour-by-day heatmap, and breakdowns for skills, plugins, MCP servers and subagents. Export it as CSV from the ⋯ menu. |
+| **Usage history** | 24-hour and weekly charts with marks for resets and for reaching 100%, project and model shares for the last 24 hours or 7 days (click a project for its models and busiest hours), an hour-by-day heatmap, and breakdowns for skills, plugins, MCP servers and subagents. Export it as CSV from the ⋯ menu. A "Token stats" window charts tokens per day by model, from Claude Code's own stats cache. |
 | **Floating widget** | A movable card that folds into a two-ring bubble, with opacity and always-on-top controls. Liquid Glass on macOS 26+. |
 | **Clawd and the sky** | A reactive pixel crab, 11 skins, themes, local weather, sunrise, sunset and moon phases. |
 | **Claude Code settings** | Edit selected Claude Code preferences, save three presets and revert changes. The app keeps a backup. |
