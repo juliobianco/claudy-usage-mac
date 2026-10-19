@@ -13,6 +13,7 @@ struct ClaudyApp: App {
         // `ClaudyUsage --snapshot DIR`: render the panel and the bar label to PNGs (for checking the look), then quit.
         let a = CommandLine.arguments
         if a.contains(where: { ["--snapshot", "--scenes", "--settings", "--readme", "--gifs", "--banner"].contains($0) }) { DevFlags.offscreen = true }
+        if !a.contains(where: { $0.hasPrefix("--") }) { LoginItem.enableOnFirstRun() }
         if let i = a.firstIndex(of: "--snapshot"), i + 1 < a.count {
             Snapshot.schedule(dir: a[i + 1])
         }

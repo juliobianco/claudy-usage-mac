@@ -8,6 +8,8 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ### Changed
 
+- Launch at login is now on by default, set once on first run; the toggle in the menu and settings still turns it off for good.
+- The Homebrew cask opens the app right after install.
 - Reorganized the README around installation and everyday use; moved detailed features, animation galleries and developer image tools to `docs/GUIDE.md`, clarified refresh intervals and update options, and highlighted the published v0.3.0 release.
 
 ## [0.3.0] - 2026-10-18
