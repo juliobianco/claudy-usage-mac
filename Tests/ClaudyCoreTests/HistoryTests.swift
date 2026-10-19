@@ -84,6 +84,23 @@ final class ModelNameTests: XCTestCase {
     }
 }
 
+final class HeatTests: XCTestCase {
+    func testHeatPlacesWeightByDayAndHour() {
+        var utc = Calendar(identifier: .gregorian); utc.timeZone = TimeZone(identifier: "UTC")!
+        let now = Date(timeIntervalSince1970: 1_800_000_000 + 3600 * 5)           // some day, 10:20 UTC
+        let h = Int(now.timeIntervalSince1970 / 3600)
+        let u = ProjectUsage(hourly: [h: ["a": ["opus": 4, "sonnet": 1], "b": ["opus": 2]],   // today, this hour
+                                      h - 24: ["a": ["opus": 3]],                              // yesterday, same hour
+                                      h - 24 * 8: ["a": ["opus": 9]]])                         // out of range
+        let g = u.heat(days: 7, now: now, calendar: utc)
+        let hour = utc.component(.hour, from: now)
+        XCTAssertEqual(g.count, 7)
+        XCTAssertEqual(g[6][hour], 7)
+        XCTAssertEqual(g[5][hour], 3)
+        XCTAssertEqual(g.flatMap { $0 }.reduce(0, +), 10)
+    }
+}
+
 final class ProjectPeriodTests: XCTestCase {
     func testPeriodFilterFamiliesAndBusiestHours() {
         let u = ProjectUsage(hourly: [100: ["a": ["opus": 30, "sonnet": 10], "b": ["haiku": 5]], 20: ["a": ["sonnet": 60]]])

@@ -100,6 +100,20 @@ public struct ProjectUsage: Equatable, Sendable {
         return t.sorted { $0.value > $1.value }.map { ($0.key, 100 * $0.value / sum) }
     }
 
+    /// Weight per day and hour for the last `days` days, oldest day first, 24 hours each (local time).
+    /// The last row is today. For the heatmap: one cell is one real hour, no two days are merged.
+    public func heat(days: Int = 7, now: Date = Date(), calendar: Calendar = .current) -> [[Double]] {
+        let today = calendar.startOfDay(for: now)
+        var grid = Array(repeating: Array(repeating: 0.0, count: 24), count: days)
+        for (h, ps) in hourly {
+            let t = Date(timeIntervalSince1970: TimeInterval(h) * 3600)
+            let back = calendar.dateComponents([.day], from: calendar.startOfDay(for: t), to: today).day ?? 99
+            guard back >= 0, back < days else { continue }
+            grid[days - 1 - back][calendar.component(.hour, from: t)] += ps.values.flatMap(\.values).reduce(0, +)
+        }
+        return grid
+    }
+
     /// Model families over all projects, share of the period, biggest first. A family under 1% is left out
     /// ("other" is often just a synthetic or unknown model).
     public func models(sinceHour: Int = .min) -> [(family: String, share: Double)] {

@@ -266,6 +266,7 @@ struct SessionRow: View {
 struct DetailsView: View {
     let model: AppModel
     @AppStorage("period") private var period = "day"
+    @State private var heatOpen = ProcessInfo.processInfo.environment["CLAUDY_HEAT"] != nil   // snapshots
     @State private var openProject: String? = ProcessInfo.processInfo.environment["CLAUDY_PROJECT"]   // snapshots
     @State private var more = ProcessInfo.processInfo.environment["CLAUDY_MORE"] != nil   // snapshots
 
@@ -371,6 +372,15 @@ struct DetailsView: View {
                     ForEach(models, id: \.family) { row(Self.modelLabel($0.family), Int($0.share.rounded()), T.purple) }
                 }
             }
+            Button { withAnimation(.easeOut(duration: 0.15)) { heatOpen.toggle() } } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: heatOpen ? "chevron.down" : "chevron.right").font(.system(size: 8, weight: .bold))
+                    Text(L.t("heat.title")).font(.system(size: 10.5))
+                }
+                .foregroundStyle(T.accent)
+            }
+            .buttonStyle(.plain)
+            if heatOpen { HeatmapView(model: model) }
         }
     }
 

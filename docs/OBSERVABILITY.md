@@ -14,7 +14,7 @@ How to use this file: when we start an item, we talk it through, write the decis
 | 4 | Pace alert | [#17](https://github.com/juliobianco/claudy-usage-mac/issues/17) | alerts in `Model.swift`, `AlertsUI`, settings | 1 | built, in testing |
 | 5 | Markers on the chart | [#18](https://github.com/juliobianco/claudy-usage-mac/issues/18) | `HistoryView.swift` | maybe 1 | built, in testing |
 | 6 | Usage by model | [#19](https://github.com/juliobianco/claudy-usage-mac/issues/19) | UI only | the model dimension from 3 | built, in testing |
-| 7 | Hour-of-week heatmap | [#20](https://github.com/juliobianco/claudy-usage-mac/issues/20) | UI over `ProjectUsage.hours` | 3 (period) | to discuss |
+| 7 | Hour-of-week heatmap | [#20](https://github.com/juliobianco/claudy-usage-mac/issues/20) | UI over `ProjectUsage.hours` | 3 (period) | built, in testing |
 | 8 | Export | [#21](https://github.com/juliobianco/claudy-usage-mac/issues/21) | a small writer in the core | nothing | to discuss |
 | 9 | Status by service | [#22](https://github.com/juliobianco/claudy-usage-mac/issues/22) | `Status.swift` | nothing | to discuss |
 
@@ -146,7 +146,12 @@ What already exists (so we do not rebuild it): the week ranking "PROJECTS · 7 D
 
 **Open questions.** Keep longer history? Where does it live: a section in the panel or in the settings window?
 
-**Decided.** (empty)
+**Decided.** (2026-10-19)
+- Inside the details, behind a "When you use it" row that opens it (the panel is already long). Not a separate window.
+- The 7 days the scanner already reads; no longer history on disk for now (a thin sample, but it avoids a second store). Revisit if a month view is wanted.
+- Weight (tokens × price), like projects and models. One accent colour, stronger = more use; empty hours are the track colour.
+- A grid of the last 7 real days (today at the bottom) by 24 hours, so no two days are merged. Hover names the cell and its share of the week.
+- Built: `ProjectUsage.heat` (tested), `HeatmapView.swift`. `CLAUDY_HEAT=1` opens it in a snapshot.
 
 ## 8. Export
 
