@@ -15,9 +15,23 @@ Small, clear, and good for a first contribution.
 - **A "vivid sky" option** — the sky is translucent like the original's, so daytime looks dark; some people will want it bright. → [#5](https://github.com/juliobianco/claudy-usage-mac/issues/5)
 - **Weather fallback** — the original falls back to [met.no](https://api.met.no) where Open-Meteo is blocked. → [#6](https://github.com/juliobianco/claudy-usage-mac/issues/6)
 
+## Observability
+
+Decided 2026-10-19 and done **before** phase 5. In the order we will build them, one per sitting; the thinking for each (data, design, open questions) is in [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md). Everything is read-only and stays on the Mac.
+
+1. **Pace and forecast** — "at this pace you hit 100% at 15:40, before the reset". → [#14](https://github.com/juliobianco/claudy-usage-mac/issues/14)
+2. **Health of the usage read** — when it last worked, and why not when it did not. → [#15](https://github.com/juliobianco/claudy-usage-mac/issues/15)
+3. **Usage by project, deeper** — period switch, drill-down, and the model dimension in the scanner (the week ranking already exists). → [#16](https://github.com/juliobianco/claudy-usage-mac/issues/16)
+4. **Pace alert** — a notification when the forecast says the limit comes before the reset. → [#17](https://github.com/juliobianco/claudy-usage-mac/issues/17)
+5. **Markers on the limits chart** — resets and the moments a limit reached 100%. → [#18](https://github.com/juliobianco/claudy-usage-mac/issues/18)
+6. **Usage by model** — Opus, Sonnet, Haiku and cache share. → [#19](https://github.com/juliobianco/claudy-usage-mac/issues/19)
+7. **Hour-of-week heatmap** — when the 5h windows are really used. → [#20](https://github.com/juliobianco/claudy-usage-mac/issues/20)
+8. **Export the history** — CSV or JSON. → [#21](https://github.com/juliobianco/claudy-usage-mac/issues/21)
+9. **Status by service** — which component is degraded, recent incidents. → [#22](https://github.com/juliobianco/claudy-usage-mac/issues/22)
+
 ## Phase 5: Clawd as an assistant
 
-Today the app only *shows* things. This phase makes it *do* things. The design is written down in [docs/PHASE5.md](docs/PHASE5.md); built in this order because the first two cost nothing and carry no risk.
+**After the observability list above.** Today the app only *shows* things. This phase makes it *do* things. The design is written down in [docs/PHASE5.md](docs/PHASE5.md); built in this order because the first two cost nothing and carry no risk.
 
 1. **Reminders** — files with a time, notification cards with snooze, repeating ones, a date field that understands "tomorrow 10", "+20m", "amanhã 10", "seg 9:00". → [#7](https://github.com/juliobianco/claudy-usage-mac/issues/7)
 2. **Lists** — shopping and any other, with checkboxes, as plain files.

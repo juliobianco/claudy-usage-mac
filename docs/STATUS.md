@@ -3,6 +3,7 @@
 Plan: `~/.claude/plans/async-sparking-reddy.md` (outside the repo). Updated 2026-10-18. The public plan is `ROADMAP.md`; this file is the working log.
 
 ## Done
+- **Observability plan** (2026-10-19): nine items in `ROADMAP.md` (issues #14-#22) with the design notes in `docs/OBSERVABILITY.md`, to be discussed and built one per sitting, before phase 5. Nothing built yet.
 - **Release 0.3.2** (2026-10-19): floating widget readable over light backgrounds (dark base under the glass).
 - **Release 0.3.1** (2026-10-19): launch at login on by default (once, first run), cask opens the app after install.
 - **Documentation refresh** (2026-10-18): README focused on installation, getting started and feature overview; detailed reference and media galleries moved to `docs/GUIDE.md`. Updated contributor links, refresh intervals and update instructions; checked the published v0.3.0 assets and matching Homebrew cask checksum.
