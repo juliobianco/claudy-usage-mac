@@ -3,6 +3,7 @@
 Plan: `~/.claude/plans/async-sparking-reddy.md` (outside the repo). Updated 2026-10-18. The public plan is `ROADMAP.md`; this file is the working log.
 
 ## Done
+- **Release 0.3.1** (2026-10-19): launch at login on by default (once, first run), cask opens the app after install.
 - **Documentation refresh** (2026-10-18): README focused on installation, getting started and feature overview; detailed reference and media galleries moved to `docs/GUIDE.md`. Updated contributor links, refresh intervals and update instructions; checked the published v0.3.0 assets and matching Homebrew cask checksum.
 - **Releases 0.2.0 and 0.3.0** (2026-10-18): `v0.2.0` published (alerts, pictures). `v0.3.0` published with the Homebrew tap, usage read every 20 s near a limit, and fixes from a Codex review (probe killed with SIGKILL after the time limit, settings backup kept per file, invalid JSON escape rejected). Not done, on purpose: concurrent writes to settings.json (tiny window), scanner marker with spaces (Claude Code writes compact JSON), projects with the same folder name are merged (would need a path key). Phase 5 (issue #7) waits: the direction is in doubt.
 - **Published** (2026-10-17/18): repository https://github.com/juliobianco/claudy-usage-mac (public), releases up to `v0.3.0` with the universal ad-hoc-signed zip + SHA-256 (not notarized), README, CHANGELOG, `ROADMAP.md`, `CONTRIBUTING.md`, 13 labelled issues, the cover image uploaded as the repo's social preview.

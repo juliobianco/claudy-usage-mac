@@ -6,6 +6,8 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-10-19
+
 ### Changed
 
 - Launch at login is now on by default, set once on first run; the toggle in the menu and settings still turns it off for good.
