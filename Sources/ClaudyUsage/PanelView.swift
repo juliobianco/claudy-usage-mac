@@ -266,6 +266,7 @@ struct SessionRow: View {
 struct DetailsView: View {
     let model: AppModel
     @AppStorage("period") private var period = "day"
+    @Environment(\.openWindow) private var openWindow
     @State private var heatOpen = ProcessInfo.processInfo.environment["CLAUDY_HEAT"] != nil   // snapshots
     @State private var openProject: String? = ProcessInfo.processInfo.environment["CLAUDY_PROJECT"]   // snapshots
     @State private var more = ProcessInfo.processInfo.environment["CLAUDY_MORE"] != nil   // snapshots
@@ -381,6 +382,14 @@ struct DetailsView: View {
             }
             .buttonStyle(.plain)
             if heatOpen { HeatmapView(model: model) }
+            Button { openWindow(id: "tokens"); NSApp.activate(ignoringOtherApps: true) } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "chart.xyaxis.line").font(.system(size: 9, weight: .bold))
+                    Text(L.t("tokens.link")).font(.system(size: 10.5))
+                }
+                .foregroundStyle(T.accent)
+            }
+            .buttonStyle(.plain)
         }
     }
 
