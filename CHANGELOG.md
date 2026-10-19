@@ -6,6 +6,10 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-19
+
+The last piece of the observability list: the token stats window.
+
 ### Added
 - "Token stats…" in the ⋯ menu and under the models in the details: a window with the tokens per day by model, for 7 days, 30 days or all time, read from Claude Code's own stats cache, with each model's share and, for all time, its input, output and cache totals.
 

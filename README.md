@@ -21,7 +21,7 @@ A native macOS port of [Enhed/clawd-usage-winwidget](https://github.com/Enhed/cl
 
 > A fan project, unaffiliated with Anthropic. Claude and Clawd belong to Anthropic.
 
-**Latest release: [v0.4.0](https://github.com/juliobianco/claudy-usage-mac/releases/tag/v0.4.0).** Pace forecast and alert, usage by project and model, a heatmap, chart marks, CSV export and service status in detail. See the [release notes](CHANGELOG.md#040---2026-10-19).
+**Latest release: [v0.5.0](https://github.com/juliobianco/claudy-usage-mac/releases/tag/v0.5.0).** A Token stats window: tokens per day by model, from Claude Code's own stats cache. 0.4.0 added the pace forecast and alert, usage by project and model, a heatmap, chart marks, CSV export and service status in detail. See the [release notes](CHANGELOG.md#050---2026-10-19).
 
 ## Install
 

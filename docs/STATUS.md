@@ -3,8 +3,8 @@
 Plan: `~/.claude/plans/async-sparking-reddy.md` (outside the repo). Updated 2026-10-18. The public plan is `ROADMAP.md`; this file is the working log.
 
 ## Done
-- **Observability plan** (2026-10-19): ten items in `ROADMAP.md` (issues #14-#23) with the design notes in `docs/OBSERVABILITY.md`, to be discussed and built one per sitting, before phase 5. Items 1-9 built and released (0.3.3 and 0.4.0); item 10 (stats cache) built, unreleased; then phase 5.
-- **Observability item 10** (2026-10-19, unreleased): "Token stats…" window from `~/.claude/stats-cache.json` (`StatsCache`, `TokensView`).
+- **Observability plan** (2026-10-19): ten items in `ROADMAP.md` (issues #14-#23) with the design notes in `docs/OBSERVABILITY.md`, to be discussed and built one per sitting, before phase 5. Items 1-9 built and released (0.3.3 and 0.4.0); item 10 (stats cache) released in 0.5.0: the list is done, phase 5 is next.
+- **Release 0.5.0** (2026-10-19): observability item 10, the "Token stats…" window (tokens per day by model from `~/.claude/stats-cache.json`: `StatsCache`, `TokensView`). The observability list is complete.
 - **Release 0.4.0** (2026-10-19): observability items 2-9: usage-read health warning, projects by period with drill-down, pace alert, chart marks, usage by model, hour-by-day heatmap, CSV export, service status in detail.
 - **Release 0.3.3** (2026-10-19): pace forecast (observability item 1, #14); bubble drag fixed.
 - **Release 0.3.2** (2026-10-19): floating widget readable over light backgrounds (dark base under the glass).

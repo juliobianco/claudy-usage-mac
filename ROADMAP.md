@@ -17,7 +17,7 @@ Small, clear, and good for a first contribution.
 
 ## Observability
 
-Decided 2026-10-19 and done **before** phase 5. Items 1 to 9 shipped in 0.3.3 and 0.4.0 (2026-10-19); item 10 is next. In the order we will build them, one per sitting; the thinking for each (data, design, open questions) is in [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md). Everything is read-only and stays on the Mac.
+Decided 2026-10-19 and done **before** phase 5. All ten items shipped on 2026-10-19 (0.3.3, 0.4.0, 0.5.0). In the order we will build them, one per sitting; the thinking for each (data, design, open questions) is in [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md). Everything is read-only and stays on the Mac.
 
 1. **Pace and forecast** — "at this pace you hit 100% at 15:40, before the reset". → [#14](https://github.com/juliobianco/claudy-usage-mac/issues/14)
 2. **Health of the usage read** — when it last worked, and why not when it did not. → [#15](https://github.com/juliobianco/claudy-usage-mac/issues/15)
