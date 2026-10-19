@@ -8,7 +8,7 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ## [0.4.0] - 2026-10-19
 
-The observability release: nine ways to see where your usage goes, all read-only and on the Mac.
+The observability release: eight more ways to see where your usage goes, all read-only and on the Mac.
 
 ### Added
 - Service status in detail: when something is off, the line lists the open incidents and the affected components. Only the Claude API and Claude Code change the dot's colour; other services say "other services affected".
