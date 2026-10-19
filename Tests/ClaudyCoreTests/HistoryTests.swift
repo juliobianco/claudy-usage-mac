@@ -176,6 +176,14 @@ final class ChartMarkTests: XCTestCase {
 }
 
 final class ExportTests: XCTestCase {
+    func testFormulaLookingNamesStayText() {
+        XCTAssertEqual(Export.field("=HYPERLINK(\"x\")"), "\"'=HYPERLINK(\"\"x\"\")\"")
+        XCTAssertEqual(Export.field("@a"), "'@a")
+        XCTAssertEqual(Export.field("-1"), "'-1")
+        XCTAssertEqual(Export.field("plain"), "plain")
+        XCTAssertEqual(Export.field("two\rlines"), "\"two\rlines\"")
+    }
+
     func testCSVRowsAndEscaping() {
         let utc = TimeZone(identifier: "UTC")!
         var h = UsageHistory()

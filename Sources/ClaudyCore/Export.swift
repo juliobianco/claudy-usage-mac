@@ -2,8 +2,11 @@ import Foundation
 
 /// CSV text of what the app keeps, for a spreadsheet. Pure: the UI picks the folder and writes the files.
 public enum Export {
-    static func field(_ s: String) -> String {
-        s.contains(where: { $0 == "," || $0 == "\"" || $0 == "\n" }) ? "\"" + s.replacingOccurrences(of: "\"", with: "\"\"") + "\"" : s
+    /// A spreadsheet runs a cell that starts with = + - @ (or a tab / CR) as a formula, and a project name is a folder
+    /// name someone else may have chosen: a quote in front keeps it text.
+    static func field(_ raw: String) -> String {
+        let s = raw.first.map { "=+-@\t\r".contains($0) } == true ? "'" + raw : raw
+        return s.contains(where: { $0 == "," || $0 == "\"" || $0 == "\n" || $0 == "\r" }) ? "\"" + s.replacingOccurrences(of: "\"", with: "\"\"") + "\"" : s
     }
 
     static func stamp(_ date: Date, _ tz: TimeZone) -> String {
@@ -27,7 +30,7 @@ public enum Export {
         for h in u.hourly.keys.sorted() {
             let t = stamp(Date(timeIntervalSince1970: TimeInterval(h) * 3600), timeZone)
             for (p, fs) in u.hourly[h]!.sorted(by: { $0.key < $1.key }) {
-                for (f, w) in fs.sorted(by: { $0.key < $1.key }) { out += "\(t),\(field(p)),\(f),\(String(format: "%.1f", w))\n" }
+                for (f, w) in fs.sorted(by: { $0.key < $1.key }) { out += "\(t),\(field(p)),\(field(f)),\(String(format: "%.1f", w))\n" }
             }
         }
         return out
