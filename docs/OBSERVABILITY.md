@@ -2,7 +2,7 @@
 
 Decided 2026-10-19. Phase 5 (Clawd as an assistant) comes **after** all of this. One item per sitting is fine: each is written to stand alone, and says what it touches so two items never overlap.
 
-How to use this file: when we start an item, we talk it through, write the decisions under **Decided**, and move its line in the table to *done*. Nothing here is built yet.
+How to use this file: when we start an item, we talk it through, write the decisions under **Decided**, and move its line in the table to *done*. Status per item is in the table.
 
 ## Order
 
@@ -17,6 +17,7 @@ How to use this file: when we start an item, we talk it through, write the decis
 | 7 | Hour-of-week heatmap | [#20](https://github.com/juliobianco/claudy-usage-mac/issues/20) | UI over `ProjectUsage.hours` | 3 (period) | built, in testing |
 | 8 | Export | [#21](https://github.com/juliobianco/claudy-usage-mac/issues/21) | a small writer in the core | nothing | to discuss |
 | 9 | Status by service | [#22](https://github.com/juliobianco/claudy-usage-mac/issues/22) | `Status.swift` | nothing | to discuss |
+| 10 | Tokens per day by model, all time | [#23](https://github.com/juliobianco/claudy-usage-mac/issues/23) | new reader of `stats-cache.json`, a window or a details section | 3 (model names) | to discuss |
 
 Why this order: 1 is the most useful and needs no new data; 2 is cheap and removes a confusing case (the panel looks frozen); 3 changes the scanner, so 6 and 7 become UI only. 4 waits for 1 because it is the same forecast with a notification on top. 8 and 9 are independent and can move up or down.
 
@@ -168,5 +169,23 @@ What already exists (so we do not rebuild it): the week ranking "PROJECTS · 7 D
 **Thinking.** `Status.swift` already reads the public status page; check whether the data we fetch already has components before adding a request. Keep the one-line form when everything is fine.
 
 **Open questions.** Does the status endpoint we use expose components and incidents? Click to open the status page?
+
+**Decided.** (empty)
+
+## 10. Tokens per day by model, all time
+
+**Idea.** From the owner (a picture of `/stats` → Models in Claude Code): a chart of tokens per day, one line per model, with All time / 7 days / 30 days, and under it each model's share with input, output and cache totals. "Prettier" than the terminal one.
+
+**Data.** `~/.claude/stats-cache.json` (checked 2026-10-19): `dailyModelTokens` (date → tokens by model id, from the first session), `modelUsage` (input, output, cache read, cache write by model), `dailyActivity`, `hourCounts`, `firstSessionDate`. Real token counts, not our weight estimate, and all time, not 7 days. Read only; no transcript scan.
+
+**Thinking.**
+- A small reader in the core (`StatsCache`), tested with a made-up file. Missing or unknown version → the section is simply absent (the file belongs to Claude Code and may change).
+- `lastComputedDate` was a day behind. Say "up to <date>" on the chart; the 7 days we scan ourselves (item 3) can fill the last days later if it matters.
+- Reuse `ModelName` for the labels (versions apart), so the same names appear everywhere.
+- It does not fit the small panel: probably a window of its own, opened from the details or the "…" menu, with the chart drawn in SwiftUI (Charts is available) in the app's style.
+- Different from item 6: that one is the share of the estimated *weight* in the last 24 h / 7 days; this one is real *tokens* over months. Both are useful; keep both and say which is which.
+- Not in the item 7 heatmap: `hourCounts` is a total by hour of day (all time), not by day, so it cannot replace the 7-day grid.
+
+**Open questions.** Window or details section? Lines or stacked bars? Show the cache totals or only input/output? Where does it sit in the order (after 9, or earlier)?
 
 **Decided.** (empty)

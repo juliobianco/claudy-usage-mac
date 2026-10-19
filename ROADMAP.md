@@ -28,6 +28,7 @@ Decided 2026-10-19 and done **before** phase 5. In the order we will build them,
 7. **Hour-of-week heatmap** — when the 5h windows are really used. → [#20](https://github.com/juliobianco/claudy-usage-mac/issues/20)
 8. **Export the history** — CSV or JSON. → [#21](https://github.com/juliobianco/claudy-usage-mac/issues/21)
 9. **Status by service** — which component is degraded, recent incidents. → [#22](https://github.com/juliobianco/claudy-usage-mac/issues/22)
+10. **Tokens per day by model, all time** — a chart from Claude Code's own stats cache, like `/stats` → Models but prettier. → [#23](https://github.com/juliobianco/claudy-usage-mac/issues/23)
 
 ## Phase 5: Clawd as an assistant
 
