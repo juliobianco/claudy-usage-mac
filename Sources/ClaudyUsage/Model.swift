@@ -55,6 +55,7 @@ final class AppModel {
         NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated { DispatchQueue.main.asyncAfter(deadline: .now() + 5) { self?.refreshUsage(); self?.refreshStatus() } }
         }
+        if Prefs.shared.alertsNotifyPace { Notifier.authorize() }     // on by default: ask once, at the first start
         refreshUsage(); refreshSessions(); refreshStatus(); refreshVersion(); refreshAccount()
         // The floating widget comes back where it was left.
         if Prefs.shared.floatOpen, ProcessInfo.processInfo.environment["CLAUDY_NO_FLOAT"] == nil {
@@ -82,6 +83,7 @@ final class AppModel {
                     for e in ResetDetector.events(old: self.usage, new: u) { self.celebrate(e) }
                     self.usage = u; self.usageAt = Date(); self.usageFailed = false; self.usageError = ""
                     self.scene.observe(model: self)
+                    self.checkPace()
                     if self.history.add(session: u.session?.percent, week: u.week?.percent), self.persist { self.history.save() }
                 case .failed(let why):   // keep the last numbers, marked stale, and try again soon
                     self.failStreak += 1
@@ -177,6 +179,17 @@ final class AppModel {
         guard waiting.count > prevWaiting, Prefs.shared.alertsNotifyWaiting, let s = waiting.first else { return }
         let where_ = [Redact.name(s.git?.repo ?? s.name, "project"), s.git.map { Redact.name($0.branch, "branch") }].compactMap { $0 }.joined(separator: " · ")
         Notifier.post(L.t("notify.waiting"), where_)
+    }
+
+    /// The forecast says the 5 h limit comes within the hour and before the reset: one notification per window.
+    private func checkPace() {
+        guard Prefs.shared.alertsNotifyPace, persist, let reset = usage?.session?.reset else { return }
+        let key = "paceAlertedReset", last = UserDefaults.standard.double(forKey: key)
+        let p = Pace.session(history, now: Date(), reset: reset)
+        guard Pace.alertDue(p, now: Date(), reset: reset, lastReset: last > 0 ? Date(timeIntervalSince1970: last) : nil),
+              case .hits(let at) = p else { return }
+        UserDefaults.standard.set(reset.timeIntervalSince1970, forKey: key)
+        Notifier.post(L.t("notify.pace", L.date("HH:mm").string(from: at)), L.t("notify.paceBody", L.date("HH:mm").string(from: reset)))
     }
 
     /// A limit started over: Clawd celebrates, the bar and the widget sparkle for a few seconds.

@@ -7,6 +7,7 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 ## [Unreleased]
 
 ### Added
+- A notification when the pace forecast says the 5-hour limit will be hit within the hour, before it resets. Once per window, on by default, with a switch in Settings → Alerts.
 - The project ranking follows the 24 hours / 7 days switch, and a click on a project shows its model mix and its busiest hours of the day.
 - A warning when the usage read keeps failing (two failures in a row, or 10 minutes without a good read): how long, why, and a "try now" button. The footer clock turns yellow too.
 

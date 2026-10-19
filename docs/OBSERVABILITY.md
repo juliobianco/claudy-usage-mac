@@ -11,7 +11,7 @@ How to use this file: when we start an item, we talk it through, write the decis
 | 1 | Pace and forecast | [#14](https://github.com/juliobianco/claudy-usage-mac/issues/14) | `History.swift` (a pure function), panel, floating card | nothing | done (0.3.3) |
 | 2 | Health of the usage read | [#15](https://github.com/juliobianco/claudy-usage-mac/issues/15) | `Model.swift`, panel | nothing | built, in testing |
 | 3 | Usage by project, deeper | [#16](https://github.com/juliobianco/claudy-usage-mac/issues/16) | scanner (adds the model dimension), `PanelView` | nothing | built, in testing |
-| 4 | Pace alert | [#17](https://github.com/juliobianco/claudy-usage-mac/issues/17) | alerts in `Model.swift`, `AlertsUI`, settings | 1 | to discuss |
+| 4 | Pace alert | [#17](https://github.com/juliobianco/claudy-usage-mac/issues/17) | alerts in `Model.swift`, `AlertsUI`, settings | 1 | built, in testing |
 | 5 | Markers on the chart | [#18](https://github.com/juliobianco/claudy-usage-mac/issues/18) | `HistoryView.swift` | maybe 1 | to discuss |
 | 6 | Usage by model | [#19](https://github.com/juliobianco/claudy-usage-mac/issues/19) | UI only | the model dimension from 3 | to discuss |
 | 7 | Hour-of-week heatmap | [#20](https://github.com/juliobianco/claudy-usage-mac/issues/20) | UI over `ProjectUsage.hours` | 3 (period) | to discuss |
@@ -101,7 +101,12 @@ What already exists (so we do not rebuild it): the week ranking "PROJECTS · 7 D
 
 **Open questions.** Threshold: only if it is hit at least 30 min before the reset? Session only, or the week too?
 
-**Decided.** (empty)
+**Decided.** (2026-10-19)
+- Fires when the session forecast says 100% within 60 minutes and before the reset. Session only: the week's average is too unreliable for an alert.
+- Once per window: the reset time of the window already warned about is kept (`paceAlertedReset` in UserDefaults, survives a restart); a new window has a new reset and re-arms.
+- A switch in Settings → Alerts, **on by default** (the other two notifications are off by default). Asks for the notification permission at the first start.
+- Wording: "At this pace the 5-hour limit ends at 16:07" / "It resets at 17:00."
+- Built: `Pace.alertDue` (pure, tested), `AppModel.checkPace()`, `alertsNotifyPace`. No preview button.
 
 ## 5. Markers on the chart
 

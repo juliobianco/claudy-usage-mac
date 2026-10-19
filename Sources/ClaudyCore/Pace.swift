@@ -32,6 +32,14 @@ public enum Pace: Equatable, Sendable {
         return project(percent: Double(percent), perMinute: Double(percent) / elapsed, now: now, reset: reset)
     }
 
+    /// The pace alert: the limit is hit within the hour and before the reset, once per window.
+    /// `lastReset` is the reset of the window already warned about; a new window has a different one.
+    public static func alertDue(_ p: Pace, now: Date, reset: Date?, lastReset: Date?, within: TimeInterval = 3600) -> Bool {
+        guard case .hits(let at) = p, let reset, at.timeIntervalSince(now) < within else { return false }
+        if let lastReset, abs(lastReset.timeIntervalSince(reset)) < 600 { return false }     // the reset time drifts by minutes
+        return true
+    }
+
     static func project(percent: Double, perMinute: Double, now: Date, reset: Date?) -> Pace {
         guard let reset, reset > now, percent < 100 else { return .unknown }
         guard perMinute > 0 else { return .safe }

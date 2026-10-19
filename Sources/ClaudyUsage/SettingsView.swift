@@ -193,6 +193,7 @@ struct BarTab: View {
         group(L.t("alerts.title")) {
             SwitchRow(label: L.t("alerts.animate"), hint: L.t("alerts.animate.hint"), isOn: $prefs.alertsAnimate)
             SwitchRow(label: L.t("alerts.notifyWaiting"), isOn: Binding(get: { prefs.alertsNotifyWaiting }, set: { prefs.alertsNotifyWaiting = $0; if $0 { Notifier.authorize() } }))
+            SwitchRow(label: L.t("alerts.notifyPace"), isOn: Binding(get: { prefs.alertsNotifyPace }, set: { prefs.alertsNotifyPace = $0; if $0 { Notifier.authorize() } }))
             SwitchRow(label: L.t("alerts.notifyReset"), isOn: Binding(get: { prefs.alertsNotifyReset }, set: { prefs.alertsNotifyReset = $0; if $0 { Notifier.authorize() } }))
             HStack(spacing: 8) {
                 ActionButton(text: L.t("alerts.previewWaiting"), systemImage: "questionmark.circle") { model.previewAlert(waiting: true) }

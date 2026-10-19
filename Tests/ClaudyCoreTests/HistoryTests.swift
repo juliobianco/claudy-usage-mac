@@ -112,6 +112,16 @@ final class PaceTests: XCTestCase {
         XCTAssertEqual(Pace.session(history([(0, 10), (10, 20)]), now: now, reset: nil), .unknown)
     }
 
+    func testAlertOnceWithinTheHourBeforeTheReset() {
+        let reset = t0.addingTimeInterval(7200)
+        XCTAssertTrue(Pace.alertDue(.hits(t0.addingTimeInterval(1800)), now: t0, reset: reset, lastReset: nil))
+        XCTAssertFalse(Pace.alertDue(.hits(t0.addingTimeInterval(5400)), now: t0, reset: reset, lastReset: nil))      // 90 min away
+        XCTAssertFalse(Pace.alertDue(.safe, now: t0, reset: reset, lastReset: nil))
+        XCTAssertFalse(Pace.alertDue(.unknown, now: t0, reset: reset, lastReset: nil))
+        XCTAssertFalse(Pace.alertDue(.hits(t0.addingTimeInterval(1800)), now: t0, reset: reset, lastReset: reset.addingTimeInterval(120)))   // same window
+        XCTAssertTrue(Pace.alertDue(.hits(t0.addingTimeInterval(1800)), now: t0, reset: reset, lastReset: reset.addingTimeInterval(-5 * 3600)))   // a new window
+    }
+
     func testWeekUsesTheAverageSinceTheStart() {
         let reset = t0.addingTimeInterval(4 * 86400)              // 3 days in
         XCTAssertEqual(Pace.week(percent: 60, now: t0, reset: reset), .hits(t0.addingTimeInterval(2 * 86400)))   // 20% a day
