@@ -7,6 +7,7 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 ## [Unreleased]
 
 ### Added
+- Service status in detail: when something is off, the line lists the open incidents and the affected components. Only the Claude API and Claude Code change the dot's colour; other services say "other services affected".
 - "Export history…" in the ⋯ menu: the 5 h / weekly history and the usage by project and model, as two CSV files in a folder you pick.
 - "When you use it": a heatmap of the last 7 days by hour, opened from the details.
 - A MODELS section under the projects: the share of Opus, Sonnet, Haiku and others, for the same 24 hours / 7 days switch.

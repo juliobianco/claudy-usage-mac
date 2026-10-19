@@ -236,6 +236,12 @@ final class AppModel {
                           git: GitInfo(repo: "docs", branch: "fix/typos", worktree: "typos")),
         ]
         status = ClaudeStatus(level: .ok, text: "", detail: [])
+        switch ProcessInfo.processInfo.environment["CLAUDY_DEMO_STATUS"] {         // a bad day, for screenshots
+        case "others": status = ClaudeStatus(level: .ok, text: "", detail: [], affected: [.init(name: "claude.ai", status: "partial_outage", important: false)])
+        case "code": status = ClaudeStatus(level: .minor, text: "Partially Degraded Service", detail: ["Elevated errors in Claude Code"],
+                                           affected: [.init(name: "Claude Code", status: "degraded_performance", important: true)])
+        default: break
+        }
         version = ClaudeVersion(installed: "2.1.302", latest: "2.1.302")
         account = ClaudeAccount(loggedIn: true, email: "you@example.com", plan: "pro")
         let hr = Int(t.timeIntervalSince1970 / 3600)
@@ -317,8 +323,15 @@ final class AppModel {
         }
     }
 
+    /// Lines under the status: the open incidents, then each affected component with the state in our words.
+    var statusDetail: [String] {
+        guard let s = status else { return [] }
+        return s.detail + s.affected.map { "\($0.name): \(L.t("status.c." + $0.status))" }
+    }
+
     var statusText: String {
         guard let s = status else { return statusFailed ? L.t("status.offline") : L.t("status.loading") }
+        if s.onlyOthersAffected { return L.t("status.others") }
         return s.level == .ok ? L.t("status.ok") : s.text
     }
 

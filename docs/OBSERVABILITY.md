@@ -16,7 +16,7 @@ How to use this file: when we start an item, we talk it through, write the decis
 | 6 | Usage by model | [#19](https://github.com/juliobianco/claudy-usage-mac/issues/19) | UI only | the model dimension from 3 | built, in testing |
 | 7 | Hour-of-week heatmap | [#20](https://github.com/juliobianco/claudy-usage-mac/issues/20) | UI over `ProjectUsage.hours` | 3 (period) | built, in testing |
 | 8 | Export | [#21](https://github.com/juliobianco/claudy-usage-mac/issues/21) | a small writer in the core | nothing | built, in testing |
-| 9 | Status by service | [#22](https://github.com/juliobianco/claudy-usage-mac/issues/22) | `Status.swift` | nothing | to discuss |
+| 9 | Status by service | [#22](https://github.com/juliobianco/claudy-usage-mac/issues/22) | `Status.swift` | nothing | built, in testing |
 | 10 | Tokens per day by model, all time | [#23](https://github.com/juliobianco/claudy-usage-mac/issues/23) | new reader of `stats-cache.json`, a window or a details section | 3 (model names) | to discuss |
 
 Why this order: 1 is the most useful and needs no new data; 2 is cheap and removes a confusing case (the panel looks frozen); 3 changes the scanner, so 6 and 7 become UI only. 4 waits for 1 because it is the same forecast with a notification on top. 8 and 9 are independent and can move up or down.
@@ -176,7 +176,13 @@ What already exists (so we do not rebuild it): the week ranking "PROJECTS · 7 D
 
 **Open questions.** Does the status endpoint we use expose components and incidents? Click to open the status page?
 
-**Decided.** (empty)
+**Decided.** (2026-10-19)
+- The summary endpoint we already call has everything (components with their state, open incidents): no new request.
+- Detail only when something is wrong; a normal day stays the one-line "All Claude systems operational".
+- Under the line: the open incidents, then each affected component with its state in our words ("Claude Code: degraded").
+- Only the Claude API and Claude Code set the dot's colour (minor/major). If only others are off (claude.ai, the console), the dot stays green and the line says "Claude API and Claude Code are fine · other services affected".
+- The click still opens status.claude.com.
+- Built: `StatusFetcher.parse` (tested, `StatusParseTests`), `ClaudeStatus.affected`, `AppModel.statusDetail`. `CLAUDY_DEMO_STATUS=others|code` with `CLAUDY_DEMO=1` shows the two cases in a snapshot.
 
 ## 10. Tokens per day by model, all time
 

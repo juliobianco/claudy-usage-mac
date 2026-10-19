@@ -175,6 +175,30 @@ final class ChartMarkTests: XCTestCase {
     }
 }
 
+final class StatusParseTests: XCTestCase {
+    func page(_ comps: [(String, String)], incidents: [String] = [], indicator: String = "minor") -> Data {
+        let c = comps.map { #"{"name":"\#($0.0)","status":"\#($0.1)"}"# }.joined(separator: ",")
+        let i = incidents.map { #"{"name":"\#($0)"}"# }.joined(separator: ",")
+        return Data(#"{"status":{"indicator":"\#(indicator)","description":"d"},"components":[\#(c)],"incidents":[\#(i)]}"#.utf8)
+    }
+
+    func testOnlyTheApiAndClaudeCodeSetTheLevel() {
+        let ok = StatusFetcher.parse(page([("claude.ai", "major_outage"), ("Claude API (api.anthropic.com)", "operational"), ("Claude Code", "operational")]))!
+        XCTAssertEqual(ok.level, .ok)
+        XCTAssertTrue(ok.onlyOthersAffected)
+        XCTAssertEqual(ok.affected.map(\.name), ["claude.ai"])
+        let minor = StatusFetcher.parse(page([("Claude Code", "degraded_performance")], incidents: ["Slow replies"]))!
+        XCTAssertEqual(minor.level, .minor)
+        XCTAssertEqual(minor.detail, ["Slow replies"])
+        let major = StatusFetcher.parse(page([("Claude Code", "degraded_performance"), ("Claude API (api.anthropic.com)", "major_outage")]))!
+        XCTAssertEqual(major.level, .major)
+        let none = StatusFetcher.parse(page([("claude.ai", "operational")], indicator: "none"))!
+        XCTAssertEqual(none.level, .ok); XCTAssertFalse(none.onlyOthersAffected)
+        XCTAssertEqual(StatusFetcher.parse(Data(#"{"status":{"indicator":"major"},"components":[]}"#.utf8))?.level, .major)   // no components: the indicator
+        XCTAssertNil(StatusFetcher.parse(Data("nope".utf8)))
+    }
+}
+
 final class ExportTests: XCTestCase {
     func testFormulaLookingNamesStayText() {
         XCTAssertEqual(Export.field("=HYPERLINK(\"x\")"), "\"'=HYPERLINK(\"\"x\"\")\"")

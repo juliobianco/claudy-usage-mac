@@ -110,7 +110,7 @@ struct PanelView: View {
                 Circle().fill(model.statusColor).frame(width: 7, height: 7).padding(.top, 4)
                 VStack(alignment: .leading, spacing: 1) {
                     Text(model.statusText).font(.system(size: 12)).foregroundStyle(T.muted)
-                    ForEach(model.status?.detail ?? [], id: \.self) {
+                    ForEach(model.statusDetail, id: \.self) {
                         Text($0).font(.system(size: 10.5)).foregroundStyle(T.muted)
                     }
                 }

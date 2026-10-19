@@ -5,32 +5,61 @@ import Foundation
 
 public struct ClaudeStatus: Equatable, Sendable {
     public enum Level: Sendable { case ok, minor, major, unknown }
-    public var level: Level
+    public struct Component: Equatable, Sendable {
+        public var name: String
+        public var status: String       // the page's own word: degraded_performance, partial_outage, major_outage, under_maintenance
+        public var important: Bool      // the API and Claude Code: what a session depends on
+        public init(name: String, status: String, important: Bool) { self.name = name; self.status = status; self.important = important }
+    }
+    public var level: Level             // only the important components set it
     public var text: String
-    public var detail: [String]
-    public init(level: Level, text: String, detail: [String]) { self.level = level; self.text = text; self.detail = detail }
+    public var detail: [String]         // names of the open incidents
+    public var affected: [Component]    // components that are not operational
+    public init(level: Level, text: String, detail: [String], affected: [Component] = []) {
+        self.level = level; self.text = text; self.detail = detail; self.affected = affected
+    }
+    /// Something else (the site, the console) is off while the API and Claude Code are fine.
+    public var onlyOthersAffected: Bool { level == .ok && !affected.isEmpty }
 }
 
 public enum StatusFetcher {
     public static func fetch() async -> ClaudeStatus? {
         guard let url = URL(string: "https://status.claude.com/api/v2/summary.json"),
-              let (data, _) = try? await URLSession.shared.data(from: url),
-              let j = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let st = j["status"] as? [String: Any] else { return nil }
-        let level: ClaudeStatus.Level
-        switch st["indicator"] as? String {
-        case "none": level = .ok
-        case "minor", "maintenance": level = .minor
-        case "major", "critical": level = .major
-        default: level = .unknown
+              let (data, _) = try? await URLSession.shared.data(from: url) else { return nil }
+        return parse(data)
+    }
+
+    static func severity(_ status: String) -> ClaudeStatus.Level {
+        switch status {
+        case "operational": .ok
+        case "major_outage": .major
+        default: .minor                 // degraded performance, partial outage, maintenance
         }
-        var detail = (j["incidents"] as? [[String: Any]] ?? []).compactMap { $0["name"] as? String }
-        for c in j["components"] as? [[String: Any]] ?? [] {
-            if let s = c["status"] as? String, s != "operational", let n = c["name"] as? String {
-                detail.append("\(n): \(s.replacingOccurrences(of: "_", with: " "))")
+    }
+
+    public static func parse(_ data: Data) -> ClaudeStatus? {
+        guard let j = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let st = j["status"] as? [String: Any] else { return nil }
+        let incidents = (j["incidents"] as? [[String: Any]] ?? []).compactMap { $0["name"] as? String }
+        var affected: [ClaudeStatus.Component] = []
+        var level = ClaudeStatus.Level.ok
+        let comps = j["components"] as? [[String: Any]] ?? []
+        for c in comps {
+            guard let s = c["status"] as? String, s != "operational", let n = c["name"] as? String else { continue }
+            let important = n.contains("Claude Code") || n.contains("api.anthropic.com")
+            affected.append(.init(name: n, status: s, important: important))
+            if important, severity(s) == .major || level == .ok { level = severity(s) }
+        }
+        // No components in the answer: fall back to the page's own indicator.
+        if comps.isEmpty {
+            switch st["indicator"] as? String {
+            case "none": level = .ok
+            case "minor", "maintenance": level = .minor
+            case "major", "critical": level = .major
+            default: level = .unknown
             }
         }
-        return ClaudeStatus(level: level, text: st["description"] as? String ?? "", detail: detail)
+        return ClaudeStatus(level: level, text: st["description"] as? String ?? "", detail: incidents, affected: affected)
     }
 }
 
