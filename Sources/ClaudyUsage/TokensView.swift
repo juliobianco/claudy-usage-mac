@@ -36,6 +36,19 @@ struct TokensView: View {
         }
     }
 
+    /// Index ranges to draw: each run of values above zero, widened by one index on each side (the zero it comes from and goes to).
+    static func usedRuns(_ v: [Double]) -> [Range<Int>] {
+        var out: [Range<Int>] = [], i = 0
+        while i < v.count {
+            guard v[i] > 0 else { i += 1; continue }
+            var j = i
+            while j + 1 < v.count, v[j + 1] > 0 { j += 1 }
+            out.append(max(0, i - 1)..<min(v.count, j + 2))
+            i = j + 1
+        }
+        return out
+    }
+
     /// A smooth line through the points that never overshoots: a monotone cubic (Fritsch-Carlson), so a quiet day stays at
     /// zero instead of dipping below it and a peak stays at its real height.
     static func smooth(_ p: [CGPoint]) -> Path {
@@ -97,12 +110,16 @@ struct TokensView: View {
                     ctx.draw(Text(label).font(.system(size: 9)).foregroundColor(T.faint), at: CGPoint(x: px(t.i), y: h + 10), anchor: anchor)
                 }
                 for (li, line) in series.lines.enumerated().reversed() {
-                    let pts = line.values.enumerated().map { CGPoint(x: px($0.offset), y: py($0.element)) }
-                    let curve = Self.smooth(pts)
-                    var area = curve
-                    if let f = pts.first, let l = pts.last { area.addLine(to: CGPoint(x: l.x, y: py(0))); area.addLine(to: CGPoint(x: f.x, y: py(0))); area.closeSubpath() }
-                    ctx.fill(area, with: .color(color(li).opacity(0.08)))
-                    ctx.stroke(curve, with: .color(color(li)), style: StrokeStyle(lineWidth: 1.8, lineCap: .round, lineJoin: .round))
+                    // Only where the model was used: a run of days with tokens, plus the zero day on each side so the curve
+                    // rises from and falls back to the floor. A flat line along zero would say the model existed before it did.
+                    for run in Self.usedRuns(line.values) {
+                        let pts = run.map { CGPoint(x: px($0), y: py(line.values[$0])) }
+                        let curve = Self.smooth(pts)
+                        var area = curve
+                        if let f = pts.first, let l = pts.last { area.addLine(to: CGPoint(x: l.x, y: py(0))); area.addLine(to: CGPoint(x: f.x, y: py(0))); area.closeSubpath() }
+                        ctx.fill(area, with: .color(color(li).opacity(0.08)))
+                        ctx.stroke(curve, with: .color(color(li)), style: StrokeStyle(lineWidth: 1.8, lineCap: .round, lineJoin: .round))
+                    }
                 }
                 if let i = hover, i < n { ctx.fill(Path(CGRect(x: px(i), y: 0, width: 1, height: h)), with: .color(Color.white.opacity(0.35))) }
             }
