@@ -209,12 +209,13 @@ struct FloatingRoot: View {
         let bubble = BubbleView(model: model)
             .overlay(DragHandle(onClick: { controller.toggleExpanded() }, tooltip: model.bubbleTip))
         if #available(macOS 26.0, *), prefs.floatGlass {
-            let tint = Glass.regular.tint(T.bg.opacity(0.55))
+            // The glass takes the colour of what is behind it (grey over white, and the light text vanishes): a dark base keeps it readable.
+            let tint = Glass.regular.tint(T.bg.opacity(0.88))
             GlassEffectContainer(spacing: 24) {
                 if state.expanded {
-                    card.glassEffect(tint, in: RoundedRectangle(cornerRadius: 26, style: .continuous)).glassEffectID("surface", in: ns)
+                    card.background(T.bg.opacity(0.8), in: RoundedRectangle(cornerRadius: 26, style: .continuous)).glassEffect(tint, in: RoundedRectangle(cornerRadius: 26, style: .continuous)).glassEffectID("surface", in: ns)
                 } else {
-                    bubble.glassEffect(tint.interactive(), in: Circle()).glassEffectID("surface", in: ns).padding(8)
+                    bubble.background(T.bg.opacity(0.8), in: Circle()).glassEffect(tint.interactive(), in: Circle()).glassEffectID("surface", in: ns).padding(8)
                 }
             }
         } else if state.expanded {

@@ -21,7 +21,7 @@ A native macOS port of [Enhed/clawd-usage-winwidget](https://github.com/Enhed/cl
 
 > A fan project, unaffiliated with Anthropic. Claude and Clawd belong to Anthropic.
 
-**Latest release: [v0.3.1](https://github.com/juliobianco/claudy-usage-mac/releases/tag/v0.3.1).** Launches at login by default (turn it off in the menu) and the Homebrew install opens the app right away. See the [release notes](CHANGELOG.md#031---2026-10-19).
+**Latest release: [v0.3.2](https://github.com/juliobianco/claudy-usage-mac/releases/tag/v0.3.2).** The floating widget is readable over light backgrounds. See the [release notes](CHANGELOG.md#032---2026-10-19).
 
 ## Install
 

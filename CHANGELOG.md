@@ -6,6 +6,12 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-10-19
+
+### Fixed
+
+- The floating widget is readable over a light background: the Liquid Glass sits on a dark base, so it no longer turns grey and swallows the light text.
+
 ## [0.3.1] - 2026-10-19
 
 ### Changed
