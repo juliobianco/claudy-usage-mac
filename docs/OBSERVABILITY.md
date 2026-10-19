@@ -12,7 +12,7 @@ How to use this file: when we start an item, we talk it through, write the decis
 | 2 | Health of the usage read | [#15](https://github.com/juliobianco/claudy-usage-mac/issues/15) | `Model.swift`, panel | nothing | built, in testing |
 | 3 | Usage by project, deeper | [#16](https://github.com/juliobianco/claudy-usage-mac/issues/16) | scanner (adds the model dimension), `PanelView` | nothing | built, in testing |
 | 4 | Pace alert | [#17](https://github.com/juliobianco/claudy-usage-mac/issues/17) | alerts in `Model.swift`, `AlertsUI`, settings | 1 | built, in testing |
-| 5 | Markers on the chart | [#18](https://github.com/juliobianco/claudy-usage-mac/issues/18) | `HistoryView.swift` | maybe 1 | to discuss |
+| 5 | Markers on the chart | [#18](https://github.com/juliobianco/claudy-usage-mac/issues/18) | `HistoryView.swift` | maybe 1 | built, in testing |
 | 6 | Usage by model | [#19](https://github.com/juliobianco/claudy-usage-mac/issues/19) | UI only | the model dimension from 3 | to discuss |
 | 7 | Hour-of-week heatmap | [#20](https://github.com/juliobianco/claudy-usage-mac/issues/20) | UI over `ProjectUsage.hours` | 3 (period) | to discuss |
 | 8 | Export | [#21](https://github.com/juliobianco/claudy-usage-mac/issues/21) | a small writer in the core | nothing | to discuss |
@@ -116,7 +116,14 @@ What already exists (so we do not rebuild it): the week ranking "PROJECTS · 7 D
 
 **Open questions.** Which events are worth a mark? Is it clutter on the 24h view?
 
-**Decided.** (empty)
+**Decided.** (2026-10-19)
+- Events: a limit reset (5 h or weekly) and a limit reaching 100%. Not "app was off": the gap in the line already says it.
+- Drawn as a small dot on the line: a ring for a reset (green 5 h, blue week), a filled red dot for 100%.
+- Inferred from the samples, nothing new is stored, so the 8 days already kept get their marks: a fall of 2+ points is a reset (it also catches one that happened while the app was off), a crossing of 100 is a hit.
+- Week view leaves out the 5 h resets (about thirty a week, they smear the line); the day view shows them. The week keeps its own reset and the 100% marks.
+- Hover: over a mark (within 6 points) the caption starts with what happened ("5h limit reset · Mon 14:07 · ...").
+- The forecast as a dotted line was left out: the text from item 1 covers it.
+- Built: `ChartMark.find` in `ChartMarks.swift` (tested), `drawMarks` and the hover in `HistoryView.swift`.
 
 ## 6. Usage by model
 

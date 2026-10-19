@@ -130,3 +130,15 @@ final class PaceTests: XCTestCase {
         XCTAssertEqual(Pace.week(percent: 50, now: t0, reset: t0.addingTimeInterval(7 * 86400 - 3600)), .unknown)   // first hour
     }
 }
+
+final class ChartMarkTests: XCTestCase {
+    func testResetsAndHundredsAreFoundFromTheSamples() {
+        func s(_ m: Int, _ a: Int, _ w: Int) -> HistorySample { HistorySample(minute: m, session: a, week: w) }
+        let samples = [s(0, 40, 10), s(5, 99, 10), s(10, 100, 11), s(15, 100, 11), s(300, 0, 11), s(305, 3, 2), s(310, 4, 3), s(315, -1, 3)]
+        let marks = ChartMark.find(samples, from: 0, to: 1000)
+        XCTAssertEqual(marks.map(\.kind), [.session100, .sessionReset, .weekReset])
+        XCTAssertEqual(marks.map(\.minute), [10, 300, 305])
+        XCTAssertEqual(ChartMark.find(samples, from: 100, to: 1000).count, 2)            // the 100% is outside the range
+        XCTAssertTrue(ChartMark.find([s(0, 50, 5), s(5, 49, 5)], from: 0, to: 9).isEmpty) // a wobble of 1 point is not a reset
+    }
+}

@@ -119,6 +119,26 @@ struct HistoryChart: View {
                 ctx.stroke(seg, with: .color(T.level(max(r[i - 1].v, r[i].v))), style: round)
             }
         }
+        drawMarks(ctx, w, h)
+    }
+
+    /// The week view leaves out the 5 h resets: there are about thirty of them in a week and they would smear the line.
+    private var marks: [ChartMark] {
+        let (t0, t1) = range
+        return ChartMark.find(model.history.samples, from: t0, to: t1).filter { mode == .day || $0.kind != .sessionReset }
+    }
+
+    /// Resets as a ring on the line they belong to, a limit reaching 100% as a filled red dot.
+    private func drawMarks(_ ctx: GraphicsContext, _ w: CGFloat, _ h: CGFloat) {
+        for m in marks {
+            let px = x(m.minute, w), py = 1 + (h - 2) * (1 - CGFloat(min(100, m.value)) / 100)
+            let r = CGRect(x: px - 3, y: py - 3, width: 6, height: 6)
+            switch m.kind {
+            case .session100, .week100: ctx.fill(Path(ellipseIn: r), with: .color(T.crit))
+            case .sessionReset: ctx.stroke(Path(ellipseIn: r), with: .color(T.ok), lineWidth: 1.2)
+            case .weekReset: ctx.stroke(Path(ellipseIn: r), with: .color(T.accent), lineWidth: 1.2)
+            }
+        }
     }
 
     /// Day view: hour marks, every 1, 2, 3, 6 or 12 hours so that about five fit.
@@ -197,6 +217,11 @@ struct HistoryChart: View {
         let (t0, t1) = range
         let t = t0 + Int(CGFloat(t1 - t0) * hx / max(1, width))
         var parts = [L.date("EEE HH:mm").string(from: Date(timeIntervalSince1970: TimeInterval(t) * 60))]
+        // Over a mark (within 6 points of the chart): say what happened there.
+        let slack = Int(CGFloat(t1 - t0) * 6 / max(1, width))
+        if let m = marks.first(where: { abs($0.minute - t) <= slack }) {
+            parts.insert(L.t("mark." + m.kind.rawValue), at: 0)
+        }
         if t > now { return parts.joined(separator: " · ") }                // the rest of the cycle has not happened yet
         if let s = model.history.sample(at: t) {
             if s.session >= 0 { parts.append("\(L.t("hist.5h")) \(s.session)%") }
