@@ -13,7 +13,7 @@ How to use this file: when we start an item, we talk it through, write the decis
 | 3 | Usage by project, deeper | [#16](https://github.com/juliobianco/claudy-usage-mac/issues/16) | scanner (adds the model dimension), `PanelView` | nothing | built, in testing |
 | 4 | Pace alert | [#17](https://github.com/juliobianco/claudy-usage-mac/issues/17) | alerts in `Model.swift`, `AlertsUI`, settings | 1 | built, in testing |
 | 5 | Markers on the chart | [#18](https://github.com/juliobianco/claudy-usage-mac/issues/18) | `HistoryView.swift` | maybe 1 | built, in testing |
-| 6 | Usage by model | [#19](https://github.com/juliobianco/claudy-usage-mac/issues/19) | UI only | the model dimension from 3 | to discuss |
+| 6 | Usage by model | [#19](https://github.com/juliobianco/claudy-usage-mac/issues/19) | UI only | the model dimension from 3 | built, in testing |
 | 7 | Hour-of-week heatmap | [#20](https://github.com/juliobianco/claudy-usage-mac/issues/20) | UI over `ProjectUsage.hours` | 3 (period) | to discuss |
 | 8 | Export | [#21](https://github.com/juliobianco/claudy-usage-mac/issues/21) | a small writer in the core | nothing | to discuss |
 | 9 | Status by service | [#22](https://github.com/juliobianco/claudy-usage-mac/issues/22) | `Status.swift` | nothing | to discuss |
@@ -131,7 +131,11 @@ What already exists (so we do not rebuild it): the week ranking "PROJECTS · 7 D
 
 **Open questions.** A bar under the project list or a separate heading? Cache share needs the token kinds kept apart in the scan; decide in item 3 whether to keep them.
 
-**Decided.** (empty)
+**Decided.** (2026-10-19)
+- Its own "MODELS" section right under the projects, following the 24 hours / 7 days switch.
+- Bars like the project rows (purple), one per model family, biggest first. A family under 1% is left out.
+- Pure UI over the scanner's family dimension (item 3): `ProjectUsage.models(sinceHour:)`, tested in `ProjectPeriodTests`.
+- Same estimate as the projects (tokens × price), same tooltip.
 
 ## 7. Hour-of-week heatmap
 

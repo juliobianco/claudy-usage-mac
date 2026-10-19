@@ -100,6 +100,16 @@ public struct ProjectUsage: Equatable, Sendable {
         return t.sorted { $0.value > $1.value }.map { ($0.key, 100 * $0.value / sum) }
     }
 
+    /// Model families over all projects, share of the period, biggest first. A family under 1% is left out
+    /// ("other" is often just a synthetic or unknown model).
+    public func models(sinceHour: Int = .min) -> [(family: String, share: Double)] {
+        var t: [String: Double] = [:]
+        for r in rows(since: sinceHour) { t[r.family, default: 0] += r.w }
+        let sum = t.values.reduce(0, +)
+        guard sum > 0 else { return [] }
+        return t.sorted { $0.value > $1.value }.map { ($0.key, 100 * $0.value / sum) }.filter { $0.1 >= 1 }
+    }
+
     /// Model families of one project, share of that project.
     public func families(of project: String, sinceHour: Int = .min) -> [(family: String, share: Double)] {
         var t: [String: Double] = [:]

@@ -363,6 +363,15 @@ struct DetailsView: View {
                 Text(L.t("counting")).font(.system(size: 10.5)).foregroundStyle(T.dim)
             }
         }
+        if let p = model.projects {
+            let models = p.models(sinceHour: period == "day" ? Int(model.now.timeIntervalSince1970 / 3600) - 24 : Int.min)
+            if !models.isEmpty {
+                VStack(alignment: .leading, spacing: 6) {
+                    heading(period == "day" ? L.t("models1") : L.t("models7")).help(L.t("projects.tip"))
+                    ForEach(models, id: \.family) { row(L.t("family." + $0.family), Int($0.share.rounded()), T.purple) }
+                }
+            }
+        }
     }
 
     /// Click a project: its model mix and the hours of the day it was busiest.

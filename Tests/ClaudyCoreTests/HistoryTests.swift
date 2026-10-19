@@ -83,6 +83,9 @@ final class ProjectPeriodTests: XCTestCase {
         XCTAssertEqual(u.families(of: "a").map(\.family), ["sonnet", "opus"])             // 70 vs 30 over the whole scan
         var utc = Calendar(identifier: .gregorian); utc.timeZone = TimeZone(identifier: "UTC")!
         XCTAssertEqual(u.busiestHours(of: "a", calendar: utc), [20, 4])   // hour 20 weighs 60, hour 100 (04h) weighs 40
+        XCTAssertEqual(u.models().map(\.family), ["sonnet", "opus", "haiku"])               // 70, 30, 5 of 105
+        XCTAssertEqual(u.models(sinceHour: 76).map(\.family), ["opus", "sonnet", "haiku"])  // 30, 10, 5 of 45
+        XCTAssertEqual(ProjectUsage(hourly: [1: ["a": ["opus": 100, "other": 0.5]]]).models().map(\.family), ["opus"])   // under 1%
         XCTAssertEqual(u.busiest(hour: 100), "a")
         XCTAssertNil(u.busiest(hour: 7))
     }

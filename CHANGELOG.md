@@ -7,6 +7,7 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 ## [Unreleased]
 
 ### Added
+- A MODELS section under the projects: the share of Opus, Sonnet, Haiku and others, for the same 24 hours / 7 days switch.
 - Marks on the history chart: a ring where a limit reset, a red dot where it reached 100%, with the event named when you hover over it. The week view shows the weekly reset and the 100% marks only.
 - A notification when the pace forecast says the 5-hour limit will be hit within the hour, before it resets. Once per window, on by default, with a switch in Settings → Alerts.
 - The project ranking follows the 24 hours / 7 days switch, and a click on a project shows its model mix and its busiest hours of the day.
