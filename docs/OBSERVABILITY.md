@@ -8,7 +8,7 @@ How to use this file: when we start an item, we talk it through, write the decis
 
 | # | Item | Issue | Touches | Needs | Status |
 |---|---|---|---|---|---|
-| 1 | Pace and forecast | [#14](https://github.com/juliobianco/claudy-usage-mac/issues/14) | `History.swift` (a pure function), panel, floating card | nothing | to discuss |
+| 1 | Pace and forecast | [#14](https://github.com/juliobianco/claudy-usage-mac/issues/14) | `History.swift` (a pure function), panel, floating card | nothing | done (0.3.3) |
 | 2 | Health of the usage read | [#15](https://github.com/juliobianco/claudy-usage-mac/issues/15) | `Model.swift`, panel | nothing | to discuss |
 | 3 | Usage by project, deeper | [#16](https://github.com/juliobianco/claudy-usage-mac/issues/16) | scanner (adds the model dimension), `PanelView` | nothing | to discuss |
 | 4 | Pace alert | [#17](https://github.com/juliobianco/claudy-usage-mac/issues/17) | alerts in `Model.swift`, `AlertsUI`, settings | 1 | to discuss |
@@ -37,7 +37,13 @@ What already exists (so we do not rebuild it): the week ranking "PROJECTS · 7 D
 
 **Open questions.** Which window for the session slope? Show a time or a time-left ("in 1h 20m")? Show the line when safe ("fine until the reset")? In the menu bar label or only inside?
 
-**Decided.** (empty)
+**Decided.** (2026-10-19)
+- Session slope over the last 30 minutes of the current window; needs 10+ minutes of line, else shows nothing.
+- A time ("at 16:07"), not a time-left: the reset line above already says how long is left.
+- Always shown when there is a forecast, also when safe ("fine until the reset").
+- Week: the average since the week began (needs 6 h of week), worded "at the week's average".
+- Only inside the panel and the floating card, as a small line under the reset (session) and under the week bar. Not in the menu bar label or the bubble. Placement to be revisited after living with it.
+- Built: `Sources/ClaudyCore/Pace.swift` (pure, tested in `PaceTests`), `AppModel.sessionPaceText` / `weekPaceText`.
 
 ## 2. Health of the usage read
 

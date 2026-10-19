@@ -15,7 +15,7 @@ struct PanelView: View {
             header.padding(.bottom, 6)
             hero
             resetLine
-            LimitRow(model: model, title: L.t("week"), line: model.usage?.week, color: T.accent).padding(.top, 9)
+            LimitRow(model: model, title: L.t("week"), line: model.usage?.week, color: T.accent, pace: model.weekPaceText).padding(.top, 9)
             if prefs.showFable, let f = model.usage?.fable { LimitRow(model: model, title: L.t("fableWeek"), line: f, color: T.purple).padding(.top, 7) }
             if prefs.showSessions { sessionsRow.padding(.top, 11) }
             if prefs.showStatus { statusRow.padding(.top, 10) }
@@ -76,7 +76,10 @@ struct PanelView: View {
     }
 
     private var resetLine: some View {
-        Text(model.resetText).font(.system(size: 12)).foregroundStyle(T.text2).padding(.top, 8)
+        VStack(alignment: .leading, spacing: 2) {
+            Text(model.resetText).font(.system(size: 12)).foregroundStyle(T.text2)
+            if let p = model.sessionPaceText { Text(p).font(.system(size: 10)).foregroundStyle(T.dim) }
+        }.padding(.top, 8)
     }
 
     // MARK: sessions + status
@@ -195,6 +198,7 @@ struct LimitRow: View {
     let title: String
     let line: UsageLine?
     let color: Color
+    var pace: String?
 
     var body: some View {
         VStack(spacing: 4) {
@@ -204,6 +208,7 @@ struct LimitRow: View {
                 Text(model.limitText(line)).font(.system(size: 11)).foregroundStyle(T.muted)
             }
             ProgressBar(percent: line?.percent, height: 5, color: color)
+            if let pace { Text(pace).font(.system(size: 10)).foregroundStyle(T.dim).frame(maxWidth: .infinity, alignment: .leading) }
         }
     }
 }

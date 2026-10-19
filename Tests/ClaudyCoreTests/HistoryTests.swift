@@ -69,3 +69,36 @@ final class HistoryTests: XCTestCase {
         XCTAssertEqual(r.busiest(hour: Int(now.timeIntervalSince1970 / 3600)), "app")
     }
 }
+
+final class PaceTests: XCTestCase {
+    let t0 = Date(timeIntervalSince1970: 1_800_000_000)
+
+    func history(_ rows: [(Int, Int)]) -> UsageHistory {       // (minutes after t0, session %)
+        var h = UsageHistory()
+        for (m, p) in rows { h.add(session: p, week: 0, now: t0.addingTimeInterval(Double(m) * 60)) }
+        return h
+    }
+
+    func testSessionHitsBeforeResetOrIsSafe() {
+        let h = history([(0, 10), (10, 20), (20, 30)])            // 1% a minute
+        let now = t0.addingTimeInterval(20 * 60)
+                XCTAssertEqual(Pace.session(h, now: now, reset: now.addingTimeInterval(3 * 3600)), .hits(now.addingTimeInterval(70 * 60)))
+        XCTAssertEqual(Pace.session(h, now: now, reset: now.addingTimeInterval(60 * 60)), .safe)   // 70 min to 100%, reset in 60
+    }
+
+    func testSessionFlatDropAndTooLittle() {
+        let now = t0.addingTimeInterval(20 * 60), reset = now.addingTimeInterval(3600)
+        XCTAssertEqual(Pace.session(history([(0, 30), (10, 30), (20, 30)]), now: now, reset: reset), .safe)
+        XCTAssertEqual(Pace.session(history([(15, 30), (20, 31)]), now: now, reset: reset), .unknown)   // 5 minutes of line
+        XCTAssertEqual(Pace.session(history([(0, 80), (10, 5), (20, 15)]), now: now, reset: now.addingTimeInterval(7200)), .hits(now.addingTimeInterval(85 * 60)))   // the drop at 10 is a reset
+        XCTAssertEqual(Pace.session(history([(0, 10), (10, 20)]), now: now, reset: nil), .unknown)
+    }
+
+    func testWeekUsesTheAverageSinceTheStart() {
+        let reset = t0.addingTimeInterval(4 * 86400)              // 3 days in
+        XCTAssertEqual(Pace.week(percent: 60, now: t0, reset: reset), .hits(t0.addingTimeInterval(2 * 86400)))   // 20% a day
+        XCTAssertEqual(Pace.week(percent: 30, now: t0, reset: reset), .safe)                                     // 10% a day: 7 days to go, 4 left
+        XCTAssertEqual(Pace.week(percent: 0, now: t0, reset: reset), .safe)
+        XCTAssertEqual(Pace.week(percent: 50, now: t0, reset: t0.addingTimeInterval(7 * 86400 - 3600)), .unknown)   // first hour
+    }
+}

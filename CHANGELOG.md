@@ -6,6 +6,14 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-10-19
+
+### Added
+- Pace forecast under the session reset ("at this pace: 100% at 16:07", or "fine until the reset") and under the week bar (from the week's average). Shown in the panel and the floating card.
+
+### Fixed
+- The bubble can be dragged again; it no longer springs back into the card.
+
 ## [0.3.2] - 2026-10-19
 
 ### Fixed

@@ -258,6 +258,22 @@ final class AppModel {
         return stale ? base + " · " + L.t("stale") : base
     }
 
+    /// The straight-line forecast under the bar; nothing while there is too little to say (see Pace).
+    var sessionPaceText: String? {
+        paceText(Pace.session(history, now: now, reset: usage?.session?.reset), "HH:mm", "pace.session")
+    }
+    var weekPaceText: String? {
+        guard let w = usage?.week else { return nil }
+        return paceText(Pace.week(percent: w.percent, now: now, reset: w.reset), "EEE HH:mm", "pace.week")
+    }
+    private func paceText(_ p: Pace, _ format: String, _ key: String) -> String? {
+        switch p {
+        case .hits(let d): L.t(key + ".hits", L.date(format).string(from: d))
+        case .safe: L.t(key + ".safe")
+        case .unknown: nil
+        }
+    }
+
     func limitText(_ l: UsageLine?) -> String {
         guard let l else { return "" }
         let span = l.reset.flatMap { Format.span(to: $0, now: now) }

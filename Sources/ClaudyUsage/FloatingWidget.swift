@@ -249,9 +249,16 @@ struct DragHandle: NSViewRepresentable {
         override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
         override func mouseDown(with event: NSEvent) {
             guard let w = window else { return }
-            let before = w.frame.origin
-            w.performDrag(with: event)               // returns when the button is released
-            if w.frame.origin == before { onClick?() }
+            // Own drag loop instead of performDrag: on the glass bubble performDrag returned at once, so every drag counted as a click.
+            let start = NSEvent.mouseLocation, origin = w.frame.origin
+            var moved = false
+            while let e = w.nextEvent(matching: [.leftMouseDragged, .leftMouseUp]), e.type == .leftMouseDragged {
+                let p = NSEvent.mouseLocation
+                if !moved && hypot(p.x - start.x, p.y - start.y) < 3 { continue }     // a click may wobble a little
+                moved = true
+                w.setFrameOrigin(NSPoint(x: origin.x + p.x - start.x, y: origin.y + p.y - start.y))
+            }
+            if !moved { onClick?() }
         }
     }
 }
@@ -280,8 +287,11 @@ struct FloatingCard: View {
                     .onDisappear { model.scene.stop() }
                 ProgressBar(percent: model.usage?.session?.percent, height: 7, color: model.usage?.session.map { T.level($0.percent) } ?? T.ok)
             }
-            Text(model.resetText).font(.system(size: 12)).foregroundStyle(T.text2).padding(.top, 8)
-            LimitRow(model: model, title: L.t("week"), line: model.usage?.week, color: T.accent).padding(.top, 9)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(model.resetText).font(.system(size: 12)).foregroundStyle(T.text2)
+                if let p = model.sessionPaceText { Text(p).font(.system(size: 10)).foregroundStyle(T.dim) }
+            }.padding(.top, 8)
+            LimitRow(model: model, title: L.t("week"), line: model.usage?.week, color: T.accent, pace: model.weekPaceText).padding(.top, 9)
             if prefs.showFable, let f = model.usage?.fable { LimitRow(model: model, title: L.t("fableWeek"), line: f, color: T.purple).padding(.top, 7) }
             HStack {
                 Text(L.t("sessions")).font(.system(size: 10, weight: .semibold)).foregroundStyle(T.dim)
