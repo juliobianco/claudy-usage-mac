@@ -65,8 +65,26 @@ final class HistoryTests: XCTestCase {
         h.write(Data(("\"}\n" + more).utf8)); try h.close()
         r = scanner.scan(root: root.path, since: since, now: now)
         XCTAssertEqual(r.total["app"] ?? 0, 3 * 150 + 5 * 10, accuracy: 0.001)            // opus = 5 per input token
-        XCTAssertEqual(r.ranked.first?.name, "app")
+        XCTAssertEqual(r.ranked().first?.name, "app")
+        XCTAssertEqual(r.families(of: "app").map(\.family), ["sonnet", "opus"])          // 450 and 50 of 500
+        XCTAssertEqual(r.families(of: "app")[0].share, 90, accuracy: 0.001)
         XCTAssertEqual(r.busiest(hour: Int(now.timeIntervalSince1970 / 3600)), "app")
+    }
+}
+
+final class ProjectPeriodTests: XCTestCase {
+    func testPeriodFilterFamiliesAndBusiestHours() {
+        let u = ProjectUsage(hourly: [100: ["a": ["opus": 30, "sonnet": 10], "b": ["haiku": 5]], 20: ["a": ["sonnet": 60]]])
+        XCTAssertEqual(u.ranked().map(\.name), ["a", "b"])
+        XCTAssertEqual(u.ranked(sinceHour: 76).map(\.name), ["a", "b"])
+        XCTAssertEqual(u.ranked(sinceHour: 76)[0].share, 100 * 40 / 45, accuracy: 0.001)   // the old hour is out
+        XCTAssertEqual(u.ranked(sinceHour: 76).count, 2)
+        XCTAssertEqual(u.families(of: "a", sinceHour: 76).map(\.family), ["opus", "sonnet"])
+        XCTAssertEqual(u.families(of: "a").map(\.family), ["sonnet", "opus"])             // 70 vs 30 over the whole scan
+        var utc = Calendar(identifier: .gregorian); utc.timeZone = TimeZone(identifier: "UTC")!
+        XCTAssertEqual(u.busiestHours(of: "a", calendar: utc), [20, 4])   // hour 20 weighs 60, hour 100 (04h) weighs 40
+        XCTAssertEqual(u.busiest(hour: 100), "a")
+        XCTAssertNil(u.busiest(hour: 7))
     }
 }
 

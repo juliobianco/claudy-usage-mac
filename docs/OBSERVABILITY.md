@@ -10,7 +10,7 @@ How to use this file: when we start an item, we talk it through, write the decis
 |---|---|---|---|---|---|
 | 1 | Pace and forecast | [#14](https://github.com/juliobianco/claudy-usage-mac/issues/14) | `History.swift` (a pure function), panel, floating card | nothing | done (0.3.3) |
 | 2 | Health of the usage read | [#15](https://github.com/juliobianco/claudy-usage-mac/issues/15) | `Model.swift`, panel | nothing | built, in testing |
-| 3 | Usage by project, deeper | [#16](https://github.com/juliobianco/claudy-usage-mac/issues/16) | scanner (adds the model dimension), `PanelView` | nothing | to discuss |
+| 3 | Usage by project, deeper | [#16](https://github.com/juliobianco/claudy-usage-mac/issues/16) | scanner (adds the model dimension), `PanelView` | nothing | built, in testing |
 | 4 | Pace alert | [#17](https://github.com/juliobianco/claudy-usage-mac/issues/17) | alerts in `Model.swift`, `AlertsUI`, settings | 1 | to discuss |
 | 5 | Markers on the chart | [#18](https://github.com/juliobianco/claudy-usage-mac/issues/18) | `HistoryView.swift` | maybe 1 | to discuss |
 | 6 | Usage by model | [#19](https://github.com/juliobianco/claudy-usage-mac/issues/19) | UI only | the model dimension from 3 | to discuss |
@@ -81,7 +81,13 @@ What already exists (so we do not rebuild it): the week ranking "PROJECTS · 7 D
 
 **Open questions.** Do we keep only 7 days of hours, or more? Drill-down as an expandable row or a small popover? Is "today" local midnight or the last 24 h?
 
-**Decided.** (empty)
+**Decided.** (2026-10-19)
+- Periods: last 24 hours and 7 days. "Today" is the last 24 hours, like the chart and `/usage`; the scan keeps 7 days of hours.
+- The existing 24 h / 7 days switch drives the chart, the usage profile and now the project ranking.
+- Click a project to expand it: model mix (family share of that project) and its three busiest hours of the day. No session list.
+- Percent only, no tokens or cost: the weight is an estimate.
+- Scanner: the cache and `ProjectUsage.hourly` are now hour -> project -> model family -> weight (family from the same price table). Items 6 and 7 are UI over this; `families(of:)`, `ranked(sinceHour:)` and `busiestHours(of:)` exist, and `hourly` has everything the heatmap needs.
+- Built: `ProjectUsage` in `History.swift` (tests: `ProjectPeriodTests`, the scan test), the rows in `PanelView.swift`. `CLAUDY_PROJECT=<name>` opens a project in a snapshot.
 
 ## 4. Pace alert
 

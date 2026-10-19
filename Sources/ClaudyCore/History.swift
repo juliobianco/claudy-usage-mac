@@ -74,19 +74,53 @@ public struct UsageHistory: Equatable, Sendable {
 // MARK: projects, from the transcripts
 
 public struct ProjectUsage: Equatable, Sendable {
-    public var total: [String: Double] = [:]            // weight by project
-    public var hours: [Int: [String: Double]] = [:]     // unix hour -> weight by project
+    /// unix hour -> project -> model family -> weight. Everything below is a sum over this.
+    public var hourly: [Int: [String: [String: Double]]] = [:]
     public var paths: [String: String] = [:]            // project -> folder, for the hover text
-    public init(total: [String: Double] = [:], hours: [Int: [String: Double]] = [:], paths: [String: String] = [:]) {
-        self.total = total; self.hours = hours; self.paths = paths
+    public init(hourly: [Int: [String: [String: Double]]] = [:], paths: [String: String] = [:]) {
+        self.hourly = hourly; self.paths = paths
     }
 
-    public var ranked: [(name: String, share: Double)] {
-        let sum = total.values.reduce(0, +)
-        guard sum > 0 else { return [] }
-        return total.sorted { $0.value > $1.value }.map { ($0.key, 100 * $0.value / sum) }
+    private func rows(since: Int) -> [(hour: Int, project: String, family: String, w: Double)] {
+        hourly.filter { $0.key >= since }.flatMap { h, ps in ps.flatMap { p, fs in fs.map { (h, p, $0.key, $0.value) } } }
     }
-    public func busiest(hour: Int) -> String? { hours[hour]?.max { $0.value < $1.value }?.key }
+
+    /// Weight by project over the whole scan.
+    public var total: [String: Double] { total(sinceHour: .min) }
+    public func total(sinceHour: Int) -> [String: Double] {
+        var t: [String: Double] = [:]
+        for r in rows(since: sinceHour) { t[r.project, default: 0] += r.w }
+        return t
+    }
+
+    /// Share of the period by project, biggest first.
+    public func ranked(sinceHour: Int = .min) -> [(name: String, share: Double)] {
+        let t = total(sinceHour: sinceHour), sum = t.values.reduce(0, +)
+        guard sum > 0 else { return [] }
+        return t.sorted { $0.value > $1.value }.map { ($0.key, 100 * $0.value / sum) }
+    }
+
+    /// Model families of one project, share of that project.
+    public func families(of project: String, sinceHour: Int = .min) -> [(family: String, share: Double)] {
+        var t: [String: Double] = [:]
+        for r in rows(since: sinceHour) where r.project == project { t[r.family, default: 0] += r.w }
+        let sum = t.values.reduce(0, +)
+        guard sum > 0 else { return [] }
+        return t.sorted { $0.value > $1.value }.map { ($0.key, 100 * $0.value / sum) }
+    }
+
+    /// The hours of the day (local, 0...23) where a project used the most, busiest first.
+    public func busiestHours(of project: String, sinceHour: Int = .min, count: Int = 3, calendar: Calendar = .current) -> [Int] {
+        var t: [Int: Double] = [:]
+        for r in rows(since: sinceHour) where r.project == project {
+            t[calendar.component(.hour, from: Date(timeIntervalSince1970: TimeInterval(r.hour) * 3600)), default: 0] += r.w
+        }
+        return t.sorted { $0.value > $1.value }.prefix(count).map(\.key)
+    }
+
+    public func busiest(hour: Int) -> String? {
+        hourly[hour]?.max { $0.value.values.reduce(0, +) < $1.value.values.reduce(0, +) }?.key
+    }
 }
 
 /// Reads ~/.claude/projects/*/**.jsonl. Only what was appended since the last scan is read, and a reply that
@@ -97,15 +131,16 @@ public final class ProjectScanner: @unchecked Sendable {
         var ids = Set<String>()
         var dir: String
         var cwd: String?
-        var w: [Int: Double] = [:]
+        var w: [Int: [String: Double]] = [:]      // hour -> model family -> weight
     }
     var cache: [String: FileCache] = [:]
     let lock = NSLock()
     public init() {}
 
     // Price of a million input tokens, as a weight: the first match wins, so versions go first.
-    static let prices: [(String, Double)] = [("fable", 10), ("mythos", 10), ("opus-5-5", 4), ("opus", 5),
-                                             ("sonnet-5", 2), ("sonnet", 3), ("haiku-5", 0.1), ("haiku", 1)]
+    // The third column is the family shown to the user, so price and family cannot disagree.
+    static let prices: [(String, Double, String)] = [("fable", 10, "fable"), ("mythos", 10, "mythos"), ("opus-5-5", 4, "opus"), ("opus", 5, "opus"),
+                                                     ("sonnet-5", 2, "sonnet"), ("sonnet", 3, "sonnet"), ("haiku-5", 0.1, "haiku"), ("haiku", 1, "haiku")]
     // Cache writes, cache reads and output, relative to input.
     static let kinds: [(String, Double)] = [("input_tokens", 1), ("cache_creation_input_tokens", 1.25),
                                             ("cache_read_input_tokens", 0.1), ("output_tokens", 5)]
@@ -166,10 +201,11 @@ public final class ProjectScanner: @unchecked Sendable {
                     guard let ts = o["timestamp"] as? String, let at = iso.date(from: ts) ?? isoPlain.date(from: ts) else { continue }
                     let hour = Int(at.timeIntervalSince1970 / 3600)
                     if hour < firstHour { continue }
-                    let price = Self.prices.first { model.contains($0.0) }?.1 ?? 3
+                    let hit = Self.prices.first { model.contains($0.0) }
+                    let price = hit?.1 ?? 3, family = hit?.2 ?? "other"
                     var tok = 0.0
                     for (k, mul) in Self.kinds { tok += mul * ((usage[k] as? NSNumber)?.doubleValue ?? 0) }
-                    c.w[hour, default: 0] += price * tok
+                    c.w[hour, default: [:]][family, default: 0] += price * tok
                 }
                 cache[path] = c
             }
@@ -184,9 +220,8 @@ public final class ProjectScanner: @unchecked Sendable {
             let cwd = cwds[c.dir] ?? c.dir
             let name = Self.projectName(cwd: cwd)
             r.paths[name] = cwd
-            for (h, v) in c.w where h >= firstHour {
-                r.total[name, default: 0] += v
-                r.hours[h, default: [:]][name, default: 0] += v
+            for (h, fs) in c.w where h >= firstHour {
+                for (f, v) in fs { r.hourly[h, default: [:]][name, default: [:]][f, default: 0] += v }
             }
         }
         return r

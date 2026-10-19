@@ -266,6 +266,7 @@ struct SessionRow: View {
 struct DetailsView: View {
     let model: AppModel
     @AppStorage("period") private var period = "day"
+    @State private var openProject: String? = ProcessInfo.processInfo.environment["CLAUDY_PROJECT"]   // snapshots
     @State private var more = ProcessInfo.processInfo.environment["CLAUDY_MORE"] != nil   // snapshots
 
     private var current: UsagePeriod? { period == "day" ? model.usage?.day : model.usage?.week7 }
@@ -339,22 +340,40 @@ struct DetailsView: View {
         }
     }
 
-    /// The limits chart follows the switch (24 hours, or the week of the quota); the projects are always the week.
+    /// The limits chart follows the switch (24 hours, or the week of the quota); the projects follow it too (last 24 hours, or the 7 days scanned).
     @ViewBuilder private var weekSection: some View {
         VStack(alignment: .leading, spacing: 6) {
             heading(period == "day" ? L.t("limits.day") : L.t("limits.week"))
             HistoryChart(model: model, mode: period == "day" ? .day : .week)
         }
         VStack(alignment: .leading, spacing: 6) {
-            heading(L.t("projects7")).help(L.t("projects.tip"))
+            heading(period == "day" ? L.t("projects1") : L.t("projects7")).help(L.t("projects.tip"))
             if let p = model.projects {
-                let top = p.ranked.prefix(4)
+                let since = period == "day" ? Int(model.now.timeIntervalSince1970 / 3600) - 24 : Int.min
+                let top = p.ranked(sinceHour: since).prefix(4)
                 if top.isEmpty { Text(L.t("nothingYet")).font(.system(size: 10.5)).foregroundStyle(T.dim) }
-                ForEach(Array(top), id: \.name) { row(Redact.name($0.name, "project"), Int($0.share.rounded()), Color(hex: 0xD77757), help: Redact.on ? nil : p.paths[$0.name]) }
+                ForEach(Array(top), id: \.name) { t in
+                    Button { withAnimation(.easeOut(duration: 0.15)) { openProject = openProject == t.name ? nil : t.name } } label: {
+                        row(Redact.name(t.name, "project"), Int(t.share.rounded()), Color(hex: 0xD77757), help: Redact.on ? nil : p.paths[t.name])
+                            .contentShape(Rectangle())
+                    }.buttonStyle(.plain)
+                    if openProject == t.name { projectDetail(p, t.name, since) }
+                }
             } else {
                 Text(L.t("counting")).font(.system(size: 10.5)).foregroundStyle(T.dim)
             }
         }
+    }
+
+    /// Click a project: its model mix and the hours of the day it was busiest.
+    private func projectDetail(_ p: ProjectUsage, _ name: String, _ since: Int) -> some View {
+        let fams = p.families(of: name, sinceHour: since).map { "\(L.t("family." + $0.family)) \(Int($0.share.rounded()))%" }.joined(separator: " · ")
+        let hours = p.busiestHours(of: name, sinceHour: since).map { String(format: "%02d:00", $0) }.joined(separator: " · ")
+        return VStack(alignment: .leading, spacing: 2) {
+            Text(fams)
+            Text(L.t("proj.hours", hours))
+        }
+        .font(.system(size: 10)).foregroundStyle(T.dim).padding(.leading, 8)
     }
 
     private func pill(_ title: String, _ id: String) -> some View {

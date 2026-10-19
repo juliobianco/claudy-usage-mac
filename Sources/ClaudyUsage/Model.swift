@@ -225,7 +225,10 @@ final class AppModel {
         status = ClaudeStatus(level: .ok, text: "", detail: [])
         version = ClaudeVersion(installed: "2.1.302", latest: "2.1.302")
         account = ClaudeAccount(loggedIn: true, email: "you@example.com", plan: "pro")
-        projects = ProjectUsage(total: ["web-app": 61, "api-server": 28, "docs": 11], hours: [:],
+        let hr = Int(t.timeIntervalSince1970 / 3600)
+        projects = ProjectUsage(hourly: [hr - 2: ["web-app": ["opus": 40, "sonnet": 11], "docs": ["sonnet": 11]],
+                                         hr - 30: ["web-app": ["opus": 10], "api-server": ["sonnet": 18]],
+                                         hr - 50: ["api-server": ["sonnet": 10], "web-app": ["haiku": 0.0001]]],
                                 paths: ["web-app": "~/code/web-app", "api-server": "~/code/api-server", "docs": "~/code/docs"])
         // A week of the quota cycle: 5-hour windows that fill up and reset, the weekly share creeping up.
         var h = UsageHistory()
