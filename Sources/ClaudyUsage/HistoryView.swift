@@ -74,7 +74,9 @@ struct HistoryChart: View {
             var prev: Int?
             for s in model.history.samples where s.minute >= t0 && s.minute <= t1 {
                 let v = s[keyPath: key]
-                if v < 0 || (prev != nil && s.minute - prev! > UsageHistory.gapMinutes) { if !run.isEmpty { out.append(run) }; run = [] }
+                // A gap, or a fall of 2+ points (a reset: its ring marks it), ends the figure: no vertical stroke from 100% to 0.
+                let reset = v >= 0 && (run.last.map { $0.v - v >= 2 } ?? false)
+                if v < 0 || reset || (prev != nil && s.minute - prev! > UsageHistory.gapMinutes) { if !run.isEmpty { out.append(run) }; run = [] }
                 prev = s.minute
                 if v >= 0 { run.append((CGPoint(x: x(s.minute, w), y: y(v)), v)) }
             }
@@ -131,7 +133,7 @@ struct HistoryChart: View {
     /// Resets as a ring on the line they belong to, a limit reaching 100% as a filled red dot.
     private func drawMarks(_ ctx: GraphicsContext, _ w: CGFloat, _ h: CGFloat) {
         for m in marks {
-            let px = x(m.minute, w), py = 1 + (h - 2) * (1 - CGFloat(min(100, m.value)) / 100)
+            let px = x(m.minute, w), py = min(max(1 + (h - 2) * (1 - CGFloat(min(100, m.value)) / 100), 3), h - 3)   // whole dot inside
             let r = CGRect(x: px - 3, y: py - 3, width: 6, height: 6)
             switch m.kind {
             case .session100, .week100: ctx.fill(Path(ellipseIn: r), with: .color(T.crit))
