@@ -137,8 +137,9 @@ struct HistoryChart: View {
             let r = CGRect(x: px - 3, y: py - 3, width: 6, height: 6)
             switch m.kind {
             case .session100, .week100: ctx.fill(Path(ellipseIn: r), with: .color(T.crit))
-            case .sessionReset: ctx.stroke(Path(ellipseIn: r), with: .color(T.ok), lineWidth: 1.2)
-            case .weekReset: ctx.stroke(Path(ellipseIn: r), with: .color(T.accent), lineWidth: 1.2)
+            case .sessionReset, .weekReset:        // the ring is empty inside: the line does not run through it
+                ctx.fill(Path(ellipseIn: r), with: .color(T.bg))
+                ctx.stroke(Path(ellipseIn: r), with: .color(m.kind == .sessionReset ? T.ok : T.accent), lineWidth: 1.2)
             }
         }
     }
