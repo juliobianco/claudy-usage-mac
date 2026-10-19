@@ -174,3 +174,15 @@ final class ChartMarkTests: XCTestCase {
         XCTAssertTrue(ChartMark.find([s(0, 50, 5), s(5, 49, 5)], from: 0, to: 9).isEmpty) // a wobble of 1 point is not a reset
     }
 }
+
+final class ExportTests: XCTestCase {
+    func testCSVRowsAndEscaping() {
+        let utc = TimeZone(identifier: "UTC")!
+        var h = UsageHistory()
+        h.add(session: 12, week: nil, now: Date(timeIntervalSince1970: 1_800_000_000))
+        XCTAssertEqual(Export.limits(h, timeZone: utc), "time,session_percent,week_percent\n2027-01-15T08:00:00Z,12,\n")
+        let u = ProjectUsage(hourly: [500_000: ["my,app": ["opus-5": 12.34, "sonnet-5-5": 1]]])
+        XCTAssertEqual(Export.projects(u, timeZone: utc),
+                       "hour,project,model,weight\n2027-01-15T08:00:00Z,\"my,app\",opus-5,12.3\n2027-01-15T08:00:00Z,\"my,app\",sonnet-5-5,1.0\n")
+    }
+}

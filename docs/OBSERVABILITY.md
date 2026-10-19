@@ -15,7 +15,7 @@ How to use this file: when we start an item, we talk it through, write the decis
 | 5 | Markers on the chart | [#18](https://github.com/juliobianco/claudy-usage-mac/issues/18) | `HistoryView.swift` | maybe 1 | built, in testing |
 | 6 | Usage by model | [#19](https://github.com/juliobianco/claudy-usage-mac/issues/19) | UI only | the model dimension from 3 | built, in testing |
 | 7 | Hour-of-week heatmap | [#20](https://github.com/juliobianco/claudy-usage-mac/issues/20) | UI over `ProjectUsage.hours` | 3 (period) | built, in testing |
-| 8 | Export | [#21](https://github.com/juliobianco/claudy-usage-mac/issues/21) | a small writer in the core | nothing | to discuss |
+| 8 | Export | [#21](https://github.com/juliobianco/claudy-usage-mac/issues/21) | a small writer in the core | nothing | built, in testing |
 | 9 | Status by service | [#22](https://github.com/juliobianco/claudy-usage-mac/issues/22) | `Status.swift` | nothing | to discuss |
 | 10 | Tokens per day by model, all time | [#23](https://github.com/juliobianco/claudy-usage-mac/issues/23) | new reader of `stats-cache.json`, a window or a details section | 3 (model names) | to discuss |
 
@@ -160,7 +160,13 @@ What already exists (so we do not rebuild it): the week ranking "PROJECTS · 7 D
 
 **Thinking.** A tiny writer in the core with a test; a menu item and a save panel in the UI. Names of projects are real names: say so in the dialog (the README rule about pictures does not apply to the user's own file, but it should not surprise them).
 
-**Decided.** (empty)
+**Decided.** (2026-10-19)
+- Two CSV files in a folder the user picks: `claudy-limits.csv` (time, session %, week %; the 8 days kept) and `claudy-projects.csv` (hour, project, model, weight; the 7 scanned days). English file names, so they are the same in both languages.
+- CSV only; it opens in Numbers and Excel.
+- Command "Export history…" in the "…" menu of the panel.
+- The folder dialog says the project names are the real ones.
+- If the project weights are not loaded yet (details never opened), they are read at that moment. Finder then shows the two files.
+- Built: `Export` in `ClaudyCore` (pure, tested), `Exporter` in `ExportUI.swift`. The dialog itself is not covered by a test.
 
 ## 9. Status by service
 

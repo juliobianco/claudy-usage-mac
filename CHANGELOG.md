@@ -7,6 +7,7 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 ## [Unreleased]
 
 ### Added
+- "Export history…" in the ⋯ menu: the 5 h / weekly history and the usage by project and model, as two CSV files in a folder you pick.
 - "When you use it": a heatmap of the last 7 days by hour, opened from the details.
 - A MODELS section under the projects: the share of Opus, Sonnet, Haiku and others, for the same 24 hours / 7 days switch.
 - Marks on the history chart: a ring where a limit reset, a red dot where it reached 100%, with the event named when you hover over it. The week view shows the weekly reset and the 100% marks only.
