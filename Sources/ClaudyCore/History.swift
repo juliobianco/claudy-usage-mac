@@ -133,6 +133,15 @@ public struct ProjectUsage: Equatable, Sendable {
     }
 }
 
+/// Model keys as the scanner stores them ("opus-4-8") and how they read ("Opus 4.8").
+public enum ModelName {
+    public static func display(_ key: String) -> String {
+        let parts = key.split(separator: "-").map(String.init)
+        guard let name = parts.first else { return key }
+        return ([name.prefix(1).uppercased() + name.dropFirst()] + [parts.dropFirst().joined(separator: ".")].filter { !$0.isEmpty }).joined(separator: " ")
+    }
+}
+
 /// Reads ~/.claude/projects/*/**.jsonl. Only what was appended since the last scan is read, and a reply that
 /// is written as several lines with the same message id is counted once. Not thread safe: one scan at a time.
 public final class ProjectScanner: @unchecked Sendable {
@@ -156,6 +165,16 @@ public final class ProjectScanner: @unchecked Sendable {
                                             ("cache_read_input_tokens", 0.1), ("output_tokens", 5)]
     static let usageMarker = Data("\"usage\":{\"input_tokens\"".utf8)
     static let cwdMarker = Data("\"cwd\":\"".utf8)
+
+    /// "claude-sonnet-5-5-20260101" -> "sonnet-5-5": the family with its version, so Sonnet 5 and 5.5 are told apart.
+    /// A model that is not in the price table is "other".
+    static func modelKey(_ model: String, family: String?) -> String {
+        guard let family else { return "other" }
+        var id = model.lowercased()
+        if id.hasPrefix("claude-") { id.removeFirst(7) }
+        if let r = id.range(of: #"-\d{8}$"#, options: .regularExpression) { id.removeSubrange(r) }
+        return id.hasPrefix(family) ? id : family
+    }
 
     /// Project name from a working folder: worktrees belong to their repo, the home folder is "~".
     public static func projectName(cwd: String, home: String = NSHomeDirectory()) -> String {
@@ -212,7 +231,7 @@ public final class ProjectScanner: @unchecked Sendable {
                     let hour = Int(at.timeIntervalSince1970 / 3600)
                     if hour < firstHour { continue }
                     let hit = Self.prices.first { model.contains($0.0) }
-                    let price = hit?.1 ?? 3, family = hit?.2 ?? "other"
+                    let price = hit?.1 ?? 3, family = Self.modelKey(model, family: hit?.2)
                     var tok = 0.0
                     for (k, mul) in Self.kinds { tok += mul * ((usage[k] as? NSNumber)?.doubleValue ?? 0) }
                     c.w[hour, default: [:]][family, default: 0] += price * tok

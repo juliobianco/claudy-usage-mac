@@ -136,6 +136,7 @@ What already exists (so we do not rebuild it): the week ranking "PROJECTS · 7 D
 - Bars like the project rows (purple), one per model family, biggest first. A family under 1% is left out.
 - Pure UI over the scanner's family dimension (item 3): `ProjectUsage.models(sinceHour:)`, tested in `ProjectPeriodTests`.
 - Same estimate as the projects (tokens × price), same tooltip.
+- The row is the model with its version ("Sonnet 5.5", "Opus 4.8"), not just the family: the scanner key is the id without `claude-` and the date (`ModelName`, tested). The project drill-down uses the same names. Fixed 2026-10-19 after the first version showed only "Sonnet" and "Opus".
 
 ## 7. Hour-of-week heatmap
 

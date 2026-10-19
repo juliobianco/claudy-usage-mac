@@ -66,9 +66,21 @@ final class HistoryTests: XCTestCase {
         r = scanner.scan(root: root.path, since: since, now: now)
         XCTAssertEqual(r.total["app"] ?? 0, 3 * 150 + 5 * 10, accuracy: 0.001)            // opus = 5 per input token
         XCTAssertEqual(r.ranked().first?.name, "app")
-        XCTAssertEqual(r.families(of: "app").map(\.family), ["sonnet", "opus"])          // 450 and 50 of 500
+        XCTAssertEqual(r.families(of: "app").map(\.family), ["sonnet-4", "opus-5"])      // 450 and 50 of 500
         XCTAssertEqual(r.families(of: "app")[0].share, 90, accuracy: 0.001)
         XCTAssertEqual(r.busiest(hour: Int(now.timeIntervalSince1970 / 3600)), "app")
+    }
+}
+
+final class ModelNameTests: XCTestCase {
+    func testKeysKeepTheVersionAndReadWell() {
+        XCTAssertEqual(ProjectScanner.modelKey("claude-sonnet-5-5", family: "sonnet"), "sonnet-5-5")
+        XCTAssertEqual(ProjectScanner.modelKey("claude-haiku-4-5-20251001", family: "haiku"), "haiku-4-5")
+        XCTAssertEqual(ProjectScanner.modelKey("opus", family: "opus"), "opus")
+        XCTAssertEqual(ProjectScanner.modelKey("something-else", family: nil), "other")
+        XCTAssertEqual(ModelName.display("sonnet-5-5"), "Sonnet 5.5")
+        XCTAssertEqual(ModelName.display("opus-5"), "Opus 5")
+        XCTAssertEqual(ModelName.display("sonnet"), "Sonnet")
     }
 }
 

@@ -368,15 +368,17 @@ struct DetailsView: View {
             if !models.isEmpty {
                 VStack(alignment: .leading, spacing: 6) {
                     heading(period == "day" ? L.t("models1") : L.t("models7")).help(L.t("projects.tip"))
-                    ForEach(models, id: \.family) { row(L.t("family." + $0.family), Int($0.share.rounded()), T.purple) }
+                    ForEach(models, id: \.family) { row(Self.modelLabel($0.family), Int($0.share.rounded()), T.purple) }
                 }
             }
         }
     }
 
+    static func modelLabel(_ key: String) -> String { key == "other" ? L.t("family.other") : ModelName.display(key) }
+
     /// Click a project: its model mix and the hours of the day it was busiest.
     private func projectDetail(_ p: ProjectUsage, _ name: String, _ since: Int) -> some View {
-        let fams = p.families(of: name, sinceHour: since).map { "\(L.t("family." + $0.family)) \(Int($0.share.rounded()))%" }.joined(separator: " · ")
+        let fams = p.families(of: name, sinceHour: since).map { "\(Self.modelLabel($0.family)) \(Int($0.share.rounded()))%" }.joined(separator: " · ")
         let hours = p.busiestHours(of: name, sinceHour: since).map { String(format: "%02d:00", $0) }.joined(separator: " · ")
         return VStack(alignment: .leading, spacing: 2) {
             Text(fams)
