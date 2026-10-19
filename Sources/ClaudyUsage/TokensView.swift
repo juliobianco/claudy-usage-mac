@@ -36,6 +36,25 @@ struct TokensView: View {
         }
     }
 
+    /// A smooth line through the points that never overshoots: a monotone cubic (Fritsch-Carlson), so a quiet day stays at
+    /// zero instead of dipping below it and a peak stays at its real height.
+    static func smooth(_ p: [CGPoint]) -> Path {
+        var path = Path()
+        guard let first = p.first else { return path }
+        path.move(to: first)
+        guard p.count > 1 else { return path }
+        let d = (0..<p.count - 1).map { (p[$0 + 1].y - p[$0].y) / max(0.0001, p[$0 + 1].x - p[$0].x) }
+        var m = [CGFloat](repeating: 0, count: p.count)
+        m[0] = d[0]; m[p.count - 1] = d[p.count - 2]
+        for k in 1..<p.count - 1 { m[k] = d[k - 1] * d[k] <= 0 ? 0 : 2 * d[k - 1] * d[k] / (d[k - 1] + d[k]) }
+        for k in 0..<p.count - 1 {
+            let dx = (p[k + 1].x - p[k].x) / 3
+            path.addCurve(to: p[k + 1], control1: CGPoint(x: p[k].x + dx, y: p[k].y + m[k] * dx),
+                          control2: CGPoint(x: p[k + 1].x - dx, y: p[k + 1].y - m[k + 1] * dx))
+        }
+        return path
+    }
+
     private func color(_ i: Int) -> Color { palette[min(i, palette.count - 1)] }
     private func label(_ key: String) -> String { key == "other" ? L.t("tokens.others") : ModelName.display(key) }
     private func dayText(_ day: Int) -> String { L.date("d MMM").string(from: Date(timeIntervalSince1970: TimeInterval(day) * 86400)) }
@@ -54,13 +73,19 @@ struct TokensView: View {
                     ctx.fill(Path(CGRect(x: left, y: y, width: w, height: 1)), with: .color(Color.white.opacity(0.07)))
                     ctx.draw(Text(Format.tokens(Int(peak * f))).font(.system(size: 9)).foregroundColor(T.faint), at: CGPoint(x: left - 6, y: y), anchor: .trailing)
                 }
-                for i in stride(from: 0, to: n, by: max(1, (n - 1) / 3)) {
-                    ctx.draw(Text(dayText(series.firstDay + i)).font(.system(size: 9)).foregroundColor(T.faint), at: CGPoint(x: px(i), y: h + 10))
+                let step = max(1, (n - 1) / 3)
+                for i in stride(from: 0, to: n, by: step) {
+                    // the first label starts at the axis and one near the right edge ends there: neither is cut off
+                    let anchor: UnitPoint = i == 0 ? .leading : (px(i) > left + w - 28 ? .trailing : .center)
+                    ctx.draw(Text(dayText(series.firstDay + i)).font(.system(size: 9)).foregroundColor(T.faint), at: CGPoint(x: px(i), y: h + 10), anchor: anchor)
                 }
                 for (li, line) in series.lines.enumerated().reversed() {
-                    var p = Path()
-                    for (i, v) in line.values.enumerated() { i == 0 ? p.move(to: CGPoint(x: px(i), y: py(v))) : p.addLine(to: CGPoint(x: px(i), y: py(v))) }
-                    ctx.stroke(p, with: .color(color(li)), style: StrokeStyle(lineWidth: 1.6, lineCap: .round, lineJoin: .round))
+                    let pts = line.values.enumerated().map { CGPoint(x: px($0.offset), y: py($0.element)) }
+                    let curve = Self.smooth(pts)
+                    var area = curve
+                    if let f = pts.first, let l = pts.last { area.addLine(to: CGPoint(x: l.x, y: py(0))); area.addLine(to: CGPoint(x: f.x, y: py(0))); area.closeSubpath() }
+                    ctx.fill(area, with: .color(color(li).opacity(0.08)))
+                    ctx.stroke(curve, with: .color(color(li)), style: StrokeStyle(lineWidth: 1.8, lineCap: .round, lineJoin: .round))
                 }
                 if let i = hover, i < n { ctx.fill(Path(CGRect(x: px(i), y: 0, width: 1, height: h)), with: .color(Color.white.opacity(0.35))) }
             }
