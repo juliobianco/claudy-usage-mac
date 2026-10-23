@@ -12,6 +12,7 @@ struct HistoryChart: View {
     @State private var hover: CGFloat?
     @State private var width: CGFloat = 272
     static let height: CGFloat = 52
+    static let inset: CGFloat = 4   // side air, so the rings at the ends are not cut off
 
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
@@ -58,7 +59,7 @@ struct HistoryChart: View {
 
     private func x(_ minute: Int, _ w: CGFloat) -> CGFloat {
         let r = range
-        return w * CGFloat(minute - r.t0) / CGFloat(max(1, r.t1 - r.t0))
+        return Self.inset + (w - 2 * Self.inset) * CGFloat(minute - r.t0) / CGFloat(max(1, r.t1 - r.t0))
     }
 
     // MARK: drawing
@@ -218,10 +219,10 @@ struct HistoryChart: View {
 
     private func hoverText(_ hx: CGFloat) -> String {
         let (t0, t1) = range
-        let t = t0 + Int(CGFloat(t1 - t0) * hx / max(1, width))
+        let t = t0 + Int(CGFloat(t1 - t0) * min(max((hx - Self.inset) / max(1, width - 2 * Self.inset), 0), 1))
         var parts = [L.date("EEE HH:mm").string(from: Date(timeIntervalSince1970: TimeInterval(t) * 60))]
         // Over a mark (within 6 points of the chart): say what happened there.
-        let slack = Int(CGFloat(t1 - t0) * 6 / max(1, width))
+        let slack = Int(CGFloat(t1 - t0) * 6 / max(1, width - 2 * Self.inset))
         if let m = marks.first(where: { abs($0.minute - t) <= slack }) {
             parts.insert(L.t("mark." + m.kind.rawValue), at: 0)
         }
