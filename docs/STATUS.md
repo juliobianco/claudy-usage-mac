@@ -3,6 +3,7 @@
 Plan: `~/.claude/plans/async-sparking-reddy.md` (outside the repo). Updated 2026-10-18. The public plan is `ROADMAP.md`; this file is the working log.
 
 ## Done
+- **Release 0.6.0** (2026-10-23): reset times on the label (#4), vivid sky (#5), chart air and 50% / 100% guides, reduce motion (#13, the VoiceOver part is still open), skins Halo and Headphones (#3, more welcome).
 - **Reset times on the label (#4) and vivid sky (#5)** (2026-10-23): two switches in Settings → Menu bar (`Prefs.barResets`, `Prefs.vividSky`); `MenuBarLabel.content` is shared with `--snapshot`. Unreleased; close the issues with the release.
 - **Chart padding** (2026-10-23): the limits chart keeps 5 pt of air above and below the lines (`HistoryChart.draw`). Unreleased.
 - **Observability plan** (2026-10-19): ten items in `ROADMAP.md` (issues #14-#23) with the design notes in `docs/OBSERVABILITY.md`, to be discussed and built one per sitting, before phase 5. Items 1-9 built and released (0.3.3 and 0.4.0); item 10 (stats cache) released in 0.5.0: the list is done, phase 5 is next.

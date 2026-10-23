@@ -49,7 +49,7 @@ final class AppModel {
         every(600) { [self] in refreshAccount() }
         every(900) { [self] in refreshProjects() }
         every(1) { [self] in now = Date() }
-        every(0.5) { [self] in if alertWaiting || alertCelebrating { alertTick += 1 } }
+        every(0.5) { [self] in if (alertWaiting || alertCelebrating) && !Prefs.shared.motionOff { alertTick += 1 } }   // still: the pulse stays at its first frame
         every(600) { [self] in scene.refreshWeather() }
         // After the Mac wakes up a probe that was running got no answer: ask again instead of waiting for the next tick.
         NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in
@@ -170,7 +170,7 @@ final class AppModel {
         guard Prefs.shared.alertsAnimate else { return false }
         return sessions.contains(where: \.waiting) || (previewWaitingUntil.map { $0 > now } ?? false)
     }
-    var alertCelebrating: Bool { Prefs.shared.alertsAnimate && (celebrateUntil.map { $0 > now } ?? false) }
+    var alertCelebrating: Bool { Prefs.shared.alertsAnimate && !Prefs.shared.motionOff && (celebrateUntil.map { $0 > now } ?? false) }
 
     /// Sessions changed: a newly waiting one is worth a notification (if asked for).
     private func sessionsChanged() {

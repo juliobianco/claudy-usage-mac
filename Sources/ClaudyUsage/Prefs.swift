@@ -1,5 +1,6 @@
 import SwiftUI
 import ClaudyCore
+import AppKit
 
 // Everything the user can choose, in one observable object. Views read it while drawing, so a change shows at once.
 // Stored in UserDefaults (domain dev.julio.claudy-usage): `defaults read dev.julio.claudy-usage`.
@@ -68,6 +69,9 @@ final class Prefs: @unchecked Sendable {
     var showClawd: Bool { didSet { d.set(showClawd, forKey: "showClawd") } }
     var showSky: Bool { didSet { d.set(showSky, forKey: "showSky") } }
     var vividSky: Bool { didSet { d.set(vividSky, forKey: "vividSky") } }          // opaque sky instead of the original's translucent one
+    var reduceMotion: Bool { didSet { d.set(reduceMotion, forKey: "reduceMotion") } }  // Clawd stands still, alerts do not blink
+    /// The switch here or the system's "Reduce motion" (Accessibility → Display).
+    var motionOff: Bool { reduceMotion || NSWorkspace.shared.accessibilityDisplayShouldReduceMotion }
     var barResets: Bool { didSet { d.set(barResets, forKey: "barResets") } }        // reset times next to the label numbers
     var showSessions: Bool { didSet { d.set(showSessions, forKey: "showSessions") } }
     var showStatus: Bool { didSet { d.set(showStatus, forKey: "showStatus") } }
@@ -101,7 +105,7 @@ final class Prefs: @unchecked Sendable {
         theme = t; accent = a
         skin = d.string(forKey: "skin") ?? "classic"
         barStyle = d.string(forKey: "barStyle") ?? "bars"
-        vividSky = b("vividSky", false); barResets = b("barResets", false)
+        vividSky = b("vividSky", false); reduceMotion = b("reduceMotion", false); barResets = b("barResets", false)
         showClawd = b("showClawd", true); showSky = b("showSky", true); showSessions = b("showSessions", true)
         showStatus = b("showStatus", true); showAccount = b("showAccount", true); showDetails = b("showDetails", true); showFable = b("showFable", true)
         warnPercent = i("warnPercent", Format.warnPercent); critPercent = i("critPercent", Format.critPercent)

@@ -112,6 +112,7 @@ final class SceneModel {
 
     // The panel and the floating widget can both show the scene: it runs while at least one does.
     @ObservationIgnored private var watchers = 0
+    @ObservationIgnored private var ticked = false
     func start() {
         watchers += 1
         guard !running else { return }
@@ -127,7 +128,13 @@ final class SceneModel {
 
     private func loop() {
         guard running else { return }
-        tickOnce()
+        // Reduced motion: Clawd stands still after the first frame and the sky moves once a minute.
+        if Prefs.shared.motionOff && ticked {
+            sky = skySim.step(w: size.width / Self.scale, h: size.height / Self.scale, lon: lon, now: clock ?? Date())
+            DispatchQueue.main.asyncAfter(deadline: .now() + 60) { [weak self] in MainActor.assumeIsolated { self?.loop() } }
+            return
+        }
+        tickOnce(); ticked = true
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(mascot.intervalMs)) { [weak self] in
             MainActor.assumeIsolated { self?.loop() }
         }

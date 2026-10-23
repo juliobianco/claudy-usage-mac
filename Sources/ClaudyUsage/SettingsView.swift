@@ -193,6 +193,7 @@ struct BarTab: View {
             SwitchRow(label: L.t("show.details"), isOn: $prefs.showDetails)
         }
         group(L.t("alerts.title")) {
+            SwitchRow(label: L.t("alerts.reduce"), hint: L.t("alerts.reduce.hint"), isOn: $prefs.reduceMotion)
             SwitchRow(label: L.t("alerts.animate"), hint: L.t("alerts.animate.hint"), isOn: $prefs.alertsAnimate)
             SwitchRow(label: L.t("alerts.notifyWaiting"), isOn: Binding(get: { prefs.alertsNotifyWaiting }, set: { prefs.alertsNotifyWaiting = $0; if $0 { Notifier.authorize() } }))
             SwitchRow(label: L.t("alerts.notifyPace"), isOn: Binding(get: { prefs.alertsNotifyPace }, set: { prefs.alertsNotifyPace = $0; if $0 { Notifier.authorize() } }))

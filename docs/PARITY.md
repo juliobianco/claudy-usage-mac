@@ -26,7 +26,7 @@ Legend: ✅ done · 🟡 partly · ⬜ planned (phase) · 🆕 not in the plan u
 | Original | Here |
 |---|---|
 | Pixel map, moods, hearts, health tiers, click moves, confetti, soul, burrow | ✅ |
-| Skins (11 built in, own folder) | ✅ files and loading; ⬜ picker in phase 4 |
+| Skins (13 built in, own folder) | ✅ files and loading; ⬜ picker in phase 4 |
 | Developer menu (right-click Clawd: force a mood, play any move, set hearts, time of day, weather) | ✅ (no "demo" loop) |
 | Sky: arc, moon phase, stars, clouds, rain, snow, fog, storm | ✅ |
 | Sky tooltip: city, temperature, weather, wind, sunrise/sunset, moon phase | ✅ |

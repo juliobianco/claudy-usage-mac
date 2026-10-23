@@ -83,7 +83,7 @@ Location is optional and only used for the weather behind Clawd. You can decline
 | **Alerts** | A blinking **?** when a session needs you and confetti when a limit resets. Notifications for a waiting session and for a reset are optional and off by default. |
 | **Usage history** | 24-hour and weekly charts with marks for resets and for reaching 100%, project and model shares for the last 24 hours or 7 days (click a project for its models and busiest hours), an hour-by-day heatmap, and breakdowns for skills, plugins, MCP servers and subagents. Export it as CSV from the ⋯ menu. A "Token stats" window charts tokens per day by model, from Claude Code's own stats cache. |
 | **Floating widget** | A movable card that folds into a two-ring bubble, with opacity and always-on-top controls. Liquid Glass on macOS 26+. |
-| **Clawd and the sky** | A reactive pixel crab, 11 skins, themes, local weather, sunrise, sunset and moon phases. |
+| **Clawd and the sky** | A reactive pixel crab, 13 skins, themes, local weather, sunrise, sunset and moon phases. |
 | **Claude Code settings** | Edit selected Claude Code preferences, save three presets and revert changes. The app keeps a backup. |
 | **Status and updates** | Claude service status with the affected components and open incidents, a warning when the usage read keeps failing, account information and Claude Code version checks, with a manual update action. |
 

@@ -6,8 +6,14 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-23
+
+The menu bar label, the sky and the limits chart get small options and polish.
+
 ### Added
 - Settings → Menu bar → "Reset times on the label": the menu bar label can show when the 5-hour window (`18:39`) and the week (`Tue 05:59`) reset (#4).
+- Settings → Menu bar → "Reduce motion": Clawd stands still, the sky moves once a minute and the alerts do not blink or throw confetti. It also follows the system's Reduce motion setting (#13, motion part).
+- Two new skins: Halo and Headphones (#3).
 - Settings → Menu bar → "Vivid sky": a bright, opaque sky behind Clawd instead of the translucent one (#5).
 
 ### Changed

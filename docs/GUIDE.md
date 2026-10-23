@@ -108,7 +108,7 @@ Behind him is a **sky** that follows the real sunrise and sunset where you are: 
 
 ## Skins and your own art
 
-Clawd comes with 11 skins (a bow, a crown, cat ears, a frost body, nerd glasses, a party hat, a Santa hat, shades, tired eyes, a top hat, a witch hat). A skin is a plain text file; drop yours in `~/Library/Application Support/ClaudyUsage/skins/` and pick its card in Settings → Look:
+Clawd comes with 13 skins (a bow, a crown, cat ears, a frost body, a halo, headphones, nerd glasses, a party hat, a Santa hat, shades, tired eyes, a top hat, a witch hat). A skin is a plain text file; drop yours in `~/Library/Application Support/ClaudyUsage/skins/` and pick its card in Settings → Look:
 
 ```
 ---
