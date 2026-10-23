@@ -3,6 +3,7 @@
 Plan: `~/.claude/plans/async-sparking-reddy.md` (outside the repo). Updated 2026-10-18. The public plan is `ROADMAP.md`; this file is the working log.
 
 ## Done
+- **Release 0.6.1** (2026-10-23): the menu bar label is drawn at 4x (it was soft on a 4K screen). Tap cask at 0.6.1.
 - **Release 0.6.0** (2026-10-23): reset times on the label (#4), vivid sky (#5), chart air and 50% / 100% guides, reduce motion (#13, the VoiceOver part is still open), skins Halo and Headphones (#3, more welcome).
 - **Reset times on the label (#4) and vivid sky (#5)** (2026-10-23): two switches in Settings → Menu bar (`Prefs.barResets`, `Prefs.vividSky`); `MenuBarLabel.content` is shared with `--snapshot`. Unreleased; close the issues with the release.
 - **Chart padding** (2026-10-23): the limits chart keeps 5 pt of air above and below the lines (`HistoryChart.draw`). Unreleased.
@@ -32,6 +33,7 @@ Plan: `~/.claude/plans/async-sparking-reddy.md` (outside the repo). Updated 2026
 
 ## Next (in order)
 Full comparison with the original: `docs/PARITY.md`.
+0. Small ones left: VoiceOver labels (#13), more skins (#3), more languages (#2), global hotkey (#11), met.no fallback (#6).
 1. **Check by hand** (issue #1): the alerts and the previews, dragging the floating widget, the bubble click, Launch at login, a fixed weather place, macOS 14/15 and Intel. **Polish pass 3**: confirm on the real dropdown that the window now fits the content; sessions block may still be busy. The "⋯" menu, hover texts and the window fit were only checked in code (offscreen renders cannot show them).
 2. **Phase 5** (chat, reminders, lists, recurring tasks): written up in `docs/PHASE5.md`, to be done later. Reminders and lists first (issue #7).
 3. Everything else open is in `ROADMAP.md` and in the issues.
