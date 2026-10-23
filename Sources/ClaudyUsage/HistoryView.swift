@@ -68,7 +68,7 @@ struct HistoryChart: View {
         if mode == .day { drawHours(ctx, w, h) } else { drawCycle(ctx, w, h) }
 
         // Runs of samples without gaps; each becomes a figure of its own.
-        func y(_ v: Int) -> CGFloat { 1 + (h - 2) * (1 - CGFloat(min(100, v)) / 100) }
+        func y(_ v: Int) -> CGFloat { 5 + (h - 10) * (1 - CGFloat(min(100, v)) / 100) }   // air above and below, so the lines do not touch the hour labels
         func runs(_ key: KeyPath<HistorySample, Int>) -> [[(p: CGPoint, v: Int)]] {
             var out: [[(p: CGPoint, v: Int)]] = [], run: [(p: CGPoint, v: Int)] = []
             var prev: Int?

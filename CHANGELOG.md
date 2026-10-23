@@ -6,6 +6,9 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+### Changed
+- The limits chart leaves some air above and below the lines, so they no longer touch the hour labels.
+
 ## [0.5.0] - 2026-10-19
 
 The last piece of the observability list: the token stats window.
