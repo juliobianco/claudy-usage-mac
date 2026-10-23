@@ -88,15 +88,22 @@ struct MenuBarLabel: View {
     var body: some View {
         // The bitmap is drawn by an ImageRenderer, outside this view's tracking: touch what it uses, so a change redraws the label.
         let p = Prefs.shared
-        _ = (p.warnPercent, p.critPercent, p.barStyle)
+        _ = (p.warnPercent, p.critPercent, p.barStyle, p.barResets)
         return Image(nsImage: render())
     }
 
+    private static func resetText(_ d: Date?, _ fmt: String) -> String? { d.map { L.date(fmt).string(from: $0) } }
+
+    /// The label as the user set it; the snapshot draws the same thing.
+    static func content(_ model: AppModel) -> MiniBars {
+        MiniBars(session: model.usage?.session?.percent, week: model.usage?.week?.percent,
+                 stale: model.stale, style: Prefs.shared.barStyle,
+                 resets: Prefs.shared.barResets ? (resetText(model.usage?.session?.reset, "HH:mm"), resetText(model.usage?.week?.reset, "EEE HH:mm")) : nil,
+                 waiting: model.alertWaiting, celebrating: model.alertCelebrating, tick: model.alertTick)
+    }
+
     @MainActor private func render() -> NSImage {
-        let content = MiniBars(session: model.usage?.session?.percent, week: model.usage?.week?.percent,
-                               stale: model.stale, style: Prefs.shared.barStyle,
-                               waiting: model.alertWaiting, celebrating: model.alertCelebrating, tick: model.alertTick)
-        let r = ImageRenderer(content: content)
+        let r = ImageRenderer(content: Self.content(model))
         r.scale = NSScreen.main?.backingScaleFactor ?? 2
         let img = r.nsImage ?? NSImage()
         img.isTemplate = false
@@ -109,6 +116,7 @@ struct MiniBars: View {
     let week: Int?
     let stale: Bool
     var style = "bars"
+    var resets: (session: String?, week: String?)?   // reset times, when the label shows them
     var waiting = false          // a session waits for you: a yellow "?" that blinks
     var celebrating = false      // a limit started over: confetti over the bars
     var tick = 0
@@ -121,8 +129,8 @@ struct MiniBars: View {
                     .opacity(tick % 2 == 0 ? 1 : 0.3)
             }
             VStack(alignment: .leading, spacing: 1.5) {
-                row("5h", session)
-                row("W", week)
+                row("5h", session, resets?.session)
+                row("W", week, resets?.week)
             }
             .opacity(stale ? 0.55 : 1)
             .overlay { if celebrating { Confetti(tick: tick) } }
@@ -131,7 +139,7 @@ struct MiniBars: View {
         .frame(height: 18)
     }
 
-    private func row(_ label: String, _ pct: Int?) -> some View {
+    private func row(_ label: String, _ pct: Int?, _ reset: String?) -> some View {
         HStack(spacing: 3) {
             Text(label)
                 .font(.system(size: 7.5, weight: .bold, design: .rounded))
@@ -151,6 +159,10 @@ struct MiniBars: View {
                     .foregroundStyle(pct.map { T.level($0) } ?? Color.white.opacity(0.6))
                     .fixedSize()                  // "100%" must fit: a fixed 22 pt cut it to "10…"
                     .frame(minWidth: 24, alignment: .trailing)
+            }
+            if let reset {
+                Text(reset).font(.system(size: 7.5, weight: .medium, design: .rounded)).monospacedDigit()
+                    .foregroundStyle(Color.white.opacity(0.6)).fixedSize()
             }
         }
     }

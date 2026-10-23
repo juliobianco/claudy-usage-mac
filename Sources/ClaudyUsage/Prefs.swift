@@ -67,6 +67,8 @@ final class Prefs: @unchecked Sendable {
     var barStyle: String { didSet { d.set(barStyle, forKey: "barStyle") } }          // bars, barsNumbers, numbers
     var showClawd: Bool { didSet { d.set(showClawd, forKey: "showClawd") } }
     var showSky: Bool { didSet { d.set(showSky, forKey: "showSky") } }
+    var vividSky: Bool { didSet { d.set(vividSky, forKey: "vividSky") } }          // opaque sky instead of the original's translucent one
+    var barResets: Bool { didSet { d.set(barResets, forKey: "barResets") } }        // reset times next to the label numbers
     var showSessions: Bool { didSet { d.set(showSessions, forKey: "showSessions") } }
     var showStatus: Bool { didSet { d.set(showStatus, forKey: "showStatus") } }
     var showAccount: Bool { didSet { d.set(showAccount, forKey: "showAccount") } }
@@ -99,6 +101,7 @@ final class Prefs: @unchecked Sendable {
         theme = t; accent = a
         skin = d.string(forKey: "skin") ?? "classic"
         barStyle = d.string(forKey: "barStyle") ?? "bars"
+        vividSky = b("vividSky", false); barResets = b("barResets", false)
         showClawd = b("showClawd", true); showSky = b("showSky", true); showSessions = b("showSessions", true)
         showStatus = b("showStatus", true); showAccount = b("showAccount", true); showDetails = b("showDetails", true); showFable = b("showFable", true)
         warnPercent = i("warnPercent", Format.warnPercent); critPercent = i("critPercent", Format.critPercent)

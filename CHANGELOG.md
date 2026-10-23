@@ -6,6 +6,10 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+### Added
+- Settings → Menu bar → "Reset times on the label": the menu bar label can show when the 5-hour window (`18:39`) and the week (`Tue 05:59`) reset (#4).
+- Settings → Menu bar → "Vivid sky": a bright, opaque sky behind Clawd instead of the translucent one (#5).
+
 ### Changed
 - The limits chart leaves some air around the lines (above, below and at the sides), so they no longer touch the hour labels or the edges.
 

@@ -190,8 +190,11 @@ struct SceneCanvas: View {
             }
 
             // sky gradient
+            // Vivid: the palette's alpha (0 to 18% by day) is raised so the colours show; the same at night, only darker.
+            let vivid = Prefs.shared.vividSky
+            func skyCol(_ c: RGBA, _ a: Double) -> Color { vivid ? col(RGBA(c.r, c.g, c.b, a)) : col(c) }
             if showSky { ctx.fill(Path(CGRect(x: 0, y: 0, width: w, height: h)),
-                     with: .linearGradient(Gradient(colors: [col(sky.top), col(sky.bottom)]),
+                     with: .linearGradient(Gradient(colors: [skyCol(sky.top, 150), skyCol(sky.bottom, 235)]),
                                            startPoint: .zero, endPoint: CGPoint(x: 0, y: h))) }
             // sprites (stars, sun, moon, clouds, weather) at 0.7, like the original's canvas
             if showSky { ctx.drawLayer { l in

@@ -180,10 +180,12 @@ struct BarTab: View {
                     .buttonStyle(.plain)
                 }
             }
+            SwitchRow(label: L.t("show.resets"), hint: L.t("show.resets.hint"), isOn: $prefs.barResets)
         }
         group(L.t("set.show")) {
             SwitchRow(label: L.t("show.clawd"), isOn: $prefs.showClawd)
             SwitchRow(label: L.t("show.sky"), isOn: $prefs.showSky)
+            SwitchRow(label: L.t("show.vivid"), hint: L.t("show.vivid.hint"), isOn: $prefs.vividSky)
             SwitchRow(label: L.t("show.sessions"), isOn: $prefs.showSessions)
             SwitchRow(label: L.t("show.status"), isOn: $prefs.showStatus)
             SwitchRow(label: L.t("show.account"), isOn: $prefs.showAccount)
