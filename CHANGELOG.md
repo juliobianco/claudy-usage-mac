@@ -11,6 +11,7 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 - Settings → Menu bar → "Vivid sky": a bright, opaque sky behind Clawd instead of the translucent one (#5).
 
 ### Changed
+- The limits chart shows faint guides at 50% and 100%, so its fixed 0–100% scale can be read.
 - The limits chart leaves some air around the lines (above, below and at the sides), so they no longer touch the hour labels or the edges.
 
 ## [0.5.0] - 2026-10-19
