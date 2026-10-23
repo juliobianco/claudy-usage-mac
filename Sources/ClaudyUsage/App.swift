@@ -104,8 +104,11 @@ struct MenuBarLabel: View {
 
     @MainActor private func render() -> NSImage {
         let r = ImageRenderer(content: Self.content(model))
-        r.scale = NSScreen.main?.backingScaleFactor ?? 2
-        let img = r.nsImage ?? NSImage()
+        // Drawn at 4x and sized in points: the menu bar may sit on any screen (a 4K one at 1x or 2x, a built-in one),
+        // and macOS scales a big bitmap down cleanly where a small one gets soft.
+        r.scale = 4
+        guard let cg = r.cgImage else { return NSImage() }
+        let img = NSImage(cgImage: cg, size: NSSize(width: CGFloat(cg.width) / 4, height: CGFloat(cg.height) / 4))
         img.isTemplate = false
         return img
     }
