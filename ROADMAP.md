@@ -11,8 +11,6 @@ Small, clear, and good for a first contribution.
 - **Check it by hand on other setups** — macOS 14 and 15 (no Liquid Glass), Intel, a second display. The things not yet exercised by hand: dragging the floating widget, the click that folds it into a bubble, *Launch at login*, typing a fixed weather place. → [#1](https://github.com/juliobianco/claudy-usage-mac/issues/1)
 - **More languages** — adding one is one table of text. Spanish, French, Russian (the original has the last two). → [#2](https://github.com/juliobianco/claudy-usage-mac/issues/2)
 - **New skins** — hats, glasses, seasons. A skin is a text file; the [guide](docs/CREATING-ART.md) shows how. → [#3](https://github.com/juliobianco/claudy-usage-mac/issues/3)
-- **Reset times on the menu bar label** — the original can show `5h: 36% (resets 03:20)`; here the label shows only the percentages. → [#4](https://github.com/juliobianco/claudy-usage-mac/issues/4)
-- **A "vivid sky" option** — the sky is translucent like the original's, so daytime looks dark; some people will want it bright. → [#5](https://github.com/juliobianco/claudy-usage-mac/issues/5)
 - **Weather fallback** — the original falls back to [met.no](https://api.met.no) where Open-Meteo is blocked. → [#6](https://github.com/juliobianco/claudy-usage-mac/issues/6)
 
 ## Observability
