@@ -6,6 +6,8 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-10-23
+
 ### Fixed
 - The menu bar label is drawn at 4x, so it is sharp on 4K and other external screens (it was soft and blocky there).
 
