@@ -71,16 +71,19 @@ struct HistoryChart: View {
         // Runs of samples without gaps; each becomes a figure of its own.
         func y(_ v: Int) -> CGFloat { 5 + (h - 10) * (1 - CGFloat(min(100, v)) / 100) }   // air above and below, so the lines do not touch the hour labels
         // The scale is fixed, 0 to 100%: faint guides at 50% and 100% so the height can be read.
-        for v in [50, 100] {
-            ctx.fill(Path(CGRect(x: 0, y: y(v), width: w, height: 1)), with: .color(Color.white.opacity(0.07)))
-            ctx.draw(Text("\(v)%").font(.system(size: 7.5)).foregroundColor(T.faint), at: CGPoint(x: Self.inset, y: y(v) + 6), anchor: .leading)
-        }
+        for v in [50, 100] { ctx.fill(Path(CGRect(x: 0, y: y(v), width: w, height: 1)), with: .color(Color.white.opacity(0.07))) }
         func runs(_ key: KeyPath<HistorySample, Int>) -> [[(p: CGPoint, v: Int)]] {
             var out: [[(p: CGPoint, v: Int)]] = [], run: [(p: CGPoint, v: Int)] = []
-            var prev: Int?
+            var prev: Int?, start = 0
             for s in model.history.samples where s.minute >= t0 && s.minute <= t1 {
                 let v = s[keyPath: key]
-                if v < 0 || (prev != nil && s.minute - prev! > UsageHistory.gapMinutes) { if !run.isEmpty { out.append(run) }; run = [] }
+                let gap = prev != nil && s.minute - prev! > UsageHistory.gapMinutes
+                if v < 0 || gap {
+                    // A few minutes cut off by a long pause (the edge of the window) is a stray stub, not a trend.
+                    if !run.isEmpty && !(gap && prev! - start < 15) { out.append(run) }
+                    run = []
+                }
+                if run.isEmpty { start = s.minute }
                 prev = s.minute
                 if v >= 0 { run.append((CGPoint(x: x(s.minute, w), y: y(v)), v)) }
             }
@@ -128,6 +131,11 @@ struct HistoryChart: View {
             }
         }
         drawMarks(ctx, w, h)
+        // Guide labels last, on a patch of the panel colour, so a line at the edge never runs through the text.
+        for v in [50, 100] {
+            ctx.fill(Path(CGRect(x: 0, y: y(v) + 1, width: Self.inset + 22, height: 10)), with: .color(T.bg))
+            ctx.draw(Text("\(v)%").font(.system(size: 7.5)).foregroundColor(T.faint), at: CGPoint(x: Self.inset, y: y(v) + 6), anchor: .leading)
+        }
     }
 
     /// The week view leaves out the 5 h resets: there are about thirty of them in a week and they would smear the line.

@@ -3,6 +3,7 @@
 Plan: `~/.claude/plans/async-sparking-reddy.md` (outside the repo). Updated 2026-10-18. The public plan is `ROADMAP.md`; this file is the working log.
 
 ## Done
+- **Release 0.6.2** (2026-10-23): 24 h chart: stray stub at the left edge (a few minutes before a long pause) is no longer drawn, and the 50% / 100% labels sit on a panel-coloured patch. Tap cask at 0.6.2.
 - **Release 0.6.1** (2026-10-23): the menu bar label is drawn at 4x (it was soft on a 4K screen). Tap cask at 0.6.1.
 - **Release 0.6.0** (2026-10-23): reset times on the label (#4), vivid sky (#5), chart air and 50% / 100% guides, reduce motion (#13, the VoiceOver part is still open), skins Halo and Headphones (#3, more welcome).
 - **Reset times on the label (#4) and vivid sky (#5)** (2026-10-23): two switches in Settings → Menu bar (`Prefs.barResets`, `Prefs.vividSky`); `MenuBarLabel.content` is shared with `--snapshot`. Unreleased; close the issues with the release.

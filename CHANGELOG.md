@@ -6,6 +6,11 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+## [0.6.2] - 2026-10-23
+
+### Fixed
+- 24 h chart: a few minutes of data cut off at the left edge by a long pause no longer draw a stray stub, and the 50%/100% labels are no longer crossed by the lines.
+
 ## [0.6.1] - 2026-10-23
 
 ### Fixed
