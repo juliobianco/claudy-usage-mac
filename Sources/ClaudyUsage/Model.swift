@@ -48,7 +48,11 @@ final class AppModel {
         every(3600) { [self] in refreshVersion() }
         every(600) { [self] in refreshAccount() }
         every(900) { [self] in refreshProjects() }
-        every(1) { [self] in now = Date() }
+        every(1) { [self] in
+            now = Date()
+            // An expired celebration left set kept the menu bar label reading `now`, so it redrew (at 4x) every second.
+            if let c = celebrateUntil, c <= now { celebrateUntil = nil }
+        }
         every(0.5) { [self] in if (alertWaiting || alertCelebrating) && !Prefs.shared.motionOff { alertTick += 1 } }   // still: the pulse stays at its first frame
         every(600) { [self] in scene.refreshWeather() }
         // After the Mac wakes up a probe that was running got no answer: ask again instead of waiting for the next tick.
@@ -65,6 +69,7 @@ final class AppModel {
 
     private func every(_ s: TimeInterval, _ f: @escaping @MainActor () -> Void) {
         let t = Timer(timeInterval: s, repeats: true) { _ in MainActor.assumeIsolated { f() } }
+        t.tolerance = s * 0.1   // lets macOS batch the wakeups
         RunLoop.main.add(t, forMode: .common)
         timers.append(t)
     }

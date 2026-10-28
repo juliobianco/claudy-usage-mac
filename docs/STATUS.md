@@ -31,7 +31,8 @@ Plan: `~/.claude/plans/async-sparking-reddy.md` (outside the repo). Updated 2026
 - **Phase 2**: Clawd (all moods, click animations, hearts, confetti, burrow, soul), sky (sun, moon phase, stars, clouds, rain, snow, fog, storm), Open-Meteo weather, CoreLocation, 11 built-in skins.
 
 ## In progress
-- **Energy** (2026-10-28): Activity Monitor showed ~360 in "12 hr Power", close to Chrome. Released in 0.6.3 and measured (Energy Impact 1,0 with the dropdown closed): the scene loop follows the window's real visibility (`WindowVisibility`, `Scene.swift`). Still to do, by likely weight: adaptive tick (slower when nothing moves), timer tolerance and `now` once a minute, `celebrateUntil` never cleared (the menu bar label re-renders every second after the first reset), less frequent `/usage` probe when idle. Measure first: widget closed / open / reduce motion.
+- **Energy, round 2** (2026-10-28): `celebrateUntil` is cleared once expired (the label no longer redraws every second after the first reset) and timers have 10% tolerance. Measured with the dropdown closed: Energy Impact 0,1 (was 1,0 in 0.6.3). Unreleased.
+- **Energy** (2026-10-28): Activity Monitor showed ~360 in "12 hr Power", close to Chrome. Released in 0.6.3 and measured (Energy Impact 1,0 with the dropdown closed): the scene loop follows the window's real visibility (`WindowVisibility`, `Scene.swift`). Still to do, by likely weight: adaptive tick (slower when nothing moves), timer tolerance and `now` once a minute, less frequent `/usage` probe when idle. Measure first: widget closed / open / reduce motion.
 
 ## Next (in order)
 Full comparison with the original: `docs/PARITY.md`.
