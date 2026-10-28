@@ -4,3 +4,6 @@ build/
 *.xcodeproj
 .DS_Store
 dist/
+
+# written here by the UniFi MCP server when a session starts in this folder
+audit.log
