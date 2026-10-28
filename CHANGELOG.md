@@ -6,6 +6,8 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+## [0.6.3] - 2026-10-28
+
 ### Fixed
 - Energy: the sky and Clawd animation now run only while a window showing them is really on screen. It is tied to the window's visibility (shown and not covered), not to the view appearing, so a closed dropdown or a covered floating widget no longer keeps it going. A stop and start inside one tick can no longer leave two loops running.
 
