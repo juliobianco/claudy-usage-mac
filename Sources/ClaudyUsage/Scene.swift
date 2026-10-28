@@ -113,35 +113,76 @@ final class SceneModel {
     // The panel and the floating widget can both show the scene: it runs while at least one does.
     @ObservationIgnored private var watchers = 0
     @ObservationIgnored private var ticked = false
+    // A stop followed by a start inside one tick would leave the old timer alive next to the new one: each loop
+    // carries its generation and ends when it is no longer the current one.
+    @ObservationIgnored private var generation = 0
     func start() {
         watchers += 1
         guard !running else { return }
         running = true
+        generation += 1
         Skins.reload()
         refreshWeather()
-        loop()
+        loop(generation)
     }
     func stop() {
         watchers = max(0, watchers - 1)
         if watchers == 0 { running = false }
     }
 
-    private func loop() {
-        guard running else { return }
+    private func loop(_ gen: Int) {
+        guard running, gen == generation else { return }
         // Reduced motion: Clawd stands still after the first frame and the sky moves once a minute.
         if Prefs.shared.motionOff && ticked {
             sky = skySim.step(w: size.width / Self.scale, h: size.height / Self.scale, lon: lon, now: clock ?? Date())
-            DispatchQueue.main.asyncAfter(deadline: .now() + 60) { [weak self] in MainActor.assumeIsolated { self?.loop() } }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 60) { [weak self] in MainActor.assumeIsolated { self?.loop(gen) } }
             return
         }
         tickOnce(); ticked = true
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(mascot.intervalMs)) { [weak self] in
-            MainActor.assumeIsolated { self?.loop() }
+            MainActor.assumeIsolated { self?.loop(gen) }
         }
     }
 
     /// For the snapshot: let the simulation run a while without a timer.
     func warmup(_ n: Int) { for _ in 0..<n { tickOnce() } }
+}
+
+/// Tells whether the window holding the view is really on screen (shown and not covered). `onAppear` / `onDisappear`
+/// are not enough: the dropdown of a MenuBarExtra keeps its view after it closes, and a covered window still "appears".
+struct WindowVisibility: NSViewRepresentable {
+    let onChange: @MainActor (Bool) -> Void
+
+    func makeNSView(context: Context) -> Probe { let v = Probe(); v.onChange = onChange; return v }
+    func updateNSView(_ v: Probe, context: Context) { v.onChange = onChange }
+    static func dismantleNSView(_ v: Probe, coordinator: ()) { v.report(false) }
+
+    @MainActor final class Probe: NSView {
+        var onChange: (@MainActor (Bool) -> Void)?
+        private var last = false
+
+        override func viewDidMoveToWindow() {
+            super.viewDidMoveToWindow()
+            NotificationCenter.default.removeObserver(self)
+            if let w = window {
+                for n in [NSWindow.didChangeOcclusionStateNotification, NSWindow.willCloseNotification] {
+                    NotificationCenter.default.addObserver(self, selector: #selector(refresh), name: n, object: w)
+                }
+            }
+            refresh()
+        }
+
+        @objc private func refresh() {
+            let closing = window?.isVisible != true
+            report(!closing && window?.occlusionState.contains(.visible) == true)
+        }
+
+        func report(_ visible: Bool) {
+            guard visible != last else { return }
+            last = visible
+            onChange?(visible)
+        }
+    }
 }
 
 // MARK: drawing
