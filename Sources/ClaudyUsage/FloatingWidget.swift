@@ -283,8 +283,7 @@ struct FloatingCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 HeroView(scene: model.scene, model: model)
                     .help(prefs.showSky ? model.skyTip : "")
-                    .onAppear { model.scene.start() }
-                    .onDisappear { model.scene.stop() }
+                    .background(WindowVisibility { $0 ? model.scene.start() : model.scene.stop() })
                 ProgressBar(percent: model.usage?.session?.percent, height: 7, color: model.usage?.session.map { T.level($0.percent) } ?? T.ok)
             }
             VStack(alignment: .leading, spacing: 2) {
