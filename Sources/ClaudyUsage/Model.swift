@@ -49,9 +49,11 @@ final class AppModel {
         every(600) { [self] in refreshAccount() }
         every(900) { [self] in refreshProjects() }
         every(1) { [self] in
-            now = Date()
             // An expired celebration left set kept the menu bar label reading `now`, so it redrew (at 4x) every second.
-            if let c = celebrateUntil, c <= now { celebrateUntil = nil }
+            if let c = celebrateUntil, c <= Date() { celebrateUntil = nil }
+            // The dropdown's content stays mounted while it is closed: moving `now` re-laid it out (chart, heatmap) every second.
+            // Only a window you can see, or an alert that counts down, needs the clock. The status item window cannot become key.
+            if celebrateUntil != nil || previewWaitingUntil != nil || NSApp.windows.contains(where: { $0.isVisible && $0.canBecomeKey }) { now = Date() }
         }
         every(0.5) { [self] in if (alertWaiting || alertCelebrating) && !Prefs.shared.motionOff { alertTick += 1 } }   // still: the pulse stays at its first frame
         every(600) { [self] in scene.refreshWeather() }
