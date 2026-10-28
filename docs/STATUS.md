@@ -3,6 +3,7 @@
 Plan: `~/.claude/plans/async-sparking-reddy.md` (outside the repo). Updated 2026-10-18. The public plan is `ROADMAP.md`; this file is the working log.
 
 ## Done
+- **Release 0.6.3** (2026-10-28): energy fix, the scene loop runs only while a window showing it is really visible. Measured on the Mac with the dropdown closed: Energy Impact 1,0, 12 hr Power 29 (was ~360). Tap cask at 0.6.3.
 - **Release 0.6.2** (2026-10-23): 24 h chart: stray stub at the left edge (a few minutes before a long pause) is no longer drawn, and the 50% / 100% labels sit on a panel-coloured patch. Tap cask at 0.6.2.
 - **Release 0.6.1** (2026-10-23): the menu bar label is drawn at 4x (it was soft on a 4K screen). Tap cask at 0.6.1.
 - **Release 0.6.0** (2026-10-23): reset times on the label (#4), vivid sky (#5), chart air and 50% / 100% guides, reduce motion (#13, the VoiceOver part is still open), skins Halo and Headphones (#3, more welcome).
@@ -30,7 +31,7 @@ Plan: `~/.claude/plans/async-sparking-reddy.md` (outside the repo). Updated 2026
 - **Phase 2**: Clawd (all moods, click animations, hearts, confetti, burrow, soul), sky (sun, moon phase, stars, clouds, rain, snow, fog, storm), Open-Meteo weather, CoreLocation, 11 built-in skins.
 
 ## In progress
-- **Energy** (2026-10-28): Activity Monitor showed ~360 in "12 hr Power", close to Chrome. Done in code, not yet built or measured on the Mac: the scene loop follows the window's real visibility (`WindowVisibility`, `Scene.swift`). Still to do, by likely weight: adaptive tick (slower when nothing moves), timer tolerance and `now` once a minute, `celebrateUntil` never cleared (the menu bar label re-renders every second after the first reset), less frequent `/usage` probe when idle. Measure first: widget closed / open / reduce motion.
+- **Energy** (2026-10-28): Activity Monitor showed ~360 in "12 hr Power", close to Chrome. Released in 0.6.3 and measured (Energy Impact 1,0 with the dropdown closed): the scene loop follows the window's real visibility (`WindowVisibility`, `Scene.swift`). Still to do, by likely weight: adaptive tick (slower when nothing moves), timer tolerance and `now` once a minute, `celebrateUntil` never cleared (the menu bar label re-renders every second after the first reset), less frequent `/usage` probe when idle. Measure first: widget closed / open / reduce motion.
 
 ## Next (in order)
 Full comparison with the original: `docs/PARITY.md`.
