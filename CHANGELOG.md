@@ -6,6 +6,8 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+## [0.6.4] - 2026-10-28
+
 ### Fixed
 - Energy: after the first limit reset the menu bar label no longer redraws every second (the finished celebration is cleared), and the polling timers allow 10% tolerance so macOS can batch the wakeups. The dropdown's content stays mounted while it is closed, and the clock moved every second re-laid it out (chart, heatmap): the clock now moves only while a window is visible or an alert counts down. Idle CPU with everything closed went from about 1.2% to about 0.1%.
 

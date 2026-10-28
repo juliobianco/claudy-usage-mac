@@ -8,7 +8,7 @@ Plan: `~/.claude/plans/async-sparking-reddy.md` (outside the repo). Updated 2026
 - **Release 0.6.1** (2026-10-23): the menu bar label is drawn at 4x (it was soft on a 4K screen). Tap cask at 0.6.1.
 - **Release 0.6.0** (2026-10-23): reset times on the label (#4), vivid sky (#5), chart air and 50% / 100% guides, reduce motion (#13, the VoiceOver part is still open), skins Halo and Headphones (#3, more welcome).
 - **Reset times on the label (#4) and vivid sky (#5)** (2026-10-23): two switches in Settings → Menu bar (`Prefs.barResets`, `Prefs.vividSky`); `MenuBarLabel.content` is shared with `--snapshot`. Unreleased; close the issues with the release.
-- **Chart padding** (2026-10-23): the limits chart keeps 5 pt of air above and below the lines (`HistoryChart.draw`). Unreleased.
+- **Chart padding** (2026-10-23): the limits chart keeps 5 pt of air above and below the lines (`HistoryChart.draw`). Released in 0.6.4.
 - **Observability plan** (2026-10-19): ten items in `ROADMAP.md` (issues #14-#23) with the design notes in `docs/OBSERVABILITY.md`, to be discussed and built one per sitting, before phase 5. Items 1-9 built and released (0.3.3 and 0.4.0); item 10 (stats cache) released in 0.5.0: the list is done, phase 5 is next.
 - **Release 0.5.0** (2026-10-19): observability item 10, the "Token stats…" window (tokens per day by model from `~/.claude/stats-cache.json`: `StatsCache`, `TokensView`). The observability list is complete.
 - **Release 0.4.0** (2026-10-19): observability items 2-9: usage-read health warning, projects by period with drill-down, pace alert, chart marks, usage by model, hour-by-day heatmap, CSV export, service status in detail.
@@ -31,7 +31,8 @@ Plan: `~/.claude/plans/async-sparking-reddy.md` (outside the repo). Updated 2026
 - **Phase 2**: Clawd (all moods, click animations, hearts, confetti, burrow, soul), sky (sun, moon phase, stars, clouds, rain, snow, fog, storm), Open-Meteo weather, CoreLocation, 11 built-in skins.
 
 ## In progress
-- **Energy, round 2** (2026-10-28): `celebrateUntil` is cleared once expired (the label no longer redraws every second after the first reset) and timers have 10% tolerance. Measured with the dropdown closed: Energy Impact 0,1 (was 1,0 in 0.6.3). Then found with `sample`: the closed dropdown stays mounted and `now` (1 s) re-laid out the chart and heatmap; `now` moves only with a visible window or a countdown alert. Idle CPU 1.2% to ~0.1% (`top`). Unreleased.
+- **Release 0.6.4** (2026-10-28): energy round 2 (below). Tap cask at 0.6.4.
+- **Energy, round 2** (2026-10-28): `celebrateUntil` is cleared once expired (the label no longer redraws every second after the first reset) and timers have 10% tolerance. Measured with the dropdown closed: Energy Impact 0,1 (was 1,0 in 0.6.3). Then found with `sample`: the closed dropdown stays mounted and `now` (1 s) re-laid out the chart and heatmap; `now` moves only with a visible window or a countdown alert. Idle CPU 1.2% to ~0.1% (`top`). Released in 0.6.4.
 - **Energy** (2026-10-28): Activity Monitor showed ~360 in "12 hr Power", close to Chrome. Released in 0.6.3 and measured (Energy Impact 1,0 with the dropdown closed): the scene loop follows the window's real visibility (`WindowVisibility`, `Scene.swift`). Still to do, by likely weight: adaptive tick (slower when nothing moves), timer tolerance and `now` once a minute, less frequent `/usage` probe when idle. Measure first: widget closed / open / reduce motion.
 
 ## Next (in order)
