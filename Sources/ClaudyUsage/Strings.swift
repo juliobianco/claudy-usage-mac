@@ -39,7 +39,7 @@ enum L {
 
     static let table: [String: [String: String]] = [
         "en": [
-            "a11y.limit5h": "5-hour limit", "a11y.hearts": "Session hearts, %d of 6 halves left", "a11y.bubble": "5-hour limit %@, week %@", "a11y.chart": "Usage chart", "app.title": "CLAUDE USAGE", "week": "WEEK", "fableWeek": "FABLE · WEEK", "sessions": "SESSIONS",
+            "a11y.on": "on", "a11y.off": "off", "a11y.limit5h": "5-hour limit", "a11y.hearts": "Session hearts, %d of 6 halves left", "a11y.bubble": "5-hour limit %@, week %@", "a11y.chart": "Usage chart", "app.title": "CLAUDE USAGE", "week": "WEEK", "fableWeek": "FABLE · WEEK", "sessions": "SESSIONS",
             "none": "none running", "session.one": "session", "session.many": "sessions",
             "request.one": "request", "request.many": "requests",
             "working": "working", "waiting": "waiting", "waitingForYou": "waiting for you", "idle": "idle",
@@ -123,7 +123,7 @@ enum L {
             "set.moreHint": "The rest of Claude Code's settings (hooks, permissions, plugins, env) are in settings.json",
         ],
         "pt": [
-            "a11y.limit5h": "Limite de 5 horas", "a11y.hearts": "Corações da sessão, %d de 6 metades restantes", "a11y.bubble": "Limite de 5 horas %@, semana %@", "a11y.chart": "Gráfico de uso", "app.title": "USO DO CLAUDE", "week": "SEMANA", "fableWeek": "FABLE · SEMANA", "sessions": "SESSÕES",
+            "a11y.on": "ligado", "a11y.off": "desligado", "a11y.limit5h": "Limite de 5 horas", "a11y.hearts": "Corações da sessão, %d de 6 metades restantes", "a11y.bubble": "Limite de 5 horas %@, semana %@", "a11y.chart": "Gráfico de uso", "app.title": "USO DO CLAUDE", "week": "SEMANA", "fableWeek": "FABLE · SEMANA", "sessions": "SESSÕES",
             "none": "nenhuma rodando", "session.one": "sessão", "session.many": "sessões",
             "request.one": "requisição", "request.many": "requisições",
             "working": "trabalhando", "waiting": "esperando", "waitingForYou": "esperando você", "idle": "parada",

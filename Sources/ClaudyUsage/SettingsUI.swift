@@ -57,6 +57,9 @@ struct SwitchRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isToggle)   // read as a switch, with its state
+        .accessibilityValue(isOn ? L.t("a11y.on") : L.t("a11y.off"))
     }
 }
 

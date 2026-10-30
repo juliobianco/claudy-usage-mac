@@ -31,14 +31,14 @@ Plan: `~/.claude/plans/async-sparking-reddy.md` (outside the repo). Updated 2026
 - **Phase 2**: Clawd (all moods, click animations, hearts, confetti, burrow, soul), sky (sun, moon phase, stars, clouds, rain, snow, fog, storm), Open-Meteo weather, CoreLocation, 11 built-in skins.
 
 ## In progress
-- **VoiceOver labels (#13) and `Git.branch` hardening** (2026-10-29): spoken labels on hero %, limit rows, hearts, session rows, chart and bubble; `refreshSessions` reads one at a time on a GCD queue. Unreleased; #13 stays open for the contrast check and a try with VoiceOver on.
+- **Release 0.7.0** (2026-10-29): VoiceOver labels and switches (#13), lighter dim text on every theme, global shortcut for the floating widget (#11), met.no weather fallback (#6), sessions read off the Swift pool (`Git.branch` hardening). Tap cask at 0.7.0.
 - **Release 0.6.4** (2026-10-28): energy round 2 (below). Tap cask at 0.6.4.
 - **Energy, round 2** (2026-10-28): `celebrateUntil` is cleared once expired (the label no longer redraws every second after the first reset) and timers have 10% tolerance. Measured with the dropdown closed: Energy Impact 0,1 (was 1,0 in 0.6.3). Then found with `sample`: the closed dropdown stays mounted and `now` (1 s) re-laid out the chart and heatmap; `now` moves only with a visible window or a countdown alert. Idle CPU 1.2% to ~0.1% (`top`). Released in 0.6.4.
 - **Energy** (2026-10-28): Activity Monitor showed ~360 in "12 hr Power", close to Chrome. Released in 0.6.3 and measured (Energy Impact 1,0 with the dropdown closed): the scene loop follows the window's real visibility (`WindowVisibility`, `Scene.swift`). Still to do, by likely weight: adaptive tick (slower when nothing moves), timer tolerance and `now` once a minute, less frequent `/usage` probe when idle. Measure first: widget closed / open / reduce motion.
 
 ## Next (in order)
 Full comparison with the original: `docs/PARITY.md`.
-0. Small ones left: VoiceOver contrast check and a real try (#13), more skins (#3), more languages (#2), global hotkey (#11), met.no fallback (#6).
+0. Small ones left: more skins (#3), more languages (#2).
 1. **Check by hand** (issue #1): the alerts and the previews, dragging the floating widget, the bubble click, Launch at login, a fixed weather place, macOS 14/15 and Intel. **Polish pass 3**: confirm on the real dropdown that the window now fits the content; sessions block may still be busy. The "⋯" menu, hover texts and the window fit were only checked in code (offscreen renders cannot show them).
 2. **Phase 5** (chat, reminders, lists, recurring tasks): written up in `docs/PHASE5.md`, to be done later. Reminders and lists first (issue #7).
 3. Everything else open is in `ROADMAP.md` and in the issues.
@@ -51,7 +51,6 @@ Full comparison with the original: `docs/PARITY.md`.
 - More languages: one more table in `Strings.swift` (+ `StringsClaude.swift`).
 - **Custom characters**: let a skin file carry its own body map (see `docs/CREATING-ART.md`, "Other creatures").
 - Closed menu bar label: maybe a mini Clawd next to the bars.
-- Weather fallback to met.no (original has it; only Open-Meteo here).
 - Sessions from other machines (`remoteSessions` in the original).
 - macOS version of the original's tips (disk space, Login Items, caches, uptime).
 - Sky colours are translucent like the original, so daytime looks dark; add a "vivid sky" option if it bothers.

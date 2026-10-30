@@ -30,7 +30,7 @@ Legend: ✅ done · 🟡 partly · ⬜ planned (phase) · 🆕 not in the plan u
 | Developer menu (right-click Clawd: force a mood, play any move, set hearts, time of day, weather) | ✅ (no "demo" loop) |
 | Sky: arc, moon phase, stars, clouds, rain, snow, fog, storm | ✅ |
 | Sky tooltip: city, temperature, weather, wind, sunrise/sunset, moon phase | ✅ |
-| Weather fallback to met.no | 🆕 backlog (only matters if Open-Meteo is blocked) |
+| Weather fallback to met.no | ✅ 0.7.0 |
 | Weather location by IP | ✖ replaced by CoreLocation, or a fixed place typed in Settings → System |
 
 ## Window, menu and settings

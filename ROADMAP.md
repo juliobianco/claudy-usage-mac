@@ -11,7 +11,6 @@ Small, clear, and good for a first contribution.
 - **Check it by hand on other setups** — macOS 14 and 15 (no Liquid Glass), Intel, a second display. The things not yet exercised by hand: dragging the floating widget, the click that folds it into a bubble, *Launch at login*, typing a fixed weather place. → [#1](https://github.com/juliobianco/claudy-usage-mac/issues/1)
 - **More languages** — adding one is one table of text. Spanish, French, Russian (the original has the last two). → [#2](https://github.com/juliobianco/claudy-usage-mac/issues/2)
 - **New skins** — hats, glasses, seasons. A skin is a text file; the [guide](docs/CREATING-ART.md) shows how. → [#3](https://github.com/juliobianco/claudy-usage-mac/issues/3)
-- **Weather fallback** — the original falls back to [met.no](https://api.met.no) where Open-Meteo is blocked. → [#6](https://github.com/juliobianco/claudy-usage-mac/issues/6)
 
 ## Observability
 
@@ -44,11 +43,9 @@ Bigger, or waiting for something.
 - **Credits and usage by product** — the cloud-session credit balance and the week's split between Claude Code, Chats and Cowork. They are only on claude.ai's usage page; we need an honest data source first (no scraping, no borrowed tokens). → [#8](https://github.com/juliobianco/claudy-usage-mac/issues/8)
 - **A notarized download and a Homebrew cask** — needs an Apple Developer ID; until then the zip asks for "Open Anyway". → [#9](https://github.com/juliobianco/claudy-usage-mac/issues/9)
 - **Other creatures** — a skin that brings its own body, so Clawd's silhouette can change (a cat, a ghost). → [#10](https://github.com/juliobianco/claudy-usage-mac/issues/10)
-- **A global hotkey** to show and hide the floating widget. → [#11](https://github.com/juliobianco/claudy-usage-mac/issues/11)
 - **Tips about your Mac** — disk space, login items, caches, uptime: a macOS version of the original's Windows-only tips.
 - **Sessions from other machines** — the original can read sessions published by a server or a VM.
 - **A check for new versions of the app itself** — notify and open the release page; never download and run code. → [#12](https://github.com/juliobianco/claudy-usage-mac/issues/12)
-- **Accessibility** — VoiceOver labels for the card, the bubble and the settings, and a "reduce motion" switch for Clawd. → [#13](https://github.com/juliobianco/claudy-usage-mac/issues/13)
 
 ## Not planned
 

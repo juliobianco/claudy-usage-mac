@@ -6,10 +6,11 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-29
 ### Added
 - Weather fallback (#6): when Open-Meteo does not answer, the sky asks met.no (as the original does) instead of showing clear weather.
 - Global shortcut (#11) to show and hide the floating widget: record one in Settings → Menu bar → Floating widget (none by default).
-- VoiceOver (#13): the big percentage, the limit rows, the hearts, the session rows, the chart and the bubble's rings now have spoken labels ("5-hour limit, 42%").
+- VoiceOver (#13): the big percentage, the limit rows, the hearts, the session rows, the chart and the bubble's rings now have spoken labels ("5-hour limit, 42%"), and the switches in Settings are read as switches, on or off.
 
 ### Changed
 - Contrast (#13): the dim text of every theme (muted, dim, faint) is lighter, so small labels, axis numbers and notes reach at least 4.5:1 against the background (they were between 2.2 and 4.4). Same hues, a bit brighter.
