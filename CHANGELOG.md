@@ -6,6 +6,10 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-10-30
+### Fixed
+- On a light menu bar the label is drawn in dark ink with deeper green / amber / red, instead of white text and pale green that vanished.
+
 ## [0.7.1] - 2026-10-30
 ### Changed
 - The floating-widget shortcut can be removed with a ⊖ button next to it (Forward Delete works too), instead of only by pressing Delete while recording.

@@ -3,6 +3,8 @@
 Plan: `~/.claude/plans/async-sparking-reddy.md` (outside the repo). Updated 2026-10-18. The public plan is `ROADMAP.md`; this file is the working log.
 
 ## Done
+
+- **Light menu bar (0.7.2)** (2026-10-30): `MenuBarTone` reads the status bar window appearance; `MiniBars(light:)` draws dark ink and deeper greens/ambers/reds.
 - **Release 0.6.3** (2026-10-28): energy fix, the scene loop runs only while a window showing it is really visible. Measured on the Mac with the dropdown closed: Energy Impact 1,0, 12 hr Power 29 (was ~360). Tap cask at 0.6.3.
 - **Release 0.6.2** (2026-10-23): 24 h chart: stray stub at the left edge (a few minutes before a long pause) is no longer drawn, and the 50% / 100% labels sit on a panel-coloured patch. Tap cask at 0.6.2.
 - **Release 0.6.1** (2026-10-23): the menu bar label is drawn at 4x (it was soft on a 4K screen). Tap cask at 0.6.1.

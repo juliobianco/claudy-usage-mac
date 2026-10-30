@@ -88,7 +88,7 @@ struct MenuBarLabel: View {
     var body: some View {
         // The bitmap is drawn by an ImageRenderer, outside this view's tracking: touch what it uses, so a change redraws the label.
         let p = Prefs.shared
-        _ = (p.warnPercent, p.critPercent, p.barStyle, p.barResets)
+        _ = (p.warnPercent, p.critPercent, p.barStyle, p.barResets, MenuBarTone.shared.light)
         return Image(nsImage: render())
     }
 
@@ -99,7 +99,7 @@ struct MenuBarLabel: View {
         MiniBars(session: model.usage?.session?.percent, week: model.usage?.week?.percent,
                  stale: model.stale, style: Prefs.shared.barStyle,
                  resets: Prefs.shared.barResets ? (resetText(model.usage?.session?.reset, "HH:mm"), resetText(model.usage?.week?.reset, "EEE HH:mm")) : nil,
-                 waiting: model.alertWaiting, celebrating: model.alertCelebrating, tick: model.alertTick)
+                 waiting: model.alertWaiting, celebrating: model.alertCelebrating, tick: model.alertTick, light: MenuBarTone.shared.light)
     }
 
     @MainActor private func render() -> NSImage {
@@ -114,6 +114,26 @@ struct MenuBarLabel: View {
     }
 }
 
+/// The menu bar is light or dark by the wallpaper behind it, not by the system theme: ask the status bar window.
+@Observable @MainActor final class MenuBarTone {
+    static let shared = MenuBarTone()
+    private(set) var light = false
+    private var timer: Timer?
+
+    private init() {
+        // ponytail: polls twice a second; KVO on the status window's effectiveAppearance if this ever shows in a profile.
+        timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+            MainActor.assumeIsolated { MenuBarTone.shared.refresh() }
+        }
+    }
+
+    private func refresh() {
+        guard let w = NSApp.windows.first(where: { String(describing: type(of: $0)).contains("StatusBar") }) else { return }
+        let l = w.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .aqua
+        if l != light { light = l }
+    }
+}
+
 struct MiniBars: View {
     let session: Int?
     let week: Int?
@@ -123,6 +143,17 @@ struct MiniBars: View {
     var waiting = false          // a session waits for you: a yellow "?" that blinks
     var celebrating = false      // a limit started over: confetti over the bars
     var tick = 0
+    var light = false            // light menu bar: dark ink and deeper greens, the pale ones vanish
+
+    private var ink: Color { light ? .black : .white }
+    private func level(_ pct: Int) -> Color {
+        guard light else { return T.level(pct) }
+        switch Format.level(pct, warn: Prefs.shared.warnPercent, crit: Prefs.shared.critPercent) {
+        case .ok: return Color(hex: 0x15803D)
+        case .warn: return Color(hex: 0xB45309)
+        case .crit: return Color(hex: 0xB91C1C)
+        }
+    }
 
     var body: some View {
         HStack(spacing: 4) {
@@ -146,26 +177,26 @@ struct MiniBars: View {
         HStack(spacing: 3) {
             Text(label)
                 .font(.system(size: 7.5, weight: .bold, design: .rounded))
-                .foregroundStyle(Color.white.opacity(0.85))
+                .foregroundStyle(ink.opacity(0.85))
                 .frame(width: 11, alignment: .leading)
             if style != "numbers" {
                 ZStack(alignment: .leading) {
-                    Capsule().fill(Color.white.opacity(0.28)).frame(width: 30, height: 4)
+                    Capsule().fill(ink.opacity(light ? 0.22 : 0.28)).frame(width: 30, height: 4)
                     if let pct {
-                        Capsule().fill(T.level(pct)).frame(width: max(3, 30 * CGFloat(min(pct, 100)) / 100), height: 4)
+                        Capsule().fill(level(pct)).frame(width: max(3, 30 * CGFloat(min(pct, 100)) / 100), height: 4)
                     }
                 }
             }
             if style != "bars" {
                 Text(pct.map { "\($0)%" } ?? "--")
                     .font(.system(size: 8, weight: .semibold, design: .rounded)).monospacedDigit()
-                    .foregroundStyle(pct.map { T.level($0) } ?? Color.white.opacity(0.6))
+                    .foregroundStyle(pct.map { level($0) } ?? ink.opacity(0.6))
                     .fixedSize()                  // "100%" must fit: a fixed 22 pt cut it to "10…"
                     .frame(minWidth: 24, alignment: .trailing)
             }
             if let reset {
                 Text(reset).font(.system(size: 7.5, weight: .medium, design: .rounded)).monospacedDigit()
-                    .foregroundStyle(Color.white.opacity(0.6)).fixedSize()
+                    .foregroundStyle(ink.opacity(0.6)).fixedSize()
             }
         }
     }
