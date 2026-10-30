@@ -7,7 +7,10 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 ## [Unreleased]
 
 ### Added
-- VoiceOver (#13): the big percentage, the limit rows, the hearts, the session rows, the chart and the bubble's rings now have spoken labels ("5-hour limit, 42%"). The contrast check is still open.
+- VoiceOver (#13): the big percentage, the limit rows, the hearts, the session rows, the chart and the bubble's rings now have spoken labels ("5-hour limit, 42%").
+
+### Changed
+- Contrast (#13): the dim text of every theme (muted, dim, faint) is lighter, so small labels, axis numbers and notes reach at least 4.5:1 against the background (they were between 2.2 and 4.4). Same hues, a bit brighter.
 
 ### Fixed
 - If macOS withholds access to a folder, reading a session's `.git` can block for good. Sessions are now read one at a time on their own queue, so a stuck read can no longer starve the usage probe and leave the panel on "loading…".

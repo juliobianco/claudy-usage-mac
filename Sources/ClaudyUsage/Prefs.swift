@@ -14,23 +14,25 @@ enum Themes {
     static let ids = ["auto", "classic", "oled", "midnight", "mocha", "forest", "halloween"]
 
     // Classic is the base; a theme lists only what differs (lib/theme.ps1).
+    // muted / dim / faint text are lifted to contrast on the theme's bg of at least 7 / 5.6 / 4.5 (WCAG AA for small text is 4.5).
     static let base: [String: UInt32] = [
         "bg": 0x1A1A1E, "code": 0x141416, "card": 0x26262C, "textHi": 0xF4F4F5,
-        "text2": 0xD4D4D8, "muted": 0x8B8B94, "dim": 0x6B7280, "faint": 0x52525B,
+        "text2": 0xD4D4D8, "muted": 0xA5A5AC, "dim": 0x8F949E, "faint": 0x828289,
         "off": 0x3F3F46, "accent": 0x60A5FA]
     static let overrides: [String: [String: UInt32]] = [
-        "oled": ["bg": 0x000000, "code": 0x0A0A0A, "card": 0x141414],
+        "oled": ["bg": 0x000000, "code": 0x0A0A0A, "card": 0x141414,
+                 "muted": 0x95959E, "dim": 0x808692, "faint": 0x75757C],
         "midnight": ["bg": 0x0F172A, "code": 0x0B1222, "card": 0x1E293B, "textHi": 0xF1F5F9,
-                     "text2": 0xCBD5E1, "muted": 0x8494AB, "dim": 0x64748B, "faint": 0x475569,
+                     "text2": 0xCBD5E1, "muted": 0x96A4B8, "dim": 0x8693A5, "faint": 0x778190,
                      "off": 0x334155, "accent": 0x38BDF8],
         "mocha": ["bg": 0x1E1E2E, "code": 0x181825, "card": 0x313244, "textHi": 0xF5F7FF,
-                  "text2": 0xBAC2DE, "muted": 0x9399B2, "dim": 0x7F849C, "faint": 0x585B70,
+                  "text2": 0xBAC2DE, "muted": 0xA4A9BE, "dim": 0x9296AB, "faint": 0x838695,
                   "off": 0x45475A, "accent": 0x89B4FA],
         "forest": ["bg": 0x111814, "code": 0x0C120E, "card": 0x1C2A21, "textHi": 0xF0F5F1,
-                   "text2": 0xCFDBD2, "muted": 0x86998B, "dim": 0x66786B, "faint": 0x4B5B50,
+                   "text2": 0xCFDBD2, "muted": 0x96A69A, "dim": 0x859389, "faint": 0x76827A,
                    "off": 0x35433A, "accent": 0x5EEAD4],
         "halloween": ["bg": 0x1C1326, "code": 0x140E1C, "card": 0x2A1D38, "textHi": 0xFFF7ED,
-                      "text2": 0xE7D3C4, "muted": 0xA08B9C, "dim": 0x7E6A80, "faint": 0x5B4A63,
+                      "text2": 0xE7D3C4, "muted": 0xAF9EAC, "dim": 0x9C8C9D, "faint": 0x897D8F,
                       "off": 0x3F3048, "accent": 0xF97316]]
 
     /// "auto" follows the season: Halloween in September to November, classic otherwise.
