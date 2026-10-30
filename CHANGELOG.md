@@ -7,6 +7,7 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 ## [Unreleased]
 
 ### Added
+- Global shortcut (#11) to show and hide the floating widget: record one in Settings → Menu bar → Floating widget (none by default).
 - VoiceOver (#13): the big percentage, the limit rows, the hearts, the session rows, the chart and the bubble's rings now have spoken labels ("5-hour limit, 42%").
 
 ### Changed

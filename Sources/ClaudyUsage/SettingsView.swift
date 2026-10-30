@@ -210,6 +210,8 @@ struct BarTab: View {
             SwitchRow(label: L.t("float.top"), isOn: $prefs.floatOnTop)
             SwitchRow(label: L.t("float.glass"), hint: L.t("float.glass.hint"), isOn: $prefs.floatGlass)
             NumberStepper(label: L.t("float.opacity"), value: $prefs.floatOpacity, range: 40...100, step: 10)
+            HotKeyRecorder()
+            Text(L.t("hotkey.hint")).font(.system(size: 10.5)).foregroundStyle(T.dim).fixedSize(horizontal: false, vertical: true)
         }
         group(L.t("set.colours")) {
             Text(L.t("set.colours.hint", model.usage?.session?.percent ?? 0)).font(.system(size: 10.5)).foregroundStyle(T.dim)

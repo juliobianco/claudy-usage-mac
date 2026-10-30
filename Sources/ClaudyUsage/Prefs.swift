@@ -95,6 +95,9 @@ final class Prefs: @unchecked Sendable {
     var floatOnTop: Bool { didSet { d.set(floatOnTop, forKey: "floatOnTop") } }
     var floatGlass: Bool { didSet { d.set(floatGlass, forKey: "floatGlass") } }
     var floatOpacity: Int { didSet { d.set(floatOpacity, forKey: "floatOpacity") } }      // percent
+    var hotkeyCode: Int { didSet { d.set(hotkeyCode, forKey: "hotkeyCode") } }            // virtual key code, -1 = no shortcut
+    var hotkeyMods: Int { didSet { d.set(hotkeyMods, forKey: "hotkeyMods") } }            // Carbon modifier mask
+    var hotkeyLabel: String { didSet { d.set(hotkeyLabel, forKey: "hotkeyLabel") } }      // "⌃⌥C", saved so it is not rebuilt from the code
 
     private(set) var palette: Palette
 
@@ -116,6 +119,7 @@ final class Prefs: @unchecked Sendable {
         alertsAnimate = b("alertsAnimate", true); alertsNotifyWaiting = b("alertsNotifyWaiting", false); alertsNotifyReset = b("alertsNotifyReset", false); alertsNotifyPace = b("alertsNotifyPace", true)
         floatOpen = b("floatOpen", false); floatExpanded = b("floatExpanded", true)
         floatOnTop = b("floatOnTop", true); floatGlass = b("floatGlass", true); floatOpacity = i("floatOpacity", 100)
+        hotkeyCode = i("hotkeyCode", -1); hotkeyMods = i("hotkeyMods", 0); hotkeyLabel = d.string(forKey: "hotkeyLabel") ?? ""
         palette = Themes.palette(t, accent: a)
     }
 

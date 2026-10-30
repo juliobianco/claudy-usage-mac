@@ -63,6 +63,7 @@ final class AppModel {
         }
         if Prefs.shared.alertsNotifyPace { Notifier.authorize() }     // on by default: ask once, at the first start
         refreshUsage(); refreshSessions(); refreshStatus(); refreshVersion(); refreshAccount()
+        HotKey.model = self; HotKey.apply()
         // The floating widget comes back where it was left.
         if Prefs.shared.floatOpen, ProcessInfo.processInfo.environment["CLAUDY_NO_FLOAT"] == nil {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [self] in FloatingWidget.shared.show(model: self, animated: false) }
