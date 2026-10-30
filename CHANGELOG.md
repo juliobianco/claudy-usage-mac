@@ -6,6 +6,10 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-10-30
+### Changed
+- The floating-widget shortcut can be removed with a ⊖ button next to it (Forward Delete works too), instead of only by pressing Delete while recording.
+
 ## [0.7.0] - 2026-10-29
 ### Added
 - Weather fallback (#6): when Open-Meteo does not answer, the sky asks met.no (as the original does) instead of showing clear weather.

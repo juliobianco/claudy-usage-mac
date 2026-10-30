@@ -42,7 +42,7 @@ enum HotKey {
     }
 }
 
-/// A button that records the next key combination. Esc cancels, Delete clears; it needs ⌘, ⌥ or ⌃ so typing is not hijacked.
+/// A button that records the next key combination. Esc cancels, Delete or the ⊖ button clears; it needs ⌘, ⌥ or ⌃ so typing is not hijacked.
 struct HotKeyRecorder: View {
     @State private var prefs = Prefs.shared
     @State private var recording = false
@@ -58,6 +58,11 @@ struct HotKeyRecorder: View {
                     .padding(.horizontal, 10).padding(.vertical, 3)
                     .background(RoundedRectangle(cornerRadius: 6).fill(T.off))
             }.buttonStyle(.plain)
+            if prefs.hotkeyCode >= 0 && !recording {
+                Button { set(-1, 0, "") } label: {
+                    Image(systemName: "minus.circle.fill").font(.system(size: 14)).foregroundStyle(T.text2)
+                }.buttonStyle(.plain).help(L.t("hotkey.clear")).accessibilityLabel(L.t("hotkey.clear"))
+            }
         }
         .onDisappear { stop() }
     }
@@ -69,7 +74,7 @@ struct HotKeyRecorder: View {
         monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { e in
             switch Int(e.keyCode) {
             case kVK_Escape: break
-            case kVK_Delete: set(-1, 0, "")
+            case kVK_Delete, kVK_ForwardDelete: set(-1, 0, "")
             default:
                 let mods = e.modifierFlags.intersection([.command, .option, .control])
                 if mods.isEmpty { return nil }   // keep listening
