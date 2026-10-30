@@ -67,8 +67,14 @@ public enum Wx {
         return WeatherKind(id: "code", name: "weather code \(code)", cover: 0.5)
     }
 
-    /// Open-Meteo, no key. Times come back in the location's own zone (timezone=auto).
+    /// Open-Meteo first; met.no when it does not answer (blocked network, outage), as the original does.
     public static func fetch(lat: Double, lon: Double) async -> Weather? {
+        if let w = await openMeteo(lat: lat, lon: lon) { return w }
+        return await metNo(lat: lat, lon: lon)
+    }
+
+    /// Open-Meteo, no key. Times come back in the location's own zone (timezone=auto).
+    static func openMeteo(lat: Double, lon: Double) async -> Weather? {
         let u = "https://api.open-meteo.com/v1/forecast?latitude=\(lat)&longitude=\(lon)"
             + "&current=weather_code,temperature_2m,wind_speed_10m&daily=sunrise,sunset&timezone=auto&forecast_days=1"
         guard let url = URL(string: u), let (data, _) = try? await URLSession.shared.data(from: url),
@@ -84,6 +90,50 @@ public enum Wx {
         return Weather(code: code, temp: (cur["temperature_2m"] as? NSNumber)?.doubleValue ?? 0,
                        wind: (cur["wind_speed_10m"] as? NSNumber)?.doubleValue ?? 0,
                        sunrise: minutes("sunrise"), sunset: minutes("sunset"), at: Date())
+    }
+
+    /// met.no locationforecast: no key, but its terms ask for a descriptive User-Agent and at most 4 decimals in the position.
+    /// It has no sunrise or sunset: the sky computes them from the coordinates (`sunCalc`).
+    static func metNo(lat: Double, lon: Double) async -> Weather? {
+        let u = String(format: "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=%.4f&lon=%.4f", lat, lon)
+        guard let url = URL(string: u) else { return nil }
+        var req = URLRequest(url: url, timeoutInterval: 20)
+        req.setValue("ClaudyUsage (github.com/juliobianco/claudy-usage-mac)", forHTTPHeaderField: "User-Agent")
+        guard let (data, _) = try? await URLSession.shared.data(for: req) else { return nil }
+        return metNoWeather(data)
+    }
+
+    static func metNoWeather(_ data: Data) -> Weather? {
+        guard let j = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let p = j["properties"] as? [String: Any], let first = (p["timeseries"] as? [[String: Any]])?.first,
+              let d = first["data"] as? [String: Any],
+              let det = (d["instant"] as? [String: Any])?["details"] as? [String: Any],
+              let symbol = ((d["next_1_hours"] ?? d["next_6_hours"]) as? [String: Any])
+                  .flatMap({ ($0["summary"] as? [String: Any])?["symbol_code"] as? String }) else { return nil }
+        return Weather(code: metNoCode(symbol), temp: (det["air_temperature"] as? NSNumber)?.doubleValue ?? 0,
+                       wind: ((det["wind_speed"] as? NSNumber)?.doubleValue ?? 0) * 3.6,   // m/s to km/h
+                       sunrise: nil, sunset: nil, at: Date())
+    }
+
+    /// "lightrainshowers_day" -> a WMO code. Thunder wins over the rest; "light" / "heavy" pick the group's step.
+    static func metNoCode(_ symbol: String) -> Int {
+        let s = String(symbol.split(separator: "_").first ?? "")
+        let light = s.hasPrefix("light"), heavy = s.hasPrefix("heavy")
+        func step(_ a: Int, _ b: Int, _ c: Int) -> Int { light ? a : heavy ? c : b }
+        if s.contains("thunder") { return step(95, 96, 99) }
+        if s.contains("sleet") { return heavy ? 67 : 66 }
+        if s.contains("snowshowers") { return heavy ? 86 : 85 }
+        if s.contains("snow") { return step(71, 73, 75) }
+        if s.contains("showers") { return step(80, 81, 82) }
+        if s.contains("rain") { return step(61, 63, 65) }
+        switch s {
+        case "clearsky": return 0
+        case "fair": return 1
+        case "partlycloudy": return 2
+        case "cloudy": return 3
+        case "fog": return 45
+        default: return 3   // unknown symbol: grey is a safer guess than blue
+        }
     }
 
     // Sunrise and sunset from coordinates (NOAA formulas), local time, minutes from midnight.
