@@ -336,6 +336,8 @@ struct BubbleView: View {
             }
         }
         .frame(width: 76, height: 76)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(L.t("a11y.bubble", s.map { "\($0)%" } ?? "--", w.map { "\($0)%" } ?? "--"))
         .overlay {                              // a session waits: the rim pulses yellow; a limit reset: confetti
             if model.alertWaiting {
                 Circle().stroke(T.warn.opacity(model.alertTick % 2 == 0 ? 0.95 : 0.25), lineWidth: 3)

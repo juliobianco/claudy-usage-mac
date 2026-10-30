@@ -6,6 +6,12 @@ Each release is a git tag (`vX.Y.Z`) with a GitHub Release; its notes are the en
 
 ## [Unreleased]
 
+### Added
+- VoiceOver (#13): the big percentage, the limit rows, the hearts, the session rows, the chart and the bubble's rings now have spoken labels ("5-hour limit, 42%"). The contrast check is still open.
+
+### Fixed
+- If macOS withholds access to a folder, reading a session's `.git` can block for good. Sessions are now read one at a time on their own queue, so a stuck read can no longer starve the usage probe and leave the panel on "loading…".
+
 ## [0.6.4] - 2026-10-28
 
 ### Fixed

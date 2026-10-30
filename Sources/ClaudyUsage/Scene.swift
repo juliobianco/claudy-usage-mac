@@ -210,6 +210,9 @@ struct HeroView: View {
                     Text("%").font(.system(size: 15)).foregroundStyle(T.muted).baselineOffset(10)
                 }
                 .allowsHitTesting(false)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(L.t("a11y.limit5h"))
+                .accessibilityValue(model.usage?.session.map { "\($0.percent)%" } ?? "")
             }
             .onAppear { scene.size = geo.size }
             .onChange(of: geo.size) { _, s in scene.size = s }

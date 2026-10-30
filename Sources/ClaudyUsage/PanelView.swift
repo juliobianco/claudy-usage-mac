@@ -189,6 +189,7 @@ struct ProgressBar: View {
             }
         }
         .frame(height: height)
+        .accessibilityHidden(true)   // the row's text already says the number
     }
 }
 
@@ -210,6 +211,7 @@ struct LimitRow: View {
             ProgressBar(percent: line?.percent, height: 5, color: color)
             if let pace { Text(pace).font(.system(size: 10)).foregroundStyle(T.dim).frame(maxWidth: .infinity, alignment: .leading) }
         }
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -247,6 +249,7 @@ struct SessionRow: View {
             Text(state).font(.system(size: 10.5)).foregroundStyle(color)
         }
         .help(Redact.on ? "" : s.cwd)
+        .accessibilityElement(children: .combine)
     }
 
     // "branch · worktree x · session name": the name tells apart two sessions in the same checkout.
@@ -479,6 +482,8 @@ struct HeartsView: View {
                 .frame(width: 14, height: 12)
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(L.t("a11y.hearts", halves))
     }
 }
 

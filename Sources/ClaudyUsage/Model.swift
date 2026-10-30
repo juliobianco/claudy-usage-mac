@@ -101,10 +101,18 @@ final class AppModel {
         }
     }
 
+    // Reads .git files, which can block for good while macOS withholds Documents access. So: one read at a time,
+    // and on a GCD queue (it grows its threads) rather than the Swift pool, which blocked reads would drain.
+    @ObservationIgnored private var listing = false
     func refreshSessions() {
-        Task.detached {
+        guard !listing else { return }
+        listing = true
+        DispatchQueue.global(qos: .utility).async {
             let s = Sessions.list()
-            await MainActor.run { if s != self.sessions { self.sessions = s; self.scene.observe(model: self); self.sessionsChanged() } }
+            Task { @MainActor in
+                self.listing = false
+                if s != self.sessions { self.sessions = s; self.scene.observe(model: self); self.sessionsChanged() }
+            }
         }
     }
 

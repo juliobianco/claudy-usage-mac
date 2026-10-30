@@ -19,6 +19,8 @@ struct HistoryChart: View {
             GeometryReader { geo in
                 let levels = (warn: Prefs.shared.warnPercent, crit: Prefs.shared.critPercent)
                 Canvas { ctx, size in draw(ctx, size, levels) }
+                    .accessibilityLabel(L.t("a11y.chart"))
+                    .accessibilityValue(L.t("a11y.bubble", model.usage?.session.map { "\($0.percent)%" } ?? "--", model.usage?.week.map { "\($0.percent)%" } ?? "--"))
                     .contentShape(Rectangle())
                     .onContinuousHover { phase in
                         if case .active(let p) = phase { hover = min(max(p.x, 0), geo.size.width) } else { hover = nil }
